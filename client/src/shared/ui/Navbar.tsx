@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import logo from "../../assets/logo.png";
 
 const Navbar = () => {
-  const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = showMobileMenu ? "hidden" : "auto";
@@ -12,45 +12,46 @@ const Navbar = () => {
   }, [showMobileMenu]);
 
   return (
-    <nav className="sticky top-0 left-0 w-full z-20 bg-white shadow-sm">
-      <div className="w-full flex justify-between items-center h-16 px-4 md:px-[50px]">
+    <nav className="absolute top-0 left-0 w-full z-30 bg-transparent">
+      <div className="w-full flex items-center justify-between px-4 md:px-[50px] py-5">
         <Link to="/" className="flex items-center">
-          <img src={logo} alt="PatitasUp" className="h-10 md:h-12 object-contain" />
+          <img src={logo} alt="PatitasUp" className="h-10 md:h-12" />
         </Link>
 
-        <ul className="hidden md:flex gap-6 text-gray-800 ml-auto mr-6 text-sm">
-          <li><NavLink to="/" className="hover:text-[#5170FF] transition">Inicio</NavLink></li>
-          <li><NavLink to="/como-funciona" className="hover:text-[#5170FF] transition">Cómo funciona</NavLink></li>
-          <li><NavLink to="/contacto" className="hover:text-[#5170FF] transition">Contacto</NavLink></li>
+        <ul className="hidden md:flex items-center gap-6 ml-auto mr-6 text-sm text-white">
+          <li><NavLink to="/" className="hover:opacity-80">Inicio</NavLink></li>
+          <li><NavLink to="/como-funciona" className="hover:opacity-80">Cómo funciona</NavLink></li>
+          <li><NavLink to="/contacto" className="hover:opacity-80">Contacto</NavLink></li>
         </ul>
 
         <div className="hidden md:flex items-center gap-3 text-sm">
-          <Link to="/registro" className="px-4 py-1.5 rounded-full font-semibold border border-[#FF914D] text-[#FF914D] hover:bg-[#FF914D] hover:text-white">Crear cuenta</Link>
-          <Link to="/login" className="px-4 py-1.5 rounded-full font-semibold bg-[#5170FF] text-white hover:bg-[#3f5de0]">Iniciar sesión</Link>
+          <Link to="/donar" className="px-4 py-1.5 rounded-full border border-white text-white hover:bg-white hover:text-[#5170ff]">Donar</Link>
+          <Link to="/publicar" className="px-4 py-1.5 rounded-full bg-[#ff914d] text-white border border-white hover:bg-[#ff7a2f]">Publicar gato</Link>
         </div>
 
-        <button className="md:hidden text-gray-800 text-3xl" onClick={() => setShowMobileMenu(!showMobileMenu)}>
-          {showMobileMenu ? <FiX /> : <FiMenu />}
+        <button className="md:hidden text-white text-3xl" onClick={() => setShowMobileMenu(true)} aria-label="Abrir menú">
+          <FiMenu />
         </button>
       </div>
 
-      {showMobileMenu && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
-          <ul className="flex flex-col gap-0 text-gray-800 px-6 py-6 text-base">
-            <li className="py-3 border-b border-gray-300"><NavLink onClick={() => setShowMobileMenu(false)} to="/">Inicio</NavLink></li>
-            <li className="py-3 border-b border-gray-300"><NavLink onClick={() => setShowMobileMenu(false)} to="/como-funciona">Cómo funciona</NavLink></li>
-            <li className="py-3 border-b border-gray-300"><NavLink onClick={() => setShowMobileMenu(false)} to="/contacto">Contacto</NavLink></li>
+      <div className={`md:hidden fixed inset-0 z-40 transition-transform duration-300 ${showMobileMenu ? "translate-x-0" : "translate-x-full"}`} style={{ pointerEvents: showMobileMenu ? "auto" : "none" }}>
+        <div className="w-full h-full bg-[#5170ff] flex flex-col text-white">
+          <div className="flex justify-end px-6 py-6">
+            <button className="text-3xl" onClick={() => setShowMobileMenu(false)} aria-label="Cerrar menú"><FiX /></button>
+          </div>
+
+          <ul className="flex flex-col gap-6 px-8 text-lg">
+            <li className="border-b border-white/40 pb-3"><NavLink to="/" onClick={() => setShowMobileMenu(false)}>Inicio</NavLink></li>
+            <li className="border-b border-white/40 pb-3"><NavLink to="/como-funciona" onClick={() => setShowMobileMenu(false)}>Cómo funciona</NavLink></li>
+            <li className="border-b border-white/40 pb-3"><NavLink to="/contacto" onClick={() => setShowMobileMenu(false)}>Contacto</NavLink></li>
           </ul>
-          <div className="flex flex-col gap-3 px-6 py-6 text-sm">
-            <Link onClick={() => setShowMobileMenu(false)} to="/registro" className="w-full bg-[#FF914D] text-white px-4 py-2 rounded-full font-semibold text-center hover:bg-[#FF6F3C]">
-              Crear cuenta
-            </Link>
-            <Link onClick={() => setShowMobileMenu(false)} to="/login" className="w-full bg-[#5170FF] text-white px-4 py-2 rounded-full font-semibold text-center hover:bg-[#3f5de0]">
-              Iniciar sesión
-            </Link>
+
+          <div className="mt-auto px-8 pb-10 flex flex-col gap-4 text-sm">
+            <Link to="/donar" onClick={() => setShowMobileMenu(false)} className="w-full rounded-full border border-white text-white py-3 font-semibold text-center">Donar</Link>
+            <Link to="/registro" onClick={() => setShowMobileMenu(false)} className="w-full rounded-full bg-[#ff914d] text-white py-3 font-semibold text-center">Publicar gato</Link>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 };
