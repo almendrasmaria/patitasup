@@ -1,4 +1,3 @@
-import heroImg from "../../../assets/hero.png";
 import CatsFiltersBar from "../../cats/components/CatsFiltersBar";
 
 type Props = {
@@ -8,21 +7,20 @@ type Props = {
 
 const HeroHome = ({ query, onQueryChange }: Props) => {
   return (
-    <section
-      className="relative w-full text-white rounded-b-[55px] overflow-hidden"
-      style={{
-        backgroundImage: `url(${heroImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="absolute inset-0 bg-black/5" />
-      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-32 pb-18 text-center">
-        <h1 className="text-[54px] sm:text-[80px] leading-[1] font-semibold drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)]">
-          PatitasUp
-        </h1>
+    <section className="relative w-full overflow-hidden rounded-b-[55px] bg-gradient-to-b from-[#5A7BFF] to-[#4E67FF] text-white">
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 12px 12px, rgba(255,255,255,0.5) 2px, transparent 2.5px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
 
-        <p className="mt-4 max-w-2xl mx-auto text-[14px] sm:text-base md:text-lg text-white">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-32 pb-18 text-center sm:px-6 lg:px-8">
+        <h1 className="text-[54px] font-semibold leading-[1] drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)] sm:text-[80px]">PatitasUp</h1>
+
+        <p className="mx-auto mt-4 max-w-2xl text-[14px] text-white sm:text-base md:text-lg">
           Conectamos gatitos rescatados con familias listas para brindar amor.
           <br />
           ¿Listo para encontrar a tu compañero perfecto?
