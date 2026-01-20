@@ -1,5 +1,5 @@
 import Navbar from "../../../shared/ui/Navbar";
-import HowItWorksHero from "../components/HowItWorksHero";
+import PageHero from "../../../shared/ui/PageHero";
 import HowItWorksColumns from "../components/HowItWorksColumns";
 import { howItWorksCards } from "../data/howItWorksData";
 
@@ -20,8 +20,8 @@ const HowItWorksPage = () => {
           />
 
           <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-28 pb-14 text-center">
-            <HowItWorksHero
-              title={"¿Cómo funciona PatitasUp?"}
+            <PageHero
+              title="¿Cómo funciona PatitasUp?"
               subtitle="Nuestra misión es conectar gatos rescatados con familias responsables. El proceso es simple, transparente y seguro para todos."
             />
           </div>
