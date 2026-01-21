@@ -1,4 +1,4 @@
-import { FiShare2, FiArrowRight } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import { PiGenderMaleFill, PiGenderFemaleFill } from "react-icons/pi";
 import { HiOutlineCake } from "react-icons/hi";
 import { HiOutlineMapPin } from "react-icons/hi2";
@@ -15,13 +15,6 @@ const CatCard = ({ cat }: Props) => {
 		<article className="w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
 			<div className="relative h-[300px] w-full overflow-hidden">
 				<img src={cat.image} alt={cat.name} className="h-full w-full object-cover" loading="lazy" />
-				<button
-					type="button"
-					aria-label="Compartir"
-					className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/85 backdrop-blur ring-1 ring-black/5"
-				>
-					<FiShare2 className="text-xl text-slate-700" />
-				</button>
 			</div>
 
 			<div className="px-6 pt-5 pb-6">
