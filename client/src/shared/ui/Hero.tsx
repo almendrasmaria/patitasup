@@ -1,14 +1,28 @@
+import Badge from "./Badge";
+
 type Props = {
   title: string;
   subtitle: string;
   variant?: "home" | "page";
+  badgeText?: string;
 };
 
-const PageHero = ({ title, subtitle, variant = "page" }: Props) => {
+const Hero = ({
+  title,
+  subtitle,
+  variant = "page",
+  badgeText,
+}: Props) => {
   const isHome = variant === "home";
 
   return (
-    <header className="text-center text-white">
+    <header className="flex flex-col items-center text-center text-white">
+      {badgeText && (
+        <div className="mb-4">
+          <Badge text={badgeText} />
+        </div>
+      )}
+
       <h1
         className={
           isHome
@@ -32,4 +46,4 @@ const PageHero = ({ title, subtitle, variant = "page" }: Props) => {
   );
 };
 
-export default PageHero;
+export default Hero;

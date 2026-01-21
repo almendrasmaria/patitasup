@@ -1,5 +1,5 @@
 import Navbar from "../../../shared/ui/Navbar";
-import PageHero from "../../../shared/ui/PageHero";
+import Hero from "../../../shared/ui/Hero";
 import ContactFormCard from "../components/ContactFormCard";
 import ContactInfoCard from "../components/ContactInfoCard";
 import Footer from "../../../shared/ui/Footer";
@@ -21,7 +21,7 @@ const ContactPage = () => {
           />
 
           <div className="relative z-10 mx-auto max-w-6xl px-4 pt-28 pb-14 sm:px-6 lg:px-8">
-            <PageHero
+            <Hero
               title="Contáctanos"
               subtitle="Estamos aquí para ayudarte a conectar con tu futuro mejor amigo y responder cualquier duda que tengas sobre el proceso."
             />
