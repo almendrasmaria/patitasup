@@ -2,7 +2,8 @@ import Navbar from "../../../shared/ui/Navbar";
 import HeroHome from "../components/HeroHome";
 import CatsGrid from "../../cats/components/CatsGrid";
 import { mockCats } from "../../cats/data/mockCats";
-import { useCatSearch } from "../../cats/hooks/useCatFilters";
+import { useCatSearch } from "../../cats/hooks/useCatFilters"; 
+import Footer from "../../../shared/ui/Footer";
 
 const HomePage = () => {
   const { query, setQuery, filteredCats } = useCatSearch(mockCats);
@@ -22,6 +23,8 @@ const HomePage = () => {
           </div>
         </section>
       </main>
+
+      <Footer></Footer>
     </div>
   );
 };

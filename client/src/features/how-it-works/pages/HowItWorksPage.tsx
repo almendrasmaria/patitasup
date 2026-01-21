@@ -2,13 +2,14 @@ import Navbar from "../../../shared/ui/Navbar";
 import PageHero from "../../../shared/ui/PageHero";
 import HowItWorksColumns from "../components/HowItWorksColumns";
 import { howItWorksCards } from "../data/howItWorksData";
+import Footer from "../../../shared/ui/Footer";
 
 const HowItWorksPage = () => {
   return (
-    <>
+    <div className="min-h-screen bg-[#F6F7F9]">
       <Navbar />
 
-      <main className="min-h-screen bg-[#F6F7F9]">
+      <main>
         <section className="relative h-[472px] overflow-hidden rounded-b-[72px] bg-gradient-to-b from-[#5A7BFF] to-[#4E67FF]">
           <div
             className="absolute inset-0 opacity-20"
@@ -19,7 +20,7 @@ const HowItWorksPage = () => {
             }}
           />
 
-          <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-28 pb-14 text-center">
+          <div className="relative z-10 mx-auto max-w-6xl px-4 pt-28 pb-14 text-center sm:px-6 lg:px-8">
             <PageHero
               title="¿Cómo funciona PatitasUp?"
               subtitle="Nuestra misión es conectar gatos rescatados con familias responsables. El proceso es simple, transparente y seguro para todos."
@@ -31,7 +32,9 @@ const HowItWorksPage = () => {
           <HowItWorksColumns cards={howItWorksCards} />
         </section>
       </main>
-    </>
+
+      <Footer />
+    </div>
   );
 };
 
