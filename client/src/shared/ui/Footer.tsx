@@ -1,8 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaInstagram, FaGithub } from "react-icons/fa";
+import { useCallback } from "react";
 import logo from "../../assets/logo.png";
 
 const Footer = () => {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const go = useCallback(
+    (to: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+
+      if (pathname !== to) navigate(to);
+
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    },
+    [navigate, pathname]
+  );
+
   return (
     <footer className="w-full border-t border-white/10 bg-[#1E293B] mt-8 sm:mt-12">
       <div className="container mx-auto px-4 md:px-6 py-8 sm:py-12">
@@ -12,15 +29,11 @@ const Footer = () => {
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#5170FF]">
                 <img src={logo} alt="PatitasUp" className="h-6 w-6" />
               </div>
-
-              <span className="text-lg font-semibold text-white">
-                PatitasUp
-              </span>
+              <span className="text-lg font-semibold text-white">PatitasUp</span>
             </div>
 
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-              Conectamos gatitos rescatados con familias responsables,
-              promoviendo la adopción responsable.
+              Conectamos gatitos rescatados con familias responsables, promoviendo la adopción responsable.
             </p>
 
             <div className="mt-4 flex items-center gap-3">
@@ -47,18 +60,10 @@ const Footer = () => {
           </div>
 
           <nav className="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/70 lg:w-auto">
-            <Link to="/" className="hover:text-white">
-              Inicio
-            </Link>
-            <Link to="/como-funciona" className="hover:text-white">
-              Cómo funciona
-            </Link>
-            <Link to="/contacto" className="hover:text-white">
-              Contacto
-            </Link>
-            <Link to="/publicar" className="hover:text-white">
-              Publicar
-            </Link>
+            <Link to="/" onClick={go("/")} className="hover:text-white">Inicio</Link>
+            <Link to="/como-funciona" onClick={go("/como-funciona")} className="hover:text-white">Cómo funciona</Link>
+            <Link to="/contacto" onClick={go("/contacto")} className="hover:text-white">Contacto</Link>
+            <Link to="/publicar" onClick={go("/publicar")} className="hover:text-white">Publicar</Link>
           </nav>
         </div>
       </div>
