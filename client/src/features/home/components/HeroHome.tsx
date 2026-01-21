@@ -1,5 +1,6 @@
 import heroImg from "../../../assets/hero.jpg";
 import CatsFiltersBar from "../../cats/components/CatsFiltersBar";
+import PageHero from "../../../shared/ui/PageHero";
 
 type Props = {
   query: string;
@@ -17,17 +18,13 @@ const HeroHome = ({ query, onQueryChange }: Props) => {
       }}
     >
       <div className="absolute inset-0 bg-black/45" />
-
       <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-        <h1 className="text-[54px] font-semibold leading-[1] drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)] sm:text-[80px]">
-          PatitasUp
-        </h1>
 
-        <p className="mx-auto mt-4 max-w-2xl text-[14px] text-white/90 sm:text-base md:text-lg">
-          Conectamos gatitos rescatados con familias listas para brindar amor.
-          <br />
-          ¿Listo para encontrar a tu compañero perfecto?
-        </p>
+        <PageHero
+          variant="home"
+          title="PatitasUp"
+          subtitle={`Conectamos gatitos rescatados con familias listas para brindar amor.\n¿Listo para encontrar a tu compañero perfecto?`}
+        />
 
         <div className="mt-10 w-full">
           <CatsFiltersBar query={query} onQueryChange={onQueryChange} />
