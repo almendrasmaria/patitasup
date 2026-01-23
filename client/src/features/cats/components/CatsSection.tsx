@@ -1,22 +1,29 @@
 import CatsGrid from "./CatsGrid";
+import Pagination from "./Pagination";
 import type { Cat } from "../model";
 
 type Props = {
   cats: Cat[];
   total?: number;
+
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 };
 
-const CatsSection = ({ cats, total }: Props) => {
+const CatsSection = ({ cats, total, page, totalPages, onPageChange }: Props) => {
   return (
-    <section className="pb-12 pt-[92px]">
+    <section id="cats-section" className="pb-12 pt-[92px] scroll-mt-24">
       <div className="w-full px-4 md:px-[50px]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-slate-500">
-            Mostrando <span className="font-semibold text-slate-700">{cats.length}</span>
+            Mostrando{" "}
+            <span className="font-semibold text-slate-700">{cats.length}</span>
             {typeof total === "number" ? (
               <>
                 {" "}
-                de <span className="font-semibold text-slate-700">{total}</span> gatos
+                de <span className="font-semibold text-slate-700">{total}</span>{" "}
+                gatos
               </>
             ) : null}
           </p>
@@ -26,6 +33,7 @@ const CatsSection = ({ cats, total }: Props) => {
           <CatsGrid cats={cats} />
         </div>
 
+        <Pagination currentPage={page} totalPages={totalPages} onChange={onPageChange} />
       </div>
     </section>
   );
