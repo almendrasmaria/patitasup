@@ -16,7 +16,7 @@ const CatCard = ({ cat }: Props) => {
 
   return (
     <article className="w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
-      <div className="relative w-full overflow-hidden aspect-[4/3]">
+      <div className="relative w-full overflow-hidden aspect-[16/10]">
         <img
           src={cat.image}
           alt={cat.name}
