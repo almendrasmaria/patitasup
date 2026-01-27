@@ -13,7 +13,7 @@ type Props = {
 
 const CatsSection = ({ cats, total, page, totalPages, onPageChange }: Props) => {
   return (
-    <section id="cats-section" className="pb-12 pt-[92px] scroll-mt-24">
+    <section id="cats-section" className="pb-12 pt-[40px] scroll-mt-24">
       <div className="w-full px-4 md:px-[50px]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-slate-500">
