@@ -1,37 +1,47 @@
+import { FaPaw } from "react-icons/fa";
 import Hero from "../../../shared/ui/Hero";
-import CatsFiltersBar from "./CatsFiltersBar";
-import heroImg from "../../../assets/hero.jpg";
 
-type Props = {
-  query: string;
-  onQueryChange: (v: string) => void;
-};
-
-const CatsHero = ({ query, onQueryChange }: Props) => {
+const CatsHero = () => {
   return (
-    <section
-      className="relative h-[620px] w-full text-white"
-      style={{
-        backgroundImage: `url(${heroImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center bottom 52%",
-      }}
-    >
-      <div className="absolute inset-0 bg-black/45" />
+    <section className="relative w-full overflow-hidden bg-[#5A7BFF] text-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="grid h-full w-full grid-cols-6 gap-12 opacity-20 sm:grid-cols-8 lg:grid-cols-10">
+          {Array.from({ length: 60 }).map((_, i) => (
+            <FaPaw
+              key={i}
+              size={18}
+              className="mx-auto text-white/70"
+              style={{ transform: `rotate(${(i % 4) * 20 - 20}deg)` }}
+            />
+          ))}
+        </div>
+      </div>
 
-      <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-white/10 blur-3xl" />
 
+      <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-4 pt-32 pb-24 text-center sm:px-6 sm:pt-36 sm:pb-28 lg:px-8">
         <Hero
           badgeText="Adopción responsable"
           variant="home"
-          title="PatitasUp"
+          title="Un nuevo comienzo para cada bigote"
           subtitle={`Conectamos gatitos rescatados con familias listas para brindar amor.\n¿Listo para encontrar a tu compañero perfecto?`}
         />
-      </div>
 
-      <div className="absolute inset-x-0 -bottom-10 z-30 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl">
-          <CatsFiltersBar query={query} onQueryChange={onQueryChange} />
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <button
+            onClick={() => {
+              document
+                .getElementById("cats-filters")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-full bg-white px-6 py-3 text-[14px] font-semibold text-[#5A7BFF] shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-[1px]"
+          >
+            Adoptar Gato
+          </button>
+
+          <button className="rounded-full bg-transparent px-6 py-3 text-[14px] font-semibold text-white ring-1 ring-white/35 transition hover:bg-white/10 active:translate-y-[1px]">
+            Publicar Ahora
+          </button>
         </div>
       </div>
     </section>

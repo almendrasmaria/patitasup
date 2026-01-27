@@ -3,6 +3,7 @@ import Navbar from "../../../shared/ui/Navbar";
 import Footer from "../../../shared/ui/Footer";
 import CatsHero from "../components/CatsHero";
 import CatsSection from "../components/CatsSection";
+import CatsFiltersBar from "../components/CatsFiltersBar";
 import { mockCats } from "../data/mockCats";
 import { useCatSearch } from "../hooks/useCatFilters";
 
@@ -12,10 +13,10 @@ const CatsPage = () => {
   const { query, setQuery, filteredCats } = useCatSearch(mockCats);
   const [page, setPage] = useState(1);
 
-const handleQueryChange = (value: string) => {
-  setQuery(value);
-  setPage(1);
-};
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+    setPage(1);
+  };
 
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(filteredCats.length / PAGE_SIZE)),
@@ -29,7 +30,6 @@ const handleQueryChange = (value: string) => {
 
   const handlePageChange = (nextPage: number) => {
     setPage(nextPage);
-
     const catsSection = document.getElementById("cats-section");
     catsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -37,10 +37,11 @@ const handleQueryChange = (value: string) => {
   return (
     <div className="min-h-screen bg-[#F6F7F9]">
       <Navbar />
-
       <main>
-        <CatsHero query={query} onQueryChange={handleQueryChange} />
-
+        <CatsHero />
+        <div  id="cats-filters" className="relative z-30 w-full">
+          <CatsFiltersBar query={query} onQueryChange={handleQueryChange} />
+        </div>
         <CatsSection
           cats={pageCats}
           total={filteredCats.length}
@@ -49,7 +50,6 @@ const handleQueryChange = (value: string) => {
           onPageChange={handlePageChange}
         />
       </main>
-
       <Footer />
     </div>
   );
