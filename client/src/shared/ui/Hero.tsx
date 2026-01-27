@@ -7,12 +7,7 @@ type Props = {
   badgeText?: string;
 };
 
-const Hero = ({
-  title,
-  subtitle,
-  variant = "page",
-  badgeText,
-}: Props) => {
+const Hero = ({ title, subtitle, variant = "page", badgeText }: Props) => {
   const isHome = variant === "home";
 
   return (
@@ -26,7 +21,7 @@ const Hero = ({
       <h1
         className={
           isHome
-            ? "text-[54px] font-semibold leading-[1] drop-shadow-[0_12px_32px_rgba(0,0,0,0.6)] sm:text-[80px]"
+            ? "mt-6 text-balance font-extrabold leading-[1.05] tracking-tight text-[40px] sm:text-[48px] lg:text-[64px]"
             : "text-[36px] sm:text-[40px] lg:text-[44px] font-semibold leading-[1.05] drop-shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
         }
       >
@@ -36,7 +31,7 @@ const Hero = ({
       <p
         className={
           isHome
-            ? "mx-auto mt-4 max-w-2xl text-[14px] text-white/90 sm:text-base md:text-lg leading-relaxed"
+            ? "mt-5 max-w-2xl text-pretty leading-7 text-white/85 text-[15px] sm:text-[16px] lg:text-[18px]"
             : "mt-4 mx-auto max-w-[28rem] sm:max-w-[32rem] text-white/90 text-[15px] sm:text-[16px] lg:text-base leading-relaxed"
         }
       >
