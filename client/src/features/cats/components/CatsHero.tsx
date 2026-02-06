@@ -1,16 +1,18 @@
 import { FaPaw } from "react-icons/fa";
 import Hero from "../../../shared/ui/Hero";
 
+
 const CatsHero = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-[#5A7BFF] text-white">
+    <section className="relative w-full overflow-hidden text-white bg-[#7061F0]">
+
       <div className="pointer-events-none absolute inset-0">
         <div className="grid h-full w-full grid-cols-6 gap-12 opacity-20 sm:grid-cols-8 lg:grid-cols-10">
           {Array.from({ length: 60 }).map((_, i) => (
             <FaPaw
               key={i}
               size={18}
-              className="mx-auto text-white/70"
+              className="mx-auto text-white/55"
               style={{ transform: `rotate(${(i % 4) * 20 - 20}deg)` }}
             />
           ))}
@@ -34,12 +36,11 @@ const CatsHero = () => {
                 .getElementById("cats-filters")
                 ?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
-            className="rounded-full bg-white px-6 py-3 text-[14px] font-semibold text-[#5A7BFF] shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-[1px]"
-          >
+            className="rounded-lg bg-white px-6 py-3 text-[14px] font-semibold shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-[1px] text-[#7061F0]">
             Adoptar Gato
           </button>
 
-          <button className="rounded-full bg-transparent px-6 py-3 text-[14px] font-semibold text-white ring-1 ring-white/35 transition hover:bg-white/10 active:translate-y-[1px]">
+          <button className="rounded-lg bg-transparent px-6 py-3 text-[14px] font-semibold text-white ring-1 ring-white/40 transition hover:bg-white/10 active:translate-y-[1px]">
             Publicar Ahora
           </button>
         </div>
