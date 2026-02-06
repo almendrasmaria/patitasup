@@ -21,12 +21,12 @@ const Footer = () => {
   );
 
   return (
-    <footer className="w-full border-t border-white/10 bg-[#1E293B] mt-8 sm:mt-12">
+    <footer className="w-full border-t border-white/10 bg-[#0F172A] mt-8 sm:mt-12">
       <div className="container mx-auto px-4 md:px-6 py-8 sm:py-12">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#5170FF]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#7061F0]">
                 <img src={logo} alt="PatitasUp" className="h-6 w-6" />
               </div>
               <span className="text-lg font-semibold text-white">PatitasUp</span>
