@@ -66,7 +66,7 @@ const CatCard = ({ cat }: Props) => {
 
         <button
           type="button"
-          className="mt-auto flex w-full items-center justify-center gap-2 rounded-4xl bg-slate-800 px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-slate-700"
+          className="mt-auto flex w-full items-center justify-center gap-2 rounded-lg bg-[#0F172A] px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-slate-700"
         >
           Adoptar a {cat.name}
           <FiArrowRight className="text-lg" />

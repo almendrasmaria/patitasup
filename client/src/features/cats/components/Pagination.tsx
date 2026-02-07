@@ -64,7 +64,7 @@ const Pagination = ({ currentPage, totalPages, onChange }: Props) => {
               onClick={() => go(p)}
               className={
                 p === currentPage
-                  ? "inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#5170ff] text-white shadow-[0_10px_22px_rgba(81,112,255,0.35)]"
+                  ? "inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#7061F0] text-white shadow-[0_10px_22px_rgba(81,112,255,0.35)]"
                   : "inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-black/5 hover:bg-slate-50"
               }
               aria-current={p === currentPage ? "page" : undefined}
