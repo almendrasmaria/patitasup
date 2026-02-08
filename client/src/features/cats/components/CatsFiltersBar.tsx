@@ -10,7 +10,7 @@ const CatsFiltersBar = ({ query, onQueryChange }: Props) => {
   return (
     <div className="w-full bg-white">
       <div className="border-y border-black/5">
-        <div className="mx-auto w-full px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full px-6 py-6 lg:px-16">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.6fr_1fr_1fr] md:items-center">
             <div className="flex h-12 items-center gap-2 rounded-xl bg-[#F6F7F9] px-4 ring-1 ring-black/5 focus-within:ring-[#5170ff]/30 sm:px-5">
               <FiSearch className="text-slate-400" />
