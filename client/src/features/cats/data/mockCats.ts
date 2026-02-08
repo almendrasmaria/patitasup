@@ -9,7 +9,7 @@ export const mockCats: Cat[] = [
     ageLabel: "60 días",
     locationLabel: "Villa Lugano",
     description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+      "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@animalitos",
   },
   {
@@ -19,8 +19,7 @@ export const mockCats: Cat[] = [
     sex: "male",
     ageLabel: "4 meses",
     locationLabel: "Villa Devoto",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@patitas",
   },
   {
@@ -30,8 +29,7 @@ export const mockCats: Cat[] = [
     sex: "female",
     ageLabel: "2 años",
     locationLabel: "Palermo",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@huellitas",
   },
   {
@@ -41,8 +39,7 @@ export const mockCats: Cat[] = [
     sex: "female",
     ageLabel: "3 meses",
     locationLabel: "Caballito",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@gatitosfelices",
   },
   {
@@ -52,8 +49,7 @@ export const mockCats: Cat[] = [
     sex: "male",
     ageLabel: "1 año",
     locationLabel: "Flores",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@rescateanimal",
   },
   {
@@ -63,8 +59,7 @@ export const mockCats: Cat[] = [
     sex: "female",
     ageLabel: "5 meses",
     locationLabel: "Almagro",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@michisurbanos",
   },
   {
@@ -74,8 +69,7 @@ export const mockCats: Cat[] = [
     sex: "male",
     ageLabel: "2 años",
     locationLabel: "San Telmo",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@rescatadoscaba",
   },
   {
@@ -85,8 +79,7 @@ export const mockCats: Cat[] = [
     sex: "female",
     ageLabel: "8 meses",
     locationLabel: "Belgrano",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@amigosfelinos",
   },
   {
@@ -96,8 +89,7 @@ export const mockCats: Cat[] = [
     sex: "male",
     ageLabel: "3 años",
     locationLabel: "Boedo",
-    description:
-      "Cariñoso y curioso, le gusta jugar, descansar cerca de personas, adaptarse facil, recibir mimos y disfrutar hogares tranquilos. Convive bien en espacios cuidados, necesita amor, tiempo y una familia comprometida con su bienestar.",
+    description: "Juguetón, activo y muy compañero. Siempre está buscando atención y nuevos desafíos. Le encanta explorar y trepar.",
     rescueInstagram: "@adopcionesgatitos",
   },
 ];
