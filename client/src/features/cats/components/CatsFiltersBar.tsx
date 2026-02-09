@@ -1,12 +1,14 @@
-import { FiChevronDown, FiSearch, FiMap } from "react-icons/fi";
-import { FaBirthdayCake } from "react-icons/fa";
+import { FiSearch, FiMap, FiChevronDown } from "react-icons/fi";
+import AgeSelect, { type AgeFilter } from "./AgeSelect";
 
 type Props = {
   query: string;
   onQueryChange: (value: string) => void;
+  age: AgeFilter;
+  onAgeChange: (value: AgeFilter) => void;
 };
 
-const CatsFiltersBar = ({ query, onQueryChange }: Props) => {
+const CatsFiltersBar = ({ query, onQueryChange, age, onAgeChange }: Props) => {
   return (
     <div className="w-full bg-white">
       <div className="border-y border-black/5">
@@ -22,15 +24,9 @@ const CatsFiltersBar = ({ query, onQueryChange }: Props) => {
               />
             </div>
 
-            <div className="flex h-12 w-full select-none items-center justify-between rounded-xl bg-[#F6F7F9] px-4 text-sm text-slate-600">
-              <span className="inline-flex items-center gap-2">
-                <FaBirthdayCake className="text-slate-400" />
-                Cualquier edad
-              </span>
-              <FiChevronDown className="text-slate-400" />
-            </div>
+            <AgeSelect value={age} onChange={onAgeChange} />
 
-            <div className="flex h-12 w-full select-none items-center justify-between rounded-xl bg-[#F6F7F9] px-4 text-sm text-slate-600">
+            <div className="flex h-12 w-full select-none items-center justify-between rounded-xl bg-[#F6F7F9] px-4 text-sm text-slate-600 ring-1 ring-black/5">
               <span className="inline-flex items-center gap-2">
                 <FiMap className="text-slate-400" />
                 Ubicación
