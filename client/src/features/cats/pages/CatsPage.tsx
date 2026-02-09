@@ -6,27 +6,41 @@ import CatsSection from "../components/CatsSection";
 import CatsFiltersBar from "../components/CatsFiltersBar";
 import { mockCats } from "../data/mockCats";
 import { useCatSearch } from "../hooks/useCatFilters";
+import type { AgeFilter } from "../components/AgeSelect";
+import { matchesAgeFilter } from "../hooks/matchAge";
 
 const PAGE_SIZE = 6;
 
 const CatsPage = () => {
   const { query, setQuery, filteredCats } = useCatSearch(mockCats);
+
   const [page, setPage] = useState(1);
+  const [age, setAge] = useState<AgeFilter>("any");
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
     setPage(1);
   };
 
+  const handleAgeChange = (value: AgeFilter) => {
+    setAge(value);
+    setPage(1);
+  };
+
+  const catsAfterAge = useMemo(
+    () => filteredCats.filter((cat) => matchesAgeFilter(cat.ageLabel, age)),
+    [filteredCats, age]
+  );
+
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(filteredCats.length / PAGE_SIZE)),
-    [filteredCats.length]
+    () => Math.max(1, Math.ceil(catsAfterAge.length / PAGE_SIZE)),
+    [catsAfterAge.length]
   );
 
   const pageCats = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return filteredCats.slice(start, start + PAGE_SIZE);
-  }, [filteredCats, page]);
+    return catsAfterAge.slice(start, start + PAGE_SIZE);
+  }, [catsAfterAge, page]);
 
   const handlePageChange = (nextPage: number) => {
     setPage(nextPage);
@@ -39,12 +53,19 @@ const CatsPage = () => {
       <Navbar />
       <main>
         <CatsHero />
-        <div  id="cats-filters" className="relative z-30 w-full">
-          <CatsFiltersBar query={query} onQueryChange={handleQueryChange} />
+
+        <div id="cats-filters" className="relative z-30 w-full">
+          <CatsFiltersBar
+            query={query}
+            onQueryChange={handleQueryChange}
+            age={age}
+            onAgeChange={handleAgeChange}
+          />
         </div>
+
         <CatsSection
           cats={pageCats}
-          total={filteredCats.length}
+          total={catsAfterAge.length}
           page={page}
           totalPages={totalPages}
           onPageChange={handlePageChange}
