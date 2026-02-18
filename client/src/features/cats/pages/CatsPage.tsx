@@ -7,6 +7,7 @@ import CatsFiltersBar from "../components/CatsFiltersBar";
 import { mockCats } from "../data/mockCats";
 import { useCatSearch } from "../hooks/useCatFilters";
 import type { AgeFilter } from "../components/AgeSelect";
+import type { LocationFilter } from "../components/LocationSelect";
 import { matchesAgeFilter } from "../hooks/matchAge";
 
 const PAGE_SIZE = 6;
@@ -16,6 +17,7 @@ const CatsPage = () => {
 
   const [page, setPage] = useState(1);
   const [age, setAge] = useState<AgeFilter>("any");
+  const [location, setLocation] = useState<LocationFilter>("any");
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
@@ -27,20 +29,29 @@ const CatsPage = () => {
     setPage(1);
   };
 
-  const catsAfterAge = useMemo(
-    () => filteredCats.filter((cat) => matchesAgeFilter(cat.ageLabel, age)),
-    [filteredCats, age]
-  );
+  const handleLocationChange = (value: LocationFilter) => {
+    setLocation(value);
+    setPage(1);
+  };
+
+  const catsAfterFilters = useMemo(() => {
+    return filteredCats
+      .filter((cat) => matchesAgeFilter(cat.ageLabel, age))
+      .filter((cat) => {
+        if (location === "any") return true;
+        return cat.locationLabel === location; 
+      });
+  }, [filteredCats, age, location]);
 
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(catsAfterAge.length / PAGE_SIZE)),
-    [catsAfterAge.length]
+    () => Math.max(1, Math.ceil(catsAfterFilters.length / PAGE_SIZE)),
+    [catsAfterFilters.length]
   );
 
   const pageCats = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return catsAfterAge.slice(start, start + PAGE_SIZE);
-  }, [catsAfterAge, page]);
+    return catsAfterFilters.slice(start, start + PAGE_SIZE);
+  }, [catsAfterFilters, page]);
 
   const handlePageChange = (nextPage: number) => {
     setPage(nextPage);
@@ -60,12 +71,14 @@ const CatsPage = () => {
             onQueryChange={handleQueryChange}
             age={age}
             onAgeChange={handleAgeChange}
+            location={location}
+            onLocationChange={handleLocationChange}
           />
         </div>
 
         <CatsSection
           cats={pageCats}
-          total={catsAfterAge.length}
+          total={catsAfterFilters.length}
           page={page}
           totalPages={totalPages}
           onPageChange={handlePageChange}

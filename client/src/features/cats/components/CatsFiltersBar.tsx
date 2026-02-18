@@ -1,14 +1,26 @@
-import { FiSearch, FiMap, FiChevronDown } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import AgeSelect, { type AgeFilter } from "./AgeSelect";
+import LocationSelect, { type LocationFilter } from "./LocationSelect";
 
 type Props = {
   query: string;
   onQueryChange: (value: string) => void;
+
   age: AgeFilter;
   onAgeChange: (value: AgeFilter) => void;
+
+  location: LocationFilter;
+  onLocationChange: (value: LocationFilter) => void;
 };
 
-const CatsFiltersBar = ({ query, onQueryChange, age, onAgeChange }: Props) => {
+const CatsFiltersBar = ({
+  query,
+  onQueryChange,
+  age,
+  onAgeChange,
+  location,
+  onLocationChange,
+}: Props) => {
   return (
     <div className="w-full bg-white">
       <div className="border-y border-black/5">
@@ -26,13 +38,7 @@ const CatsFiltersBar = ({ query, onQueryChange, age, onAgeChange }: Props) => {
 
             <AgeSelect value={age} onChange={onAgeChange} />
 
-            <div className="flex h-12 w-full select-none items-center justify-between rounded-xl bg-[#F6F7F9] px-4 text-sm text-slate-600 ring-1 ring-black/5">
-              <span className="inline-flex items-center gap-2">
-                <FiMap className="text-slate-400" />
-                Ubicación
-              </span>
-              <FiChevronDown className="text-slate-400" />
-            </div>
+            <LocationSelect value={location} onChange={onLocationChange} />
           </div>
         </div>
       </div>
