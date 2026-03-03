@@ -32,7 +32,7 @@ const Navbar = () => {
 
           <div className="hidden items-center gap-4 md:flex">
             <Link to="/donar" className="rounded-lg px-4 py-2 text-[15px] font-medium text-white transition hover:bg-slate-100 hover:text-slate-900">Donar</Link>
-            <Link to="/publicar" className="rounded-lg bg-[#292B2D] px-4 py-2 text-[15px] font-semibold text-white hover:opacity-90 transition shadow-sm">Publicar gato</Link>
+            <Link to="/registro" className="rounded-lg bg-[#292B2D] px-4 py-2 text-[15px] font-semibold text-white hover:opacity-90 transition shadow-sm">Publicar gato</Link>
           </div>
 
           <button className="text-3xl text-white md:hidden" onClick={() => setShowMobileMenu(true)} aria-label="Abrir menú">
@@ -42,24 +42,30 @@ const Navbar = () => {
       </div>
 
       <div
-        className={`fixed inset-0 z-[9999] transform transition-transform duration-300 md:hidden ${showMobileMenu ? "translate-x-0" : "translate-x-full"} bg-[#5170ff]`}
-        style={{ pointerEvents: showMobileMenu ? "auto" : "none" }}
+        className={`fixed inset-0 z-[9999] transition-transform duration-300 md:hidden ${
+          showMobileMenu ? "translate-x-0" : "translate-x-full"
+        } bg-[#7061F0]`}
       >
-        <div className="flex h-full w-full flex-col text-white">
-          <div className="flex justify-end px-6 py-6">
-            <button className="text-3xl" onClick={closeMenu} aria-label="Cerrar menú"><FiX /></button>
+        <div className="flex h-full flex-col text-white px-6 pt-6 pb-8">
+          
+          <div className="flex justify-between items-center">
+            <img src={logo} alt="PatitasUp" className="h-9" />
+            <button onClick={closeMenu} className="text-3xl">
+              <FiX />
+            </button>
           </div>
 
-          <ul className="flex flex-col gap-6 px-8 text-lg">
-            <li className="border-b border-white/40 pb-3"><NavLink to="/" onClick={closeMenu}>Inicio</NavLink></li>
-            <li className="border-b border-white/40 pb-3"><NavLink to="/como-funciona" onClick={closeMenu}>Cómo funciona</NavLink></li>
-            <li className="border-b border-white/40 pb-3"><NavLink to="/contacto" onClick={closeMenu}>Contacto</NavLink></li>
+          <ul className="mt-12 space-y-8 text-xl font-semibold">
+            <li><NavLink to="/" onClick={closeMenu}>Inicio</NavLink></li>
+            <li><NavLink to="/como-funciona" onClick={closeMenu}>Cómo funciona</NavLink></li>
+            <li><NavLink to="/contacto" onClick={closeMenu}>Contacto</NavLink></li>
           </ul>
 
-          <div className="mt-auto flex flex-col gap-4 px-8 pb-10 text-sm">
-            <Link to="/donar" onClick={closeMenu} className="w-full rounded-full border border-white py-3 text-center font-semibold text-white">Donar</Link>
-            <Link to="/registro" onClick={closeMenu} className="w-full rounded-full bg-[#ff914d] py-3 text-center font-semibold text-white">Publicar gato</Link>
+          <div className="mt-auto space-y-3">
+            <Link to="/donar" onClick={closeMenu} className="block w-full rounded-full border border-white py-2 text-center font-medium">Donar</Link>
+            <Link to="/registro" onClick={closeMenu} className="block w-full rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]">Publicar gato</Link>
           </div>
+
         </div>
       </div>
     </nav>

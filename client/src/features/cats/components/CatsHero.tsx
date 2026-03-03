@@ -11,7 +11,7 @@ const CatsHero = () => {
         <Hero
           badgeText="Bienvenido a PatitasUp"
           variant="home"
-          title="Un nuevo comienzo para cada bigote"
+          title="Encontrá a tu próximo compañero felino"
           subtitle={`Conectamos gatitos rescatados con familias listas para brindar amor.\n¿Listo para encontrar a tu compañero perfecto?`}
         />
 
