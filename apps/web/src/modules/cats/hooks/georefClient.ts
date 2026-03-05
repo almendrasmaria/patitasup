@@ -1,4 +1,4 @@
-const GEOREF_BASE_URL = "/georef/api";
+const GEOREF_BASE_URL = "https://apis.datos.gob.ar/georef/api";
 
 export type GeorefLocalidad = {
   id: string;
