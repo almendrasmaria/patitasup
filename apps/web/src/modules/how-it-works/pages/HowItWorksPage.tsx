@@ -7,8 +7,8 @@ const HowItWorksPage = () => {
   return (
     <div className="min-h-screen bg-[#F6F7F9]">
       <main>
-        <PawsSection className="h-[472px] rounded-b-[72px]">
-          <div className="mx-auto max-w-6xl px-4 pt-28 pb-24 text-center sm:px-6 lg:px-8">
+        <PawsSection className="h-[472px]">
+          <div className="mx-auto flex h-full max-w-6xl items-start justify-center px-4 pt-18 sm:pt-22 lg:pt-26 lg:px-8 lg:pt-16">
             <Hero
               badgeText="Cómo funciona"
               variant="page"
@@ -18,7 +18,7 @@ const HowItWorksPage = () => {
           </div>
         </PawsSection>
 
-        <section className="relative z-20 -mt-[130px] pb-16">
+        <section className="relative z-10 mx-auto -mt-16 pb-24 sm:-mt-20 lg:-mt-24">
           <HowItWorksColumns cards={howItWorksCards} />
         </section>
       </main>

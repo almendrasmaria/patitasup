@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Hero from "@/shared/components/Hero";
+import PawsSection from "@/shared/components/PawsSection";
 import CatsSection from "../components/CatsSection";
 import CatsFiltersBar from "../components/CatsFiltersBar";
 import { mockCats } from "../data/mockCats";
@@ -62,23 +63,25 @@ const CatsPage = () => {
   return (
     <div className="min-h-screen bg-[#F6F7F9]">
       <main>
-        <Hero
-          badgeText="Bienvenido a PatitasUp"
-          variant="home"
-          title="Encontrá a tu próximo compañero felino"
-          subtitle={`Conectamos gatitos rescatados con familias listas para brindar amor.\n¿Listo para encontrar a tu compañero perfecto?`}
-          primaryButton={{
-            label: "Adoptar Gato",
-            onClick: () => {
-              document
-                .getElementById("cats-filters")
-                ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            },
-          }}
-          secondaryButton={{
-            label: "Publicar Ahora",
-          }}
-        />
+        <PawsSection>
+          <Hero
+            badgeText="Bienvenido a PatitasUp"
+            variant="home"
+            title="Encontrá a tu próximo compañero felino"
+            subtitle={`Conectamos gatitos rescatados con familias listas para brindar amor.\n¿Listo para encontrar a tu compañero perfecto?`}
+            primaryButton={{
+              label: "Adoptar Gato",
+              onClick: () => {
+                document
+                  .getElementById("cats-filters")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              },
+            }}
+            secondaryButton={{
+              label: "Publicar Ahora",
+            }}
+          />
+        </PawsSection>
 
         <div id="cats-filters" className="relative z-30 w-full">
           <CatsFiltersBar
