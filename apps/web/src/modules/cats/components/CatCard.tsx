@@ -58,6 +58,8 @@ const CatCard = ({ cat }: Props) => {
 
           <Link
             href={`/adoptar/${cat.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-full bg-[#0F172A] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
           >
             Adoptar
