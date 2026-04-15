@@ -72,7 +72,7 @@ function SelectField({
       </label>
 
       <Select.Root value={value} onValueChange={onValueChange}>
-        <Select.Trigger className="flex h-14 w-full items-center justify-between rounded-[18px] border border-[#E7E7EF] bg-white px-4 text-left text-[15px] text-[#1E1B39] outline-none transition data-[placeholder]:text-[#A0A3B1] focus:border-[#7061F0] focus:ring-4 focus:ring-[#7061F0]/10">
+        <Select.Trigger className="flex h-14 w-full items-center justify-between rounded-[18px] border border-[#E7E7EF] bg-white px-4 text-left text-[15px] text-[#1E1B39] outline-none transition data-placeholder:text-[#A0A3B1] focus:border-[#7061F0] focus:ring-4 focus:ring-[#7061F0]/10">
           <Select.Value placeholder={placeholder} />
           <Select.Icon className="text-[#8E93A8]">
             <HiChevronDown size={20} />
@@ -90,7 +90,7 @@ function SelectField({
                 <Select.Item
                   key={option.value}
                   value={option.value}
-                  className="relative flex h-11 cursor-pointer items-center rounded-xl px-10 pr-4 text-[15px] text-[#1E1B39] outline-none transition hover:bg-[#F7F5FF] data-[highlighted]:bg-[#F7F5FF]"
+                  className="relative flex h-11 cursor-pointer items-center rounded-xl px-10 pr-4 text-[15px] text-[#1E1B39] outline-none transition hover:bg-[#F7F5FF] data-highlighted:bg-[#F7F5FF]"
                 >
                   <Select.ItemText>{option.label}</Select.ItemText>
                   <Select.ItemIndicator className="absolute left-3 inline-flex items-center text-[#7061F0]">

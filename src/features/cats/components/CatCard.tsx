@@ -11,7 +11,7 @@ type Props = {
 const CatCard = ({ cat }: Props) => {
   return (
     <article className="w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
-      <div className="relative aspect-[16/10] w-full overflow-hidden">
+      <div className="relative aspect-16/10 w-full overflow-hidden">
         <Image
           src={cat.image}
           alt={cat.name}
@@ -20,7 +20,7 @@ const CatCard = ({ cat }: Props) => {
           sizes="(max-width: 768px) 100vw, 33vw"
         />
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-5 py-4">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 via-black/30 to-transparent px-5 py-4">
           <div className="text-3xl font-semibold text-white">{cat.name}</div>
 
           <div className="mt-1 flex items-center gap-1.5 text-sm text-white/80">

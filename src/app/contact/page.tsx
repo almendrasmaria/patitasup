@@ -8,7 +8,7 @@ export default function Page() {
     <div className="min-h-screen bg-[#F6F7F9]">
       <main>
         <PawsSection className="h-[472px]">
-          <div className="mx-auto flex h-full max-w-6xl items-start justify-center px-4 pt-18 sm:pt-22 lg:pt-26 lg:px-8 lg:pt-12">
+          <div className="mx-auto flex h-full max-w-6xl items-start justify-center px-4 pt-18 sm:pt-22 lg:pt-26 lg:px-8">
             <Hero
               badgeText="Contacto"
               variant="page"

@@ -55,23 +55,22 @@ const Navbar = () => {
 
           <div className="hidden items-center gap-4 md:flex">
             <Link
-              href="/donar"
+              href="/login"
               className="rounded-lg px-4 py-2 text-[15px] font-medium text-white transition hover:bg-slate-100 hover:text-slate-900"
             >
-              Donar
+              Ingresar
             </Link>
             <Link
               href="/register"
               className="rounded-lg bg-[#292B2D] px-4 py-2 text-[15px] font-semibold text-white transition shadow-sm hover:opacity-90"
             >
-              Publicar gato
+              Crear cuenta
             </Link>
           </div>
 
           <button
             className="text-3xl text-white md:hidden"
             onClick={() => setShowMobileMenu(true)}
-            aria-label="Abrir menú"
           >
             <FiMenu />
           </button>
@@ -79,14 +78,14 @@ const Navbar = () => {
       </div>
 
       <div
-        className={`fixed inset-0 z-[9999] bg-[#7061F0] transition-transform duration-300 md:hidden ${
+        className={`fixed inset-0 z-9999 bg-[#7061F0] transition-transform duration-300 md:hidden ${
           showMobileMenu ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col px-6 pb-8 pt-6 text-white">
           <div className="flex items-center justify-between">
             <Image src="/logo.png" alt="PatitasUp" width={140} height={36} className="h-9 w-auto" priority />
-            <button onClick={closeMenu} className="text-3xl" aria-label="Cerrar menú">
+            <button onClick={closeMenu} className="text-3xl">
               <FiX />
             </button>
           </div>
@@ -111,11 +110,11 @@ const Navbar = () => {
 
           <div className="mt-auto space-y-3">
             <Link
-              href="/donar"
+              href="/login"
               onClick={closeMenu}
               className="block w-full rounded-full border border-white py-2 text-center font-medium"
             >
-              Donar
+              Ingresar
             </Link>
             <Link
               href="/register"

@@ -45,7 +45,7 @@ const AgeSelect = ({ value, onChange }: Props) => {
         <Select.Content
           position="popper"
           sideOffset={8}
-          className="z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/10"
+          className="z-50 min-w-(--radix-select-trigger-width) overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/10"
         >
           <Select.Viewport className="p-2">
             {AGE_OPTIONS.map((opt) => (
@@ -55,8 +55,8 @@ const AgeSelect = ({ value, onChange }: Props) => {
                 className={[
                   "relative flex cursor-pointer select-none items-center",
                   "rounded-xl px-3 py-2 text-sm text-slate-700 outline-none",
-                  "data-[highlighted]:bg-[#F6F7F9]",
-                  "data-[state=checked]:bg-[#EEF2FF]",
+                  "data-highlighted:bg-[#F6F7F9]",
+                  "data-state=checked:bg-[#EEF2FF]",
                 ].join(" ")}
               >
                 <Select.ItemText>{opt.label}</Select.ItemText>

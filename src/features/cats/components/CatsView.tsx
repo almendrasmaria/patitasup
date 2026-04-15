@@ -79,6 +79,9 @@ const CatsView = () => {
             }}
             secondaryButton={{
               label: "Publicar Ahora",
+              onClick: () => {
+                window.location.href = "/login";
+              },
             }}
           />
         </PawsSection>

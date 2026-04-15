@@ -70,7 +70,7 @@ const Hero = ({
           {primaryButton && (
             <button
               onClick={primaryButton.onClick}
-              className="rounded-lg bg-white px-6 py-3 text-[14px] font-semibold text-[#7061F0] shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-[1px]"
+              className="rounded-lg bg-white px-6 py-3 text-[14px] font-semibold text-[#7061F0] shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-px"
             >
               {primaryButton.label}
             </button>
@@ -79,7 +79,7 @@ const Hero = ({
           {secondaryButton && (
             <button
               onClick={secondaryButton.onClick}
-              className="rounded-lg bg-transparent px-6 py-3 text-[14px] font-semibold text-white ring-1 ring-white/40 transition hover:bg-white/10 active:translate-y-[1px]"
+              className="rounded-lg bg-transparent px-6 py-3 text-[14px] font-semibold text-white ring-1 ring-white/40 transition hover:bg-white/10 active:translate-y-px"
             >
               {secondaryButton.label}
             </button>

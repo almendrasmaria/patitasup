@@ -43,7 +43,7 @@ const AuthCarousel = ({ slides, interval = 4000 }: AuthCarouselProps) => {
         >
           <Image src={slide.image} alt="" fill priority={index === 0} className="object-cover" />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/15 to-transparent" />
 
           <div className="absolute bottom-12 left-12 max-w-[420px]">
             <h2 className="text-[34px] font-semibold leading-[1.05] tracking-[-0.03em] text-white">

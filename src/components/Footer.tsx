@@ -67,14 +67,14 @@ const Footer = () => {
             <Link href="/" onClick={go("/")} className="hover:text-white">
               Inicio
             </Link>
-            <Link href="/como-funciona" onClick={go("/como-funciona")} className="hover:text-white">
+            <Link href="/how-it-works" onClick={go("/how-it-works")} className="hover:text-white">
               Cómo funciona
             </Link>
-            <Link href="/contacto" onClick={go("/contacto")} className="hover:text-white">
+            <Link href="/contact" onClick={go("/contact")} className="hover:text-white">
               Contacto
             </Link>
-            <Link href="/publicar" onClick={go("/publicar")} className="hover:text-white">
-              Publicar
+            <Link href="/register" onClick={go("/register")} className="hover:text-white">
+              Crear cuenta
             </Link>
           </nav>
         </div>

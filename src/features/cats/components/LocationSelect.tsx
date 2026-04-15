@@ -74,12 +74,12 @@ export default function LocationSelect({ value, onChange }: Props) {
         <Select.Content
           position="popper"
           sideOffset={8}
-          className="z-[9999] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/10"
+          className="z-9999 min-w-(--radix-select-trigger-width) overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/10"
         >
           <Select.Viewport className="max-h-[360px] overflow-y-auto p-2">
             <Select.Item
               value="any"
-              className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-[highlighted]:bg-[#F6F7F9] data-[state=checked]:bg-[#EEF2FF]"
+              className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-highlighted:bg-[#F6F7F9] data-[state=checked]:bg-[#EEF2FF]"
             >
               <Select.ItemText>Cualquier ubicación</Select.ItemText>
               <Select.ItemIndicator className="absolute right-3 inline-flex items-center text-slate-600">
@@ -101,7 +101,7 @@ export default function LocationSelect({ value, onChange }: Props) {
                 <Select.Item
                   key={it.value}
                   value={it.value}
-                  className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-[highlighted]:bg-[#F6F7F9] data-[state=checked]:bg-[#EEF2FF]"
+                  className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-highlighted:bg-[#F6F7F9] data-[state=checked]:bg-[#EEF2FF]"
                 >
                   <Select.ItemText>{it.label}</Select.ItemText>
                   <Select.ItemIndicator className="absolute right-3 inline-flex items-center text-slate-600">
