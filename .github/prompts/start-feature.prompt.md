@@ -15,6 +15,9 @@ tools:
   - read/problems
   - supabase/*
   - prisma-remote/*
+  - postgres/*
+  - github-local/*
+  - vercel-local/*
 ---
 
 Start implementation for this feature:

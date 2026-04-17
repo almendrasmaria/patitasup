@@ -41,6 +41,8 @@ PR title uses same format as commit title:
 
 `<type>(<scope>): <summary>`
 
+When GitHub-Local MCP is available, prefer it for PR creation and updates instead of raw CLI.
+
 PR description must be brief and concrete with this template:
 
 1. `What`: one short paragraph

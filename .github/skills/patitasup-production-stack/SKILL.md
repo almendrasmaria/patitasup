@@ -13,15 +13,19 @@ Use this skill when the user asks to implement, refactor, debug, or prepare prod
 ## Stack contract
 
 1. Backend and shared logic must be TypeScript.
-2. Prisma is the only ORM for DB access.
-3. Supabase handles authentication and database platform concerns.
-4. Vercel is the target deployment platform.
+2. Prisma is the only ORM for DB access on PostgreSQL.
+3. Keep two database connections configured: local PostgreSQL for local development and Supabase PostgreSQL for shared/remote environments.
+4. Never mix local and Supabase connection strings in the same environment profile.
+5. Supabase handles authentication and database platform concerns.
+6. Vercel is the target deployment platform.
 
 ## MCP-aware workflow
 
 1. Check available MCP servers in `.vscode/mcp.json`.
-2. For DB and auth platform tasks, prioritize `supabase/*` and `Prisma-Remote/*` tools.
-3. If Vercel or GitHub MCP is not configured, continue with local CLI workflow and mention the limitation.
+2. For DB and auth platform tasks, prioritize `supabase/*`, `prisma-remote/*`, and `postgres/*` tools.
+3. For deployment and Vercel project tasks, prioritize `vercel-local/*` tools.
+4. For pull requests and repository workflows, prioritize `github-local/*` tools.
+5. If a requested provider MCP is not configured, continue with local CLI workflow and mention the limitation.
 
 ## Implementation sequence
 

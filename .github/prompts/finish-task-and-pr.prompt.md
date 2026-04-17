@@ -12,6 +12,9 @@ tools:
   - read/terminalSelection
   - read/terminalLastCommand
   - read/problems
+  - postgres/*
+  - github-local/*
+  - vercel-local/*
 ---
 
 Finalize the current work and prepare merge-ready output.
@@ -29,4 +32,5 @@ Checklist:
 3. Propose commit title using `<type>(<scope>): <summary>`.
 4. Propose PR title using `<type>(<scope>): <summary>`.
 5. Draft concise PR body with sections: What, Why, Validation.
-6. If `gh` CLI is available and user requests execution, run `gh pr create` with the generated title/body.
+6. If GitHub-Local MCP is available and user requests execution, prefer it for PR creation and updates.
+7. If GitHub-Local MCP is unavailable and `gh` CLI is available and user requests execution, run `gh pr create` with the generated title/body.
