@@ -11,9 +11,7 @@ type Props = {
 const LayoutShell = ({ children }: Props) => {
   const pathname = usePathname();
 
-  const hideLayout =
-    pathname === "/register" ||
-    pathname === "/login";
+  const hideLayout = pathname === "/register" || pathname === "/login" || pathname === "/perfil";
 
   return (
     <>
