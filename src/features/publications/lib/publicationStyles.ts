@@ -1,6 +1,3 @@
-/**
- * Shared Tailwind tokens for the publications dashboard to keep styles DRY.
- */
 export const sectionTitleWordClass = "relative inline-block pb-1";
 export const sectionTitleUnderlineClass =
   "pointer-events-none absolute bottom-0 left-0 h-[3px] w-full rounded-full bg-[#7061F0]";
