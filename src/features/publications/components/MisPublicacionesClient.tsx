@@ -51,7 +51,7 @@ export default function MisPublicacionesClient({
   const showingCount = pageRows.length;
 
   return (
-    <div className="mx-auto w-full max-w-6xl xl:max-w-7xl 2xl:max-w-[88rem]">
+    <div className="mx-auto w-full max-w-6xl xl:max-w-[85rem] 2xl:max-w-[94rem]">
       <div className="space-y-5">
         <SectionTitle
           title="Mis publicaciones"
