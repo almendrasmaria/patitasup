@@ -11,7 +11,11 @@ type Props = {
 const LayoutShell = ({ children }: Props) => {
   const pathname = usePathname();
 
-  const hideLayout = pathname === "/register" || pathname === "/login" || pathname === "/perfil";
+  const dashboardRoutes = ["/perfil", "/mis-publicaciones", "/solicitudes"];
+  const hideLayout =
+    pathname === "/register" ||
+    pathname === "/login" ||
+    dashboardRoutes.includes(pathname);
 
   return (
     <>
