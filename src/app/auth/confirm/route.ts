@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const tokenHash = requestUrl.searchParams.get("token_hash");
   const type = requestUrl.searchParams.get("type") as EmailOtpType | null;
-  const next = getSafeRedirectPath(requestUrl.searchParams.get("next"), "/perfil");
+  const next = getSafeRedirectPath(requestUrl.searchParams.get("next"), "/profile");
 
   if (tokenHash && type) {
     const supabase = await createSupabaseServerClient();

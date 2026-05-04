@@ -230,7 +230,7 @@ export default function AppNavbar({ navUser }: Props) {
                   >
                     {showMiPerfilInMenu && (
                       <Link
-                        href="/perfil"
+                        href="/profile"
                         role="menuitem"
                         className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
                         onClick={() => setDropdownOpen(false)}
@@ -381,7 +381,7 @@ export default function AppNavbar({ navUser }: Props) {
           ) : (
             <>
               <Link
-                href="/perfil"
+                href="/profile"
                 onClick={closeMobile}
                 className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
               >

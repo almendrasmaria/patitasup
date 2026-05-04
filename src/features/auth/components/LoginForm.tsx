@@ -16,7 +16,7 @@ const LoginForm = () => {
   );
   const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/perfil";
+  const next = searchParams.get("next") ?? "/profile";
   const confirmationError = searchParams.get("error") === "confirm";
   const statusMessage = state.message ??
     (confirmationError ? "No pudimos confirmar tu correo. Intentá nuevamente." : undefined);
@@ -111,7 +111,7 @@ const LoginForm = () => {
 
         <div className="flex justify-end">
           <Link
-            href="/recuperar-contrasena"
+            href="/forgot-password"
             className="text-[13px] font-medium text-[#7061F0] hover:underline"
           >
             ¿Olvidaste tu contraseña?

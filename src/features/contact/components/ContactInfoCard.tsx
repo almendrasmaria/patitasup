@@ -55,7 +55,7 @@ const ContactInfoCard = () => {
           <div className="leading-tight">
             <p className="text-[13px] font-semibold text-black/80">¿Eres un refugio?</p>
             <a
-              href="/registrarse"
+              href="/register"
               className="mt-1 inline-block text-[13px] font-semibold text-[#2F55FF] hover:underline"
             >
               Registrate como socio aquí

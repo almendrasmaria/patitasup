@@ -83,7 +83,7 @@ export async function loginAction(
 
   const email = normalizeEmail(getString(formData.get("email")));
   const password = getString(formData.get("password"));
-  const next = getSafeRedirectPath(getString(formData.get("next")) || "/perfil");
+  const next = getSafeRedirectPath(getString(formData.get("next")) || "/profile");
 
   const parsed = loginSchema.safeParse({ email, password });
 
@@ -133,7 +133,7 @@ export async function registerAction(
   }
 
   const supabase = await createSupabaseServerClient();
-  const emailRedirectTo = await getAbsoluteUrl("/auth/confirm?next=/perfil");
+  const emailRedirectTo = await getAbsoluteUrl("/auth/confirm?next=/profile");
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -166,7 +166,7 @@ export async function registerAction(
   });
 
   if (data.session) {
-    redirect("/perfil");
+    redirect("/profile");
   }
 
   return {

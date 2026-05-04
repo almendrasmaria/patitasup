@@ -1,7 +1,7 @@
 export const DASHBOARD_NAV_ITEMS = [
-  { label: "Mi perfil", href: "/perfil" },
-  { label: "Mis publicaciones", href: "/mis-publicaciones" },
-  { label: "Solicitudes", href: "/solicitudes" },
+  { label: "Mi perfil", href: "/profile" },
+  { label: "Mis publicaciones", href: "/my-listings" },
+  { label: "Solicitudes", href: "/requests" },
 ] as const;
 
 export const DASHBOARD_PATHS = DASHBOARD_NAV_ITEMS.map((item) => item.href);

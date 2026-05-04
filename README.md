@@ -55,7 +55,7 @@ pnpm exec prisma migrate dev --name init-auth
 
 ## Qué hace esta implementación
 
-- Usa `@supabase/ssr` con `middleware.ts` para refrescar cookies y proteger `/perfil`.
+- Usa `@supabase/ssr` con `middleware.ts` para refrescar cookies y proteger `/profile`.
 - Ejecuta login y registro con server actions, validación con Zod y redirecciones seguras.
 - Sincroniza cada usuario autenticado con la tabla `Profile` en PostgreSQL usando Prisma.
 - Expone `/auth/confirm` para confirmar correo electrónico y `/auth/signout` para cerrar sesión.

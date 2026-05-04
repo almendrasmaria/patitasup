@@ -13,13 +13,13 @@ import StatusTabs from "./StatusTabs";
 
 const PAGE_SIZE = 10;
 
-type MisPublicacionesClientProps = {
+type MyListingsClientProps = {
   publications?: Publication[];
 };
 
-export default function MisPublicacionesClient({
+export default function MyListingsClient({
   publications = MOCK_PUBLICATIONS,
-}: MisPublicacionesClientProps) {
+}: MyListingsClientProps) {
   const [filter, setFilter] = useState<PublicationFilter>("todas");
   const [page, setPage] = useState(1);
 
