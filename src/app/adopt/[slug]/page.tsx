@@ -24,7 +24,7 @@ export default async function Page({ params }: Props) {
   return (
     <div className="min-h-screen bg-[#F6F7F9]">
       <main>
-        <PawsSection className="h-135 sm:h-140 md:h-125 lg:h-115">
+        <PawsSection className="h-[33.75rem] sm:h-[35rem] md:h-[31.25rem] lg:h-[28.75rem]">
           <div className="mx-auto max-w-5xl px-4 pt-24 pb-24 sm:px-6 lg:px-8">
             <Hero
               badgeText="Solicitud de adopción"
