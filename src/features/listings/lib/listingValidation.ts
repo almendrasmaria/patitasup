@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import type { PublicationFormStatus } from "../types";
+
 const emptyToUndefined = (value: unknown) => {
   if (typeof value !== "string") return value;
 
@@ -7,7 +9,9 @@ const emptyToUndefined = (value: unknown) => {
   return trimmed.length > 0 ? trimmed : undefined;
 };
 
-export const createListingSchema = z
+const publicationStatusSchema = z.enum(["active", "adopted", "draft"] satisfies [PublicationFormStatus, ...PublicationFormStatus[]]);
+
+export const saveListingSchema = z
   .object({
     petName: z.string().trim().min(2).max(80),
     ageValue: z.coerce.number().int().min(1).max(3650),
@@ -31,7 +35,7 @@ export const createListingSchema = z
       emptyToUndefined,
       z.string().trim().url("Ingresá una URL válida.").max(500).optional(),
     ),
-    status: z.enum(["active", "draft"]).default("active"),
+    status: publicationStatusSchema.default("active"),
   })
   .superRefine((value, ctx) => {
     const maxAgeByUnit = {
@@ -49,4 +53,7 @@ export const createListingSchema = z
     }
   });
 
-export type CreateListingInput = z.infer<typeof createListingSchema>;
+export const createListingSchema = saveListingSchema;
+
+export type CreateListingInput = z.infer<typeof saveListingSchema>;
+export type UpdateListingInput = CreateListingInput;
