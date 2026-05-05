@@ -1,32 +1,32 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 
 import type { Publication, PublicationFilter } from "../types";
-import { MOCK_PUBLICATIONS } from "../data/mockPublications";
-import { primaryCtaClass } from "../lib/publicationStyles";
+import { primaryCtaClass } from "../lib/listingStyles";
 import PaginationControls from "./PaginationControls";
-import PublicationsTable from "./PublicationsTable";
+import ListingsTable from "./ListingsTable";
 import SectionTitle from "./SectionTitle";
 import StatusTabs from "./StatusTabs";
 
 const PAGE_SIZE = 10;
 
 type MyListingsClientProps = {
-  publications?: Publication[];
+  listings?: Publication[];
 };
 
 export default function MyListingsClient({
-  publications = MOCK_PUBLICATIONS,
+  listings = [],
 }: MyListingsClientProps) {
   const [filter, setFilter] = useState<PublicationFilter>("todas");
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
-    if (filter === "todas") return publications;
-    return publications.filter((p) => p.status === filter);
-  }, [publications, filter]);
+    if (filter === "todas") return listings;
+    return listings.filter((listing) => listing.status === filter);
+  }, [listings, filter]);
 
   const totalResults = filtered.length;
   const totalPages = Math.max(1, Math.ceil(totalResults / PAGE_SIZE));
@@ -40,31 +40,31 @@ export default function MyListingsClient({
     setPage(1);
   };
 
-  const handleEdit = (_row: Publication) => {};
+  const handleEdit = () => {};
 
-  const handleDelete = (_row: Publication) => {};
+  const handleDelete = () => {};
 
   const showingCount = pageRows.length;
 
   return (
-    <div className="mx-auto w-full max-w-6xl xl:max-w-[85rem] 2xl:max-w-[94rem]">
+    <div className="mx-auto w-full max-w-6xl xl:max-w-340 2xl:max-w-376">
       <div className="space-y-5">
         <SectionTitle
           title="Mis publicaciones"
           action={
-            <button
-              type="button"
+            <Link
+              href="/my-listings/new"
               className={`${primaryCtaClass} w-full justify-center sm:w-auto`}
             >
               <span>Nueva publicación</span>
               <FiPlus className="h-5 w-5 shrink-0" aria-hidden />
-            </button>
+            </Link>
           }
         />
 
         <StatusTabs value={filter} onChange={handleFilterChange} />
 
-        <PublicationsTable
+        <ListingsTable
           rows={pageRows}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -78,8 +78,8 @@ export default function MyListingsClient({
           <PaginationControls
             currentPage={safePage}
             totalPages={totalPages}
-            onPrev={() => setPage((p) => Math.max(1, p - 1))}
-            onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onPrev={() => setPage((currentPage) => Math.max(1, currentPage - 1))}
+            onNext={() => setPage((currentPage) => Math.min(totalPages, currentPage + 1))}
           />
         </div>
       </div>

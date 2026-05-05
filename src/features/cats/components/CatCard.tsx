@@ -9,6 +9,10 @@ type Props = {
 };
 
 const CatCard = ({ cat }: Props) => {
+  const isRemoteImage = /^https?:\/\//.test(cat.image);
+  const rescueName = cat.rescueInstagram || "Refugio";
+  const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
+
   return (
     <article className="w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
       <div className="relative aspect-16/10 w-full overflow-hidden">
@@ -16,6 +20,7 @@ const CatCard = ({ cat }: Props) => {
           src={cat.image}
           alt={cat.name}
           fill
+          unoptimized={isRemoteImage}
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
@@ -43,7 +48,7 @@ const CatCard = ({ cat }: Props) => {
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EDE9FE] text-[#7061F0] text-lg font-semibold">
-              {cat.rescueInstagram?.[1]?.toUpperCase() ?? "A"}
+              {rescueInitial}
             </div>
 
             <div>
@@ -51,7 +56,7 @@ const CatCard = ({ cat }: Props) => {
                 Rescatado por
               </div>
               <div className="text-sm font-semibold text-slate-800">
-                {cat.rescueInstagram || "Refugio"}
+                {rescueName}
               </div>
             </div>
           </div>

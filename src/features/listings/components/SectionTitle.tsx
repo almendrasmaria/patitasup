@@ -1,4 +1,4 @@
-import { sectionTitleUnderlineClass, sectionTitleWordClass } from "../lib/publicationStyles";
+import { sectionTitleUnderlineClass, sectionTitleWordClass } from "../lib/listingStyles";
 
 type SectionTitleProps = {
   title: string;

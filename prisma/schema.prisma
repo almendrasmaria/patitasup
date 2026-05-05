@@ -11,6 +11,46 @@ model Profile {
   supabaseUserId String   @unique
   email          String   @unique
   displayName    String
+  publications   Publication[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+enum PublicationAgeUnit {
+  DAYS
+  MONTHS
+  YEARS
+}
+
+enum PublicationSex {
+  MALE
+  FEMALE
+}
+
+enum PublicationStatus {
+  ACTIVE
+  ADOPTED
+  DRAFT
+}
+
+model Publication {
+  id              String             @id @default(cuid())
+  authorProfileId String
+  authorProfile   Profile            @relation(fields: [authorProfileId], references: [id], onDelete: Cascade)
+  slug            String             @unique
+  petName         String
+  ageValue        Int
+  ageUnit         PublicationAgeUnit
+  sex             PublicationSex
+  location        String
+  description     String             @db.Text
+  rescueInstagram String?
+  imageUrl        String?
+  status          PublicationStatus   @default(ACTIVE)
+  publishedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([authorProfileId, status, createdAt])
+  @@index([status, createdAt])
 }

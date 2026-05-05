@@ -10,11 +10,16 @@ import { useCatSearch } from "../hooks/useCatSearch";
 import type { AgeFilter } from "./AgeSelect";
 import type { LocationFilter } from "./LocationSelect";
 import { matchesAgeFilter } from "../lib/matchAge";
+import type { Cat } from "../types";
 
 const PAGE_SIZE = 6;
 
-const CatsView = () => {
-  const { query, setQuery, filteredCats } = useCatSearch(mockCats);
+type CatsViewProps = {
+  cats?: Cat[];
+};
+
+const CatsView = ({ cats = mockCats }: CatsViewProps) => {
+  const { query, setQuery, filteredCats } = useCatSearch(cats);
 
   const [page, setPage] = useState(1);
   const [age, setAge] = useState<AgeFilter>("any");

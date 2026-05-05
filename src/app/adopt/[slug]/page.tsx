@@ -2,6 +2,9 @@ import Hero from "@/components/Hero";
 import PawsSection from "@/components/PawsSection";
 import AdoptionForm from "@/features/cats/components/AdoptionForm";
 import { mockCats } from "@/features/cats/data/mockCats";
+import { findPublishedListingCatBySlug } from "@/features/listings/lib/listingsRepository";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{
@@ -11,7 +14,8 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params;
-  const cat = mockCats.find((item) => item.slug === slug);
+  const listingCat = await findPublishedListingCatBySlug(slug);
+  const cat = listingCat ?? mockCats.find((item) => item.slug === slug);
 
   if (!cat) {
     return <div>Gatito no encontrado</div>;
@@ -20,7 +24,7 @@ export default async function Page({ params }: Props) {
   return (
     <div className="min-h-screen bg-[#F6F7F9]">
       <main>
-        <PawsSection className="h-[540px] sm:h-[560px] md:h-[500px] lg:h-[460px]">
+        <PawsSection className="h-135 sm:h-140 md:h-125 lg:h-115">
           <div className="mx-auto max-w-5xl px-4 pt-24 pb-24 sm:px-6 lg:px-8">
             <Hero
               badgeText="Solicitud de adopción"

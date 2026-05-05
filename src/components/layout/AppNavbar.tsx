@@ -146,7 +146,7 @@ export default function AppNavbar({ navUser }: Props) {
   const linkInactive = "font-medium text-[#4b5563] transition hover:text-[#7061F0]";
   const linkActive = "font-semibold text-[#7061F0]";
 
-  const isActiveDash = (href: string) => pathname === href;
+  const isActiveDash = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   const initials = navUser ? getInitials(navUser.profileName) : "";
 

@@ -1,11 +1,11 @@
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 import type { Publication } from "../types";
-import { tableCellClass, tableHeaderClass } from "../lib/publicationStyles";
+import { tableCellClass, tableHeaderClass } from "../lib/listingStyles";
 import ActionIconButton from "./ActionIconButton";
 import StatusBadge from "./StatusBadge";
 
-type PublicationsTableProps = {
+type ListingsTableProps = {
   rows: Publication[];
   onEdit: (row: Publication) => void;
   onDelete: (row: Publication) => void;
@@ -22,7 +22,7 @@ const colgroup = (
   </colgroup>
 );
 
-export default function PublicationsTable({ rows, onEdit, onDelete }: PublicationsTableProps) {
+export default function ListingsTable({ rows, onEdit, onDelete }: ListingsTableProps) {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full min-w-[52rem] table-fixed border-collapse">

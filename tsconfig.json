@@ -27,6 +27,9 @@
         "./src/*"
       ]
     },
+    "types": [
+      "node"
+    ],
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
@@ -37,6 +40,7 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "prisma.config.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

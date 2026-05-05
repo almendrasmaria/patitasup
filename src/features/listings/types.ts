@@ -1,7 +1,7 @@
 export type PublicationStatus = "activo" | "adoptado" | "borrador";
 
 export type Publication = {
-  id: number;
+  id: string;
   petName: string;
   age: string;
   sex: string;
