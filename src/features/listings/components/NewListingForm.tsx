@@ -10,6 +10,7 @@ import {
   formLabelClass,
   primaryCtaClass,
 } from "../lib/listingStyles";
+import type { PublicationFormStatus, PublicationFormValues } from "../types";
 
 type ListingFormState = {
   petName: string;
@@ -30,6 +31,12 @@ type ApiResponse = {
   fieldErrors?: Partial<Record<ListingFieldName, string[]>>;
 };
 
+type NewListingFormProps = {
+  mode?: "create" | "edit";
+  listingId?: string;
+  initialValues?: PublicationFormValues;
+};
+
 const initialForm: ListingFormState = {
   petName: "",
   ageValue: "",
@@ -42,10 +49,29 @@ const initialForm: ListingFormState = {
   status: "active",
 };
 
-const statusOptions: { value: ListingFormState["status"]; label: string }[] = [
+const statusOptions: { value: PublicationFormStatus; label: string }[] = [
   { value: "active", label: "Activa" },
+  { value: "adopted", label: "Adoptada" },
   { value: "draft", label: "Borrador" },
 ];
+
+function buildFormState(initialValues?: PublicationFormValues): ListingFormState {
+  if (!initialValues) {
+    return initialForm;
+  }
+
+  return {
+    petName: initialValues.petName,
+    ageValue: String(initialValues.ageValue),
+    ageUnit: initialValues.ageUnit,
+    sex: initialValues.sex,
+    location: initialValues.location,
+    rescueInstagram: initialValues.rescueInstagram,
+    imageUrl: initialValues.imageUrl,
+    description: initialValues.description,
+    status: initialValues.status,
+  };
+}
 
 function getFieldError(
   fieldErrors: ApiResponse["fieldErrors"],
@@ -54,12 +80,18 @@ function getFieldError(
   return fieldErrors?.[fieldName]?.[0];
 }
 
-export default function NewListingForm() {
+export default function NewListingForm({
+  mode = "create",
+  listingId,
+  initialValues,
+}: NewListingFormProps) {
   const router = useRouter();
-  const [form, setForm] = useState<ListingFormState>(initialForm);
+  const [form, setForm] = useState<ListingFormState>(() => buildFormState(initialValues));
   const [fieldErrors, setFieldErrors] = useState<ApiResponse["fieldErrors"]>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const isEditing = mode === "edit";
 
   const updateField =
     (fieldName: ListingFieldName) =>
@@ -79,8 +111,11 @@ export default function NewListingForm() {
     setMessage(null);
     setFieldErrors({});
 
-    const response = await fetch("/api/listings", {
-      method: "POST",
+    const endpoint = isEditing && listingId ? `/api/listings/${listingId}` : "/api/listings";
+    const method = isEditing ? "PATCH" : "POST";
+
+    const response = await fetch(endpoint, {
+      method,
       headers: {
         "Content-Type": "application/json",
       },
@@ -301,7 +336,7 @@ export default function NewListingForm() {
           disabled={submitting}
         >
           <FiSave className="h-5 w-5" aria-hidden />
-          {submitting ? "Guardando..." : "Guardar publicación"}
+          {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}
         </button>
       </div>
     </form>

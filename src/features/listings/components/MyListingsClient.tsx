@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 
@@ -20,8 +21,11 @@ type MyListingsClientProps = {
 export default function MyListingsClient({
   listings = [],
 }: MyListingsClientProps) {
+  const router = useRouter();
   const [filter, setFilter] = useState<PublicationFilter>("todas");
   const [page, setPage] = useState(1);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     if (filter === "todas") return listings;
@@ -40,15 +44,51 @@ export default function MyListingsClient({
     setPage(1);
   };
 
-  const handleEdit = () => {};
+  const handleEdit = (listing: Publication) => {
+    router.push(`/my-listings/${listing.id}/edit`);
+  };
 
-  const handleDelete = () => {};
+  const handleDelete = async (listing: Publication) => {
+    const confirmed = window.confirm(`¿Querés eliminar la publicación de ${listing.petName}?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setBusyId(listing.id);
+    setFeedback(null);
+
+    const response = await fetch(`/api/listings/${listing.id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      try {
+        const payload = (await response.json()) as { message?: string };
+        setFeedback(payload.message ?? "No pudimos eliminar la publicación.");
+      } catch {
+        setFeedback("No pudimos eliminar la publicación.");
+      }
+
+      setBusyId(null);
+      return;
+    }
+
+    router.refresh();
+    setBusyId(null);
+  };
 
   const showingCount = pageRows.length;
 
   return (
     <div className="mx-auto w-full max-w-6xl xl:max-w-340 2xl:max-w-376">
       <div className="space-y-5">
+        {feedback ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {feedback}
+          </div>
+        ) : null}
+
         <SectionTitle
           title="Mis publicaciones"
           action={
@@ -82,6 +122,8 @@ export default function MyListingsClient({
             onNext={() => setPage((currentPage) => Math.min(totalPages, currentPage + 1))}
           />
         </div>
+
+        {busyId ? <p className="text-right text-sm text-[#6b7280]">Actualizando publicación...</p> : null}
       </div>
     </div>
   );
