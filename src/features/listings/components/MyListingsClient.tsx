@@ -31,8 +31,8 @@ export default function MyListingsClient({
   const [filter, setFilter] = useState<PublicationFilter>("todas");
   const [page, setPage] = useState(1);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [savedStatuses, setSavedStatuses] = useState<Partial<Record<string, PublicationStatus>>>({});
-  const [pendingStatuses, setPendingStatuses] = useState<Partial<Record<string, PublicationStatus>>>({});
+  const [savedStatuses, setSavedStatuses] = useState<Record<string, PublicationStatus>>({});
+  const [pendingStatuses, setPendingStatuses] = useState<Record<string, PublicationStatus>>({});
   const [deletedIds, setDeletedIds] = useState<Partial<Record<string, true>>>({});
   const [savingStatuses, setSavingStatuses] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
