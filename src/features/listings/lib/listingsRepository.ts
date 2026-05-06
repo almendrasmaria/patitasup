@@ -12,8 +12,19 @@ import {
 import type { Cat } from "@/features/cats/types";
 import { prisma } from "@/lib/prisma";
 
-import type { Publication, PublicationStatus } from "../types";
-import type { CreateListingInput } from "./listingValidation";
+import type {
+  Publication,
+  PublicationFormAgeUnit,
+  PublicationFormSex,
+  PublicationFormStatus,
+  PublicationFormValues,
+  PublicationStatus,
+} from "../types";
+import type {
+  CreateListingInput,
+  SaveListingStatusesInput,
+  UpdateListingInput,
+} from "./listingValidation";
 
 const dateFormatter = new Intl.DateTimeFormat("es-AR", {
   day: "2-digit",
@@ -37,20 +48,38 @@ const catSexByPrismaSex: Record<PrismaSex, Cat["sex"]> = {
   [PrismaSex.FEMALE]: "female",
 };
 
-const prismaAgeUnitByInput: Record<CreateListingInput["ageUnit"], PrismaAgeUnit> = {
+const prismaAgeUnitByInput: Record<PublicationFormAgeUnit, PrismaAgeUnit> = {
   days: PrismaAgeUnit.DAYS,
   months: PrismaAgeUnit.MONTHS,
   years: PrismaAgeUnit.YEARS,
 };
 
-const prismaSexByInput: Record<CreateListingInput["sex"], PrismaSex> = {
+const inputAgeUnitByPrismaAgeUnit: Record<PrismaAgeUnit, PublicationFormAgeUnit> = {
+  [PrismaAgeUnit.DAYS]: "days",
+  [PrismaAgeUnit.MONTHS]: "months",
+  [PrismaAgeUnit.YEARS]: "years",
+};
+
+const prismaSexByInput: Record<PublicationFormSex, PrismaSex> = {
   male: PrismaSex.MALE,
   female: PrismaSex.FEMALE,
 };
 
-const prismaStatusByInput: Record<CreateListingInput["status"], PrismaStatus> = {
+const inputSexByPrismaSex: Record<PrismaSex, PublicationFormSex> = {
+  [PrismaSex.MALE]: "male",
+  [PrismaSex.FEMALE]: "female",
+};
+
+const prismaStatusByInput: Record<PublicationFormStatus, PrismaStatus> = {
   active: PrismaStatus.ACTIVE,
+  adopted: PrismaStatus.ADOPTED,
   draft: PrismaStatus.DRAFT,
+};
+
+const inputStatusByPrismaStatus: Record<PrismaStatus, PublicationFormStatus> = {
+  [PrismaStatus.ACTIVE]: "active",
+  [PrismaStatus.ADOPTED]: "adopted",
+  [PrismaStatus.DRAFT]: "draft",
 };
 
 function formatAge(value: number, unit: PrismaAgeUnit) {
@@ -84,6 +113,14 @@ function normalizeInstagram(value: string | undefined) {
   return value.startsWith("@") ? value : `@${value}`;
 }
 
+function getPublishedAtForStatus(status: PrismaStatus, currentPublishedAt: Date | null) {
+  if (status === PrismaStatus.DRAFT) {
+    return null;
+  }
+
+  return currentPublishedAt ?? new Date();
+}
+
 function getFallbackImage(rowId: string) {
   const imageNumber =
     (Array.from(rowId).reduce((total, char) => total + char.charCodeAt(0), 0) % 3) + 1;
@@ -103,6 +140,20 @@ export function mapListingRow(row: PrismaPublication): Publication {
     sex: sexByPrismaSex[row.sex],
     status: statusByPrismaStatus[row.status],
     date: dateFormatter.format(row.publishedAt ?? row.createdAt),
+  };
+}
+
+export function mapListingRowToFormValues(row: PrismaPublication): PublicationFormValues {
+  return {
+    petName: row.petName,
+    ageValue: row.ageValue,
+    ageUnit: inputAgeUnitByPrismaAgeUnit[row.ageUnit],
+    sex: inputSexByPrismaSex[row.sex],
+    location: row.location,
+    rescueInstagram: row.rescueInstagram ?? "",
+    imageUrl: row.imageUrl ?? "",
+    description: row.description,
+    status: inputStatusByPrismaStatus[row.status],
   };
 }
 
@@ -186,9 +237,127 @@ export async function createListingForProfile(
       rescueInstagram: normalizeInstagram(input.rescueInstagram),
       imageUrl: input.imageUrl ?? null,
       status,
-      publishedAt: status === PrismaStatus.ACTIVE ? new Date() : null,
+      publishedAt: getPublishedAtForStatus(status, null),
     },
   });
 
   return mapListingRow(row);
+}
+
+export async function findListingForProfile(profileId: string, listingId: string) {
+  const row = await prisma.publication.findFirst({
+    where: {
+      id: listingId,
+      authorProfileId: profileId,
+    },
+  });
+
+  return row ? mapListingRowToFormValues(row) : null;
+}
+
+export async function updateListingForProfile(
+  profileId: string,
+  listingId: string,
+  input: UpdateListingInput,
+) {
+  const existingRow = await prisma.publication.findFirst({
+    where: {
+      id: listingId,
+      authorProfileId: profileId,
+    },
+    select: {
+      id: true,
+      publishedAt: true,
+    },
+  });
+
+  if (!existingRow) {
+    return null;
+  }
+
+  const status = prismaStatusByInput[input.status];
+
+  const row = await prisma.publication.update({
+    where: {
+      id: existingRow.id,
+    },
+    data: {
+      petName: input.petName,
+      ageValue: input.ageValue,
+      ageUnit: prismaAgeUnitByInput[input.ageUnit],
+      sex: prismaSexByInput[input.sex],
+      location: input.location,
+      description: input.description,
+      rescueInstagram: normalizeInstagram(input.rescueInstagram),
+      imageUrl: input.imageUrl ?? null,
+      status,
+      publishedAt: getPublishedAtForStatus(status, existingRow.publishedAt),
+    },
+  });
+
+  return mapListingRow(row);
+}
+
+export async function deleteListingForProfile(profileId: string, listingId: string) {
+  const result = await prisma.publication.deleteMany({
+    where: {
+      id: listingId,
+      authorProfileId: profileId,
+    },
+  });
+
+  return result.count > 0;
+}
+
+export async function updateListingStatusesForProfile(
+  profileId: string,
+  updates: SaveListingStatusesInput["updates"],
+) {
+  const uniqueUpdates = Array.from(
+    new Map(updates.map((update) => [update.id, update.status])).entries(),
+  ).map(([id, status]) => ({ id, status }));
+
+  const rows = await prisma.publication.findMany({
+    where: {
+      authorProfileId: profileId,
+      id: {
+        in: uniqueUpdates.map((update) => update.id),
+      },
+    },
+    select: {
+      id: true,
+      publishedAt: true,
+    },
+  });
+
+  if (rows.length !== uniqueUpdates.length) {
+    return null;
+  }
+
+  const publishedAtById = new Map(rows.map((row) => [row.id, row.publishedAt]));
+
+  await prisma.$transaction(async (tx) => {
+    const results = await Promise.all(
+      uniqueUpdates.map((update) => {
+        const status = prismaStatusByInput[update.status];
+
+        return tx.publication.updateMany({
+          where: {
+            id: update.id,
+            authorProfileId: profileId,
+          },
+          data: {
+            status,
+            publishedAt: getPublishedAtForStatus(status, publishedAtById.get(update.id) ?? null),
+          },
+        });
+      }),
+    );
+
+    if (results.some((result) => result.count !== 1)) {
+      throw new Error("Bulk status update failed due to ownership mismatch.");
+    }
+  });
+
+  return true;
 }

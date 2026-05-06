@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { FiCheck, FiSave } from "react-icons/fi";
+
+import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/cats/lib/georefClient";
 
 import {
   formControlClass,
@@ -10,6 +12,7 @@ import {
   formLabelClass,
   primaryCtaClass,
 } from "../lib/listingStyles";
+import type { PublicationFormStatus, PublicationFormValues } from "../types";
 
 type ListingFormState = {
   petName: string;
@@ -20,7 +23,7 @@ type ListingFormState = {
   rescueInstagram: string;
   imageUrl: string;
   description: string;
-  status: "active" | "draft";
+  status: PublicationFormStatus;
 };
 
 type ListingFieldName = keyof ListingFormState;
@@ -28,6 +31,12 @@ type ListingFieldName = keyof ListingFormState;
 type ApiResponse = {
   message?: string;
   fieldErrors?: Partial<Record<ListingFieldName, string[]>>;
+};
+
+type NewListingFormProps = {
+  mode?: "create" | "edit";
+  listingId?: string;
+  initialValues?: PublicationFormValues;
 };
 
 const initialForm: ListingFormState = {
@@ -42,10 +51,29 @@ const initialForm: ListingFormState = {
   status: "active",
 };
 
-const statusOptions: { value: ListingFormState["status"]; label: string }[] = [
+const statusOptions: { value: PublicationFormStatus; label: string }[] = [
   { value: "active", label: "Activa" },
+  { value: "adopted", label: "Adoptada" },
   { value: "draft", label: "Borrador" },
 ];
+
+function buildFormState(initialValues?: PublicationFormValues): ListingFormState {
+  if (!initialValues) {
+    return initialForm;
+  }
+
+  return {
+    petName: initialValues.petName,
+    ageValue: String(initialValues.ageValue),
+    ageUnit: initialValues.ageUnit,
+    sex: initialValues.sex,
+    location: initialValues.location,
+    rescueInstagram: initialValues.rescueInstagram,
+    imageUrl: initialValues.imageUrl,
+    description: initialValues.description,
+    status: initialValues.status,
+  };
+}
 
 function getFieldError(
   fieldErrors: ApiResponse["fieldErrors"],
@@ -54,12 +82,82 @@ function getFieldError(
   return fieldErrors?.[fieldName]?.[0];
 }
 
-export default function NewListingForm() {
+export default function NewListingForm({
+  mode = "create",
+  listingId,
+  initialValues,
+}: NewListingFormProps) {
   const router = useRouter();
-  const [form, setForm] = useState<ListingFormState>(initialForm);
+  const [form, setForm] = useState<ListingFormState>(() => buildFormState(initialValues));
   const [fieldErrors, setFieldErrors] = useState<ApiResponse["fieldErrors"]>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
+  const [locationsLoading, setLocationsLoading] = useState(false);
+  const [locationsError, setLocationsError] = useState<string | null>(null);
+
+  const isEditing = mode === "edit";
+  const initialFormState = useMemo(() => buildFormState(initialValues), [initialValues]);
+
+  const isDirty = useMemo(
+    () =>
+      form.petName !== initialFormState.petName ||
+      form.ageValue !== initialFormState.ageValue ||
+      form.ageUnit !== initialFormState.ageUnit ||
+      form.sex !== initialFormState.sex ||
+      form.location !== initialFormState.location ||
+      form.rescueInstagram !== initialFormState.rescueInstagram ||
+      form.imageUrl !== initialFormState.imageUrl ||
+      form.description !== initialFormState.description ||
+      form.status !== initialFormState.status,
+    [form, initialFormState],
+  );
+
+  useEffect(() => {
+    let alive = true;
+
+    const run = async () => {
+      try {
+        setLocationsLoading(true);
+        setLocationsError(null);
+
+        const localidades: GeorefLocalidad[] = await getLocalidadesCaba();
+
+        if (!alive) {
+          return;
+        }
+
+        setLocationOptions(localidades.map((localidad) => localidad.nombre));
+      } catch (error) {
+        if (!alive) {
+          return;
+        }
+
+        setLocationsError(
+          error instanceof Error ? error.message : "No pudimos cargar las ubicaciones.",
+        );
+        setLocationOptions([]);
+      } finally {
+        if (alive) {
+          setLocationsLoading(false);
+        }
+      }
+    };
+
+    run();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const selectableLocations = useMemo(() => {
+    if (form.location && !locationOptions.includes(form.location)) {
+      return [form.location, ...locationOptions];
+    }
+
+    return locationOptions;
+  }, [form.location, locationOptions]);
 
   const updateField =
     (fieldName: ListingFieldName) =>
@@ -79,8 +177,11 @@ export default function NewListingForm() {
     setMessage(null);
     setFieldErrors({});
 
-    const response = await fetch("/api/listings", {
-      method: "POST",
+    const endpoint = isEditing && listingId ? `/api/listings/${listingId}` : "/api/listings";
+    const method = isEditing ? "PATCH" : "POST";
+
+    const response = await fetch(endpoint, {
+      method,
       headers: {
         "Content-Type": "application/json",
       },
@@ -195,17 +296,25 @@ export default function NewListingForm() {
           <label htmlFor="location" className={formLabelClass}>
             Ubicación
           </label>
-          <input
+          <select
             id="location"
             name="location"
-            type="text"
             value={form.location}
             onChange={updateField("location")}
-            placeholder="Ej: Palermo"
             className={formControlClass}
-            autoComplete="address-level2"
             required
-          />
+            disabled={locationsLoading}
+          >
+            <option value="">
+              {locationsLoading ? "Cargando ubicaciones..." : "Seleccioná una ubicación real"}
+            </option>
+            {selectableLocations.map((locationName) => (
+              <option key={locationName} value={locationName}>
+                {locationName}
+              </option>
+            ))}
+          </select>
+          {locationsError ? <p className={formErrorClass}>No pudimos cargar las ubicaciones: {locationsError}</p> : null}
           {getFieldError(fieldErrors, "location") ? (
             <p className={formErrorClass}>{getFieldError(fieldErrors, "location")}</p>
           ) : null}
@@ -242,6 +351,7 @@ export default function NewListingForm() {
             onChange={updateField("imageUrl")}
             placeholder="https://..."
             className={formControlClass}
+            required
           />
           {getFieldError(fieldErrors, "imageUrl") ? (
             <p className={formErrorClass}>{getFieldError(fieldErrors, "imageUrl")}</p>
@@ -298,10 +408,10 @@ export default function NewListingForm() {
         <button
           type="submit"
           className={`${primaryCtaClass} justify-center disabled:cursor-not-allowed disabled:opacity-65`}
-          disabled={submitting}
+          disabled={submitting || !isDirty}
         >
           <FiSave className="h-5 w-5" aria-hidden />
-          {submitting ? "Guardando..." : "Guardar publicación"}
+          {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}
         </button>
       </div>
     </form>
