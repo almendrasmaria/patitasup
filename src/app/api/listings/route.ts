@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: "Revisá los campos marcados.",
-        fieldErrors: parsed.error.flatten().fieldErrors,
+        fieldErrors: parsed.fieldErrors,
       },
       { status: 422 },
     );
