@@ -158,9 +158,9 @@ export default function AppNavbar({ navUser }: Props) {
     <>
     <header
       data-site-navbar
-      className="fixed top-0 right-0 left-0 z-[1000] w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
+      className="fixed top-0 right-0 left-0 z-1000 w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
     >
-      <div className="mx-auto grid h-[60px] w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-[64px] sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-15 w-full max-w-350 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
         <div className="relative z-20 flex justify-start">
           <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
         </div>
