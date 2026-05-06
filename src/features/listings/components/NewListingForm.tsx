@@ -23,7 +23,7 @@ type ListingFormState = {
   rescueInstagram: string;
   imageUrl: string;
   description: string;
-  status: "active" | "draft";
+  status: PublicationFormStatus;
 };
 
 type ListingFieldName = keyof ListingFormState;
@@ -97,6 +97,21 @@ export default function NewListingForm({
   const [locationsError, setLocationsError] = useState<string | null>(null);
 
   const isEditing = mode === "edit";
+  const initialFormState = useMemo(() => buildFormState(initialValues), [initialValues]);
+
+  const isDirty = useMemo(
+    () =>
+      form.petName !== initialFormState.petName ||
+      form.ageValue !== initialFormState.ageValue ||
+      form.ageUnit !== initialFormState.ageUnit ||
+      form.sex !== initialFormState.sex ||
+      form.location !== initialFormState.location ||
+      form.rescueInstagram !== initialFormState.rescueInstagram ||
+      form.imageUrl !== initialFormState.imageUrl ||
+      form.description !== initialFormState.description ||
+      form.status !== initialFormState.status,
+    [form, initialFormState],
+  );
 
   useEffect(() => {
     let alive = true;
@@ -393,7 +408,7 @@ export default function NewListingForm({
         <button
           type="submit"
           className={`${primaryCtaClass} justify-center disabled:cursor-not-allowed disabled:opacity-65`}
-          disabled={submitting}
+          disabled={submitting || !isDirty}
         >
           <FiSave className="h-5 w-5" aria-hidden />
           {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}

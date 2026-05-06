@@ -76,7 +76,7 @@ export async function PATCH(request: Request, { params }: Context) {
     return NextResponse.json(
       {
         message: "Revisá los campos marcados.",
-        fieldErrors: parsed.error.flatten().fieldErrors,
+        fieldErrors: parsed.fieldErrors,
       },
       { status: 422 },
     );
