@@ -336,21 +336,28 @@ export async function updateListingStatusesForProfile(
 
   const publishedAtById = new Map(rows.map((row) => [row.id, row.publishedAt]));
 
-  await prisma.$transaction(
-    uniqueUpdates.map((update) => {
-      const status = prismaStatusByInput[update.status];
+  await prisma.$transaction(async (tx) => {
+    const results = await Promise.all(
+      uniqueUpdates.map((update) => {
+        const status = prismaStatusByInput[update.status];
 
-      return prisma.publication.update({
-        where: {
-          id: update.id,
-        },
-        data: {
-          status,
-          publishedAt: getPublishedAtForStatus(status, publishedAtById.get(update.id) ?? null),
-        },
-      });
-    }),
-  );
+        return tx.publication.updateMany({
+          where: {
+            id: update.id,
+            authorProfileId: profileId,
+          },
+          data: {
+            status,
+            publishedAt: getPublishedAtForStatus(status, publishedAtById.get(update.id) ?? null),
+          },
+        });
+      }),
+    );
+
+    if (results.some((result) => result.count !== 1)) {
+      throw new Error("Bulk status update failed due to ownership mismatch.");
+    }
+  });
 
   return true;
 }
