@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentListingProfile } from "@/features/listings/lib/ensureListingProfile";
-import { createListingSchema } from "@/features/listings/lib/listingValidation";
+import { parseListingInput } from "@/features/listings/lib/listingValidation";
 import {
   createListingForProfile,
   listListingsForProfile,
@@ -37,7 +37,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "El cuerpo de la solicitud no es válido." }, { status: 400 });
   }
 
-  const parsed = createListingSchema.safeParse(body);
+  let parsed;
+
+  try {
+    parsed = await parseListingInput(body);
+  } catch (error) {
+    console.error("Failed to validate listing payload", error);
+
+    return NextResponse.json(
+      { message: "No pudimos validar la ubicación. Intentá nuevamente." },
+      { status: 503 },
+    );
+  }
 
   if (!parsed.success) {
     return NextResponse.json(

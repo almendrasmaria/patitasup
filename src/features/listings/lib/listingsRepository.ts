@@ -20,7 +20,11 @@ import type {
   PublicationFormValues,
   PublicationStatus,
 } from "../types";
-import type { CreateListingInput, UpdateListingInput } from "./listingValidation";
+import type {
+  CreateListingInput,
+  SaveListingStatusesInput,
+  UpdateListingInput,
+} from "./listingValidation";
 
 const dateFormatter = new Intl.DateTimeFormat("es-AR", {
   day: "2-digit",
@@ -303,4 +307,50 @@ export async function deleteListingForProfile(profileId: string, listingId: stri
   });
 
   return result.count > 0;
+}
+
+export async function updateListingStatusesForProfile(
+  profileId: string,
+  updates: SaveListingStatusesInput["updates"],
+) {
+  const uniqueUpdates = Array.from(
+    new Map(updates.map((update) => [update.id, update.status])).entries(),
+  ).map(([id, status]) => ({ id, status }));
+
+  const rows = await prisma.publication.findMany({
+    where: {
+      authorProfileId: profileId,
+      id: {
+        in: uniqueUpdates.map((update) => update.id),
+      },
+    },
+    select: {
+      id: true,
+      publishedAt: true,
+    },
+  });
+
+  if (rows.length !== uniqueUpdates.length) {
+    return null;
+  }
+
+  const publishedAtById = new Map(rows.map((row) => [row.id, row.publishedAt]));
+
+  await prisma.$transaction(
+    uniqueUpdates.map((update) => {
+      const status = prismaStatusByInput[update.status];
+
+      return prisma.publication.update({
+        where: {
+          id: update.id,
+        },
+        data: {
+          status,
+          publishedAt: getPublishedAtForStatus(status, publishedAtById.get(update.id) ?? null),
+        },
+      });
+    }),
+  );
+
+  return true;
 }

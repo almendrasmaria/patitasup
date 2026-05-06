@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { findLocalidadCabaByName } from "@/features/cats/lib/georefClient";
+
 import type { PublicationFormStatus } from "../types";
 
 const emptyToUndefined = (value: unknown) => {
@@ -31,10 +33,7 @@ export const saveListingSchema = z
           "Ingresá un Instagram válido.",
         ),
     ),
-    imageUrl: z.preprocess(
-      emptyToUndefined,
-      z.string().trim().url("Ingresá una URL válida.").max(500).optional(),
-    ),
+    imageUrl: z.string().trim().min(1, "La imagen es obligatoria.").url("Ingresá una URL válida.").max(500),
     status: publicationStatusSchema.default("active"),
   })
   .superRefine((value, ctx) => {
@@ -57,3 +56,48 @@ export const createListingSchema = saveListingSchema;
 
 export type CreateListingInput = z.infer<typeof saveListingSchema>;
 export type UpdateListingInput = CreateListingInput;
+
+export type ListingFieldErrors = Partial<Record<keyof CreateListingInput, string[]>>;
+
+export async function parseListingInput(value: unknown) {
+  const parsed = saveListingSchema.safeParse(value);
+
+  if (!parsed.success) {
+    return {
+      success: false as const,
+      fieldErrors: parsed.error.flatten().fieldErrors as ListingFieldErrors,
+    };
+  }
+
+  const matchedLocation = await findLocalidadCabaByName(parsed.data.location);
+
+  if (!matchedLocation) {
+    return {
+      success: false as const,
+      fieldErrors: {
+        location: ["Seleccioná una ubicación válida de CABA."],
+      } satisfies ListingFieldErrors,
+    };
+  }
+
+  return {
+    success: true as const,
+    data: {
+      ...parsed.data,
+      location: matchedLocation.nombre,
+    },
+  };
+}
+
+export const saveListingStatusesSchema = z.object({
+  updates: z
+    .array(
+      z.object({
+        id: z.string().trim().min(1),
+        status: publicationStatusSchema,
+      }),
+    )
+    .min(1),
+});
+
+export type SaveListingStatusesInput = z.infer<typeof saveListingStatusesSchema>;

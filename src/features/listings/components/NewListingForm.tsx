@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { FiCheck, FiSave } from "react-icons/fi";
+
+import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/cats/lib/georefClient";
 
 import {
   formControlClass,
@@ -90,8 +92,57 @@ export default function NewListingForm({
   const [fieldErrors, setFieldErrors] = useState<ApiResponse["fieldErrors"]>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
+  const [locationsLoading, setLocationsLoading] = useState(false);
+  const [locationsError, setLocationsError] = useState<string | null>(null);
 
   const isEditing = mode === "edit";
+
+  useEffect(() => {
+    let alive = true;
+
+    const run = async () => {
+      try {
+        setLocationsLoading(true);
+        setLocationsError(null);
+
+        const localidades: GeorefLocalidad[] = await getLocalidadesCaba();
+
+        if (!alive) {
+          return;
+        }
+
+        setLocationOptions(localidades.map((localidad) => localidad.nombre));
+      } catch (error) {
+        if (!alive) {
+          return;
+        }
+
+        setLocationsError(
+          error instanceof Error ? error.message : "No pudimos cargar las ubicaciones.",
+        );
+        setLocationOptions([]);
+      } finally {
+        if (alive) {
+          setLocationsLoading(false);
+        }
+      }
+    };
+
+    run();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const selectableLocations = useMemo(() => {
+    if (form.location && !locationOptions.includes(form.location)) {
+      return [form.location, ...locationOptions];
+    }
+
+    return locationOptions;
+  }, [form.location, locationOptions]);
 
   const updateField =
     (fieldName: ListingFieldName) =>
@@ -230,17 +281,25 @@ export default function NewListingForm({
           <label htmlFor="location" className={formLabelClass}>
             Ubicación
           </label>
-          <input
+          <select
             id="location"
             name="location"
-            type="text"
             value={form.location}
             onChange={updateField("location")}
-            placeholder="Ej: Palermo"
             className={formControlClass}
-            autoComplete="address-level2"
             required
-          />
+            disabled={locationsLoading}
+          >
+            <option value="">
+              {locationsLoading ? "Cargando ubicaciones..." : "Seleccioná una ubicación real"}
+            </option>
+            {selectableLocations.map((locationName) => (
+              <option key={locationName} value={locationName}>
+                {locationName}
+              </option>
+            ))}
+          </select>
+          {locationsError ? <p className={formErrorClass}>No pudimos cargar las ubicaciones: {locationsError}</p> : null}
           {getFieldError(fieldErrors, "location") ? (
             <p className={formErrorClass}>{getFieldError(fieldErrors, "location")}</p>
           ) : null}
@@ -277,6 +336,7 @@ export default function NewListingForm({
             onChange={updateField("imageUrl")}
             placeholder="https://..."
             className={formControlClass}
+            required
           />
           {getFieldError(fieldErrors, "imageUrl") ? (
             <p className={formErrorClass}>{getFieldError(fieldErrors, "imageUrl")}</p>
