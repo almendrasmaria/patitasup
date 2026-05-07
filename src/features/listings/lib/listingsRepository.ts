@@ -10,6 +10,7 @@ import {
 } from "@prisma/client";
 
 import type { Cat } from "@/features/cats/types";
+import { formatDashboardDate } from "@/lib/formatDashboardDate";
 import { prisma } from "@/lib/prisma";
 
 import type {
@@ -25,12 +26,6 @@ import type {
   SaveListingStatusesInput,
   UpdateListingInput,
 } from "./listingValidation";
-
-const dateFormatter = new Intl.DateTimeFormat("es-AR", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-});
 
 const statusByPrismaStatus: Record<PrismaStatus, PublicationStatus> = {
   [PrismaStatus.ACTIVE]: "activo",
@@ -139,7 +134,7 @@ export function mapListingRow(row: PrismaPublication): Publication {
     age: formatAge(row.ageValue, row.ageUnit),
     sex: sexByPrismaSex[row.sex],
     status: statusByPrismaStatus[row.status],
-    date: dateFormatter.format(row.publishedAt ?? row.createdAt),
+    date: formatDashboardDate(row.publishedAt ?? row.createdAt),
   };
 }
 
