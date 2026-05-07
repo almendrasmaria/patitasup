@@ -4,11 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FiChevronDown, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
+import { FiFileText, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
 
 import { signOutFromBrowser } from "@/features/auth/lib/signOutApp";
 
-import { DASHBOARD_NAV_ITEMS, isDashboardRoute } from "./dashboardRoutes";
+import {
+  DASHBOARD_MY_LISTINGS_HREF,
+  DASHBOARD_NAV_ITEMS,
+  DASHBOARD_PROFILE_HREF,
+  isDashboardRoute,
+} from "./dashboardRoutes";
 
 export type NavUser = {
   email: string;
@@ -93,7 +98,7 @@ function NavbarBrand({
           alt=""
           width={24}
           height={24}
-          className="h-[22px] w-[22px] object-contain brightness-0 invert"
+          className="h-5.5 w-5.5 object-contain brightness-0 invert"
           sizes="36px"
           priority={imagePriority}
         />
@@ -114,8 +119,11 @@ export default function AppNavbar({ navUser }: Props) {
   const inDashboard = isDashboardRoute(pathname);
   const usePublicCenterNav = !inDashboard;
 
-  const showMiPerfilInMenu = loggedIn && !inDashboard;
+  const showMiPerfilInMenu = loggedIn;
+  const showMisPublicacionesInMenu = loggedIn && pathname === "/";
   const showVolverInicio = loggedIn && inDashboard;
+  const showMiPerfilInMobileMenu = loggedIn;
+  const showMisPublicacionesInMobileMenu = loggedIn && pathname !== DASHBOARD_MY_LISTINGS_HREF;
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "auto";
@@ -158,9 +166,9 @@ export default function AppNavbar({ navUser }: Props) {
     <>
     <header
       data-site-navbar
-      className="fixed top-0 right-0 left-0 z-[1000] w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
+      className="fixed top-0 right-0 left-0 z-1000 w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
     >
-      <div className="mx-auto grid h-[60px] w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-[64px] sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-15 w-full max-w-350 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8">
         <div className="relative z-20 flex justify-start">
           <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
         </div>
@@ -207,36 +215,41 @@ export default function AppNavbar({ navUser }: Props) {
                 <button
                   type="button"
                   onClick={() => setDropdownOpen((o) => !o)}
-                  className="flex max-w-[min(100vw-12rem,280px)] items-center gap-2 rounded-2xl border border-[#ececf2] bg-white px-2 py-1.5 shadow-sm transition hover:border-[#7061F0]/30 hover:shadow-md lg:gap-3 lg:px-3"
+                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#ececf2] bg-white shadow-sm transition hover:border-[#7061F0]/30 hover:shadow-md"
                   aria-expanded={dropdownOpen}
                   aria-haspopup="menu"
+                  aria-label="Abrir menú de usuario"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#7061F0] text-sm font-semibold text-white">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7061F0] text-sm font-semibold text-white">
                     {initials}
                   </span>
-                  <span className="hidden min-w-0 text-left leading-tight lg:block">
-                    <span className="block truncate text-sm font-semibold text-[#1B1B1F]">{navUser.profileName}</span>
-                    <span className="block max-w-[180px] truncate text-xs text-[#6b7280]">{navUser.email}</span>
-                  </span>
-                  <FiChevronDown
-                    className={`hidden shrink-0 text-[#9ca3af] transition sm:block ${dropdownOpen ? "rotate-180" : ""}`}
-                  />
                 </button>
 
                 {dropdownOpen && (
                   <div
                     role="menu"
-                    className="absolute right-0 mt-2 min-w-[200px] overflow-hidden rounded-2xl border border-[#ececf2] bg-white py-1 shadow-lg"
+                    className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[#ececf2] bg-white py-1 shadow-lg"
                   >
                     {showMiPerfilInMenu && (
                       <Link
-                        href="/profile"
+                        href={DASHBOARD_PROFILE_HREF}
                         role="menuitem"
                         className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
                         onClick={() => setDropdownOpen(false)}
                       >
                         <FiUser className="text-[#7061F0]" aria-hidden />
                         Mi perfil
+                      </Link>
+                    )}
+                    {showMisPublicacionesInMenu && (
+                      <Link
+                        href={DASHBOARD_MY_LISTINGS_HREF}
+                        role="menuitem"
+                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <FiFileText className="text-[#7061F0]" aria-hidden />
+                        Mis publicaciones
                       </Link>
                     )}
                     {showVolverInicio && (
@@ -266,7 +279,10 @@ export default function AppNavbar({ navUser }: Props) {
                 type="button"
                 className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
                 aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-                onClick={() => setMobileOpen(true)}
+                onClick={() => {
+                  setDropdownOpen(false);
+                  setMobileOpen(true);
+                }}
               >
                 <FiMenu />
               </button>
@@ -306,7 +322,7 @@ export default function AppNavbar({ navUser }: Props) {
       aria-modal={mobileOpen ? "true" : undefined}
       aria-hidden={!mobileOpen}
       id="app-navbar-mobile-menu"
-      className={`fixed inset-0 z-[9999] min-h-screen overflow-y-auto bg-[#7061F0] transition-transform duration-300 ease-out md:hidden ${
+      className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[#7061F0] transition-transform duration-300 ease-out md:hidden ${
         mobileOpen ? "pointer-events-auto translate-x-0" : "pointer-events-none translate-x-full"
       }`}
     >
@@ -362,6 +378,26 @@ export default function AppNavbar({ navUser }: Props) {
             </>
           ) : inDashboard ? (
             <>
+              {showMiPerfilInMobileMenu && (
+                <Link
+                  href={DASHBOARD_PROFILE_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiUser className="text-lg" aria-hidden />
+                  Mi perfil
+                </Link>
+              )}
+              {showMisPublicacionesInMobileMenu && (
+                <Link
+                  href={DASHBOARD_MY_LISTINGS_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiFileText className="text-lg" aria-hidden />
+                  Mis publicaciones
+                </Link>
+              )}
               <Link
                 href="/"
                 onClick={closeMobile}
@@ -380,14 +416,26 @@ export default function AppNavbar({ navUser }: Props) {
             </>
           ) : (
             <>
-              <Link
-                href="/profile"
-                onClick={closeMobile}
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
-              >
-                <FiUser className="text-lg" aria-hidden />
-                Mi perfil
-              </Link>
+              {showMiPerfilInMobileMenu && (
+                <Link
+                  href={DASHBOARD_PROFILE_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiUser className="text-lg" aria-hidden />
+                  Mi perfil
+                </Link>
+              )}
+              {showMisPublicacionesInMobileMenu && (
+                <Link
+                  href={DASHBOARD_MY_LISTINGS_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiFileText className="text-lg" aria-hidden />
+                  Mis publicaciones
+                </Link>
+              )}
               <button
                 type="button"
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"

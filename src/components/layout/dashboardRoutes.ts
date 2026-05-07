@@ -1,12 +1,19 @@
+export const DASHBOARD_PROFILE_HREF = "/profile";
+export const DASHBOARD_MY_LISTINGS_HREF = "/my-listings";
+export const DASHBOARD_REQUESTS_HREF = "/requests";
+
 export const DASHBOARD_NAV_ITEMS = [
-  { label: "Mi perfil", href: "/profile" },
-  { label: "Mis publicaciones", href: "/my-listings" },
-  { label: "Solicitudes", href: "/requests" },
+  { label: "Mis publicaciones", href: DASHBOARD_MY_LISTINGS_HREF },
+  { label: "Solicitudes", href: DASHBOARD_REQUESTS_HREF },
 ] as const;
 
-export const DASHBOARD_PATHS = DASHBOARD_NAV_ITEMS.map((item) => item.href);
+export const DASHBOARD_PATHS = [
+  DASHBOARD_PROFILE_HREF,
+  DASHBOARD_MY_LISTINGS_HREF,
+  DASHBOARD_REQUESTS_HREF,
+] as const;
 
-export const DASHBOARD_HOME_HREF = DASHBOARD_NAV_ITEMS[0].href;
+export const DASHBOARD_HOME_HREF = DASHBOARD_PROFILE_HREF;
 
 export function isDashboardRoute(pathname: string): boolean {
   return DASHBOARD_PATHS.some(
