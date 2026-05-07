@@ -122,6 +122,8 @@ export default function AppNavbar({ navUser }: Props) {
   const showMiPerfilInMenu = loggedIn;
   const showMisPublicacionesInMenu = loggedIn && pathname === "/";
   const showVolverInicio = loggedIn && inDashboard;
+  const showMiPerfilInMobileMenu = loggedIn;
+  const showMisPublicacionesInMobileMenu = loggedIn && pathname !== DASHBOARD_MY_LISTINGS_HREF;
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "auto";
@@ -166,7 +168,7 @@ export default function AppNavbar({ navUser }: Props) {
       data-site-navbar
       className="fixed top-0 right-0 left-0 z-1000 w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
     >
-      <div className="mx-auto grid h-15 w-full max-w-350 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-15 w-full max-w-350 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8">
         <div className="relative z-20 flex justify-start">
           <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
         </div>
@@ -209,7 +211,7 @@ export default function AppNavbar({ navUser }: Props) {
         <div className="relative z-20 flex shrink-0 justify-end">
           {loggedIn && navUser ? (
             <>
-              <div ref={dropdownRef} className="relative">
+              <div ref={dropdownRef} className="relative hidden md:block">
                 <button
                   type="button"
                   onClick={() => setDropdownOpen((o) => !o)}
@@ -376,6 +378,26 @@ export default function AppNavbar({ navUser }: Props) {
             </>
           ) : inDashboard ? (
             <>
+              {showMiPerfilInMobileMenu && (
+                <Link
+                  href={DASHBOARD_PROFILE_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiUser className="text-lg" aria-hidden />
+                  Mi perfil
+                </Link>
+              )}
+              {showMisPublicacionesInMobileMenu && (
+                <Link
+                  href={DASHBOARD_MY_LISTINGS_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiFileText className="text-lg" aria-hidden />
+                  Mis publicaciones
+                </Link>
+              )}
               <Link
                 href="/"
                 onClick={closeMobile}
@@ -394,6 +416,26 @@ export default function AppNavbar({ navUser }: Props) {
             </>
           ) : (
             <>
+              {showMiPerfilInMobileMenu && (
+                <Link
+                  href={DASHBOARD_PROFILE_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiUser className="text-lg" aria-hidden />
+                  Mi perfil
+                </Link>
+              )}
+              {showMisPublicacionesInMobileMenu && (
+                <Link
+                  href={DASHBOARD_MY_LISTINGS_HREF}
+                  onClick={closeMobile}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                >
+                  <FiFileText className="text-lg" aria-hidden />
+                  Mis publicaciones
+                </Link>
+              )}
               <button
                 type="button"
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
