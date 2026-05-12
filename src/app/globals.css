@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+:root {
+  --background: #fdfcfb;
+  --warm-sand: #f9f6f2;
+  --warm-beige: #f5f1ed;
+  --warm-beige-dark: #e8e4df;
+  --warm-orange: #ff8856;
+  --warm-orange-light: #ffa07a;
+  --primary: #2d2d2d;
+  --muted-foreground: #706f6c;
+  --soft-gray: #a8a6a1;
+  --border: var(--warm-beige-dark);
+}
+
 body {
   font-family: "Poppins", sans-serif;
 }

@@ -22,6 +22,7 @@ export type NavUser = {
 
 const publicNav = [
   { label: "Inicio", href: "/" },
+  { label: "Adoptar", href: "/adoption" },
   { label: "Cómo funciona", href: "/how-it-works" },
   { label: "Contacto", href: "/contact" },
 ] as const;
@@ -62,7 +63,7 @@ function NavbarBrand({
   imagePriority?: boolean;
   mode?: "full" | "iconOnly";
 }) {
-  const textClass = variant === "onLight" ? "text-[#7061F0]" : "text-white";
+  const textClass = variant === "onLight" ? "text-[var(--primary)]" : "text-white";
 
   if (mode === "iconOnly") {
     return (
@@ -151,8 +152,10 @@ export default function AppNavbar({ navUser }: Props) {
     });
   }, [router]);
 
-  const linkInactive = "font-medium text-[#4b5563] transition hover:text-[#7061F0]";
-  const linkActive = "font-semibold text-[#7061F0]";
+  const publicLinkInactive =
+    "text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:text-[var(--warm-orange)]";
+  const publicLinkActive = "text-sm font-medium text-[var(--primary)]";
+  const dashboardLinkInactive = "font-medium text-[#4b5563] transition hover:text-[#7061F0]";
 
   const isActiveDash = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -164,158 +167,156 @@ export default function AppNavbar({ navUser }: Props) {
 
   return (
     <>
-    <header
-      data-site-navbar
-      className="fixed top-0 right-0 left-0 z-1000 w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-    >
-      <div className="mx-auto grid h-15 w-full max-w-350 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8">
-        <div className="relative z-20 flex justify-start">
-          <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
-        </div>
+      <nav data-site-navbar className="relative z-50 border-b border-[var(--border)] bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+              <div className="relative z-20 flex items-center gap-2">
+                <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
+              </div>
 
-        <nav
-          className="hidden min-w-0 justify-center justify-self-center md:flex"
-          aria-label={inDashboard ? "Panel principal" : "Navegación principal"}
-        >
-          {usePublicCenterNav ? (
-            <ul className="flex flex-wrap items-center justify-center gap-4 text-[15px] lg:gap-8">
-              {publicNav.map(({ label, href }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className={isActivePublicCenter(pathname, href) ? linkActive : linkInactive}
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <ul className="flex flex-wrap items-center justify-center gap-1">
-              {DASHBOARD_NAV_ITEMS.map(({ label, href }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className={`rounded-xl px-3 py-2 text-[15px] lg:px-4 ${
-                      isActiveDash(href) ? "bg-[#7061F0]/12 text-[#7061F0]" : linkInactive
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </nav>
+              <div className="relative hidden flex-1 items-center justify-center px-6 md:flex">
+                <div aria-label={inDashboard ? "Panel principal" : "Navegación principal"} role="navigation">
+                  {usePublicCenterNav ? (
+                    <ul className="flex flex-wrap items-center justify-center gap-8">
+                      {publicNav.map(({ label, href }) => (
+                        <li key={href}>
+                          <Link
+                            href={href}
+                            className={isActivePublicCenter(pathname, href) ? publicLinkActive : publicLinkInactive}
+                          >
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <ul className="flex flex-wrap items-center justify-center gap-1">
+                      {DASHBOARD_NAV_ITEMS.map(({ label, href }) => (
+                        <li key={href}>
+                          <Link
+                            href={href}
+                            className={`rounded-xl px-3 py-2 text-[15px] lg:px-4 ${
+                              isActiveDash(href) ? "bg-[#7061F0]/12 text-[#7061F0]" : dashboardLinkInactive
+                            }`}
+                          >
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
 
-        <div className="relative z-20 flex shrink-0 justify-end">
-          {loggedIn && navUser ? (
-            <>
-              <div ref={dropdownRef} className="relative hidden md:block">
-                <button
-                  type="button"
-                  onClick={() => setDropdownOpen((o) => !o)}
-                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#ececf2] bg-white shadow-sm transition hover:border-[#7061F0]/30 hover:shadow-md"
-                  aria-expanded={dropdownOpen}
-                  aria-haspopup="menu"
-                  aria-label="Abrir menú de usuario"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7061F0] text-sm font-semibold text-white">
-                    {initials}
-                  </span>
-                </button>
+              <div className="relative z-20 flex shrink-0 items-center justify-end">
+                {loggedIn && navUser ? (
+                  <>
+                    <div ref={dropdownRef} className="relative hidden md:block">
+                      <button
+                        type="button"
+                        onClick={() => setDropdownOpen((o) => !o)}
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#ececf2] bg-white shadow-sm transition hover:border-[#7061F0]/30 hover:shadow-md"
+                        aria-expanded={dropdownOpen}
+                        aria-haspopup="menu"
+                        aria-label="Abrir menú de usuario"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7061F0] text-sm font-semibold text-white">
+                          {initials}
+                        </span>
+                      </button>
 
-                {dropdownOpen && (
-                  <div
-                    role="menu"
-                    className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[#ececf2] bg-white py-1 shadow-lg"
-                  >
-                    {showMiPerfilInMenu && (
-                      <Link
-                        href={DASHBOARD_PROFILE_HREF}
-                        role="menuitem"
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <FiUser className="text-[#7061F0]" aria-hidden />
-                        Mi perfil
-                      </Link>
-                    )}
-                    {showMisPublicacionesInMenu && (
-                      <Link
-                        href={DASHBOARD_MY_LISTINGS_HREF}
-                        role="menuitem"
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <FiFileText className="text-[#7061F0]" aria-hidden />
-                        Mis publicaciones
-                      </Link>
-                    )}
-                    {showVolverInicio && (
-                      <Link
-                        href="/"
-                        role="menuitem"
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Volver a inicio
-                      </Link>
-                    )}
+                      {dropdownOpen && (
+                        <div
+                          role="menu"
+                          className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[#ececf2] bg-white py-1 shadow-lg"
+                        >
+                          {showMiPerfilInMenu && (
+                            <Link
+                              href={DASHBOARD_PROFILE_HREF}
+                              role="menuitem"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              <FiUser className="text-[#7061F0]" aria-hidden />
+                              Mi perfil
+                            </Link>
+                          )}
+                          {showMisPublicacionesInMenu && (
+                            <Link
+                              href={DASHBOARD_MY_LISTINGS_HREF}
+                              role="menuitem"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              <FiFileText className="text-[#7061F0]" aria-hidden />
+                              Mis publicaciones
+                            </Link>
+                          )}
+                          {showVolverInicio && (
+                            <Link
+                              href="/"
+                              role="menuitem"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              Volver a inicio
+                            </Link>
+                          )}
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 transition hover:bg-red-50"
+                            onClick={() => void handleLogout()}
+                          >
+                            <FiLogOut aria-hidden />
+                            Cerrar sesión
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     <button
                       type="button"
-                      role="menuitem"
-                      className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 transition hover:bg-red-50"
-                      onClick={() => void handleLogout()}
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
+                      aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        setMobileOpen(true);
+                      }}
                     >
-                      <FiLogOut aria-hidden />
-                      Cerrar sesión
+                      <FiMenu />
                     </button>
-                  </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="hidden items-center gap-3 md:flex">
+                      <Link
+                        href="/login"
+                        className="px-1 py-2 text-sm font-medium text-[var(--primary)] transition-colors hover:text-[var(--warm-orange)]"
+                      >
+                        Iniciar sesión
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="rounded-full bg-[var(--warm-orange)] px-5 py-2 text-sm font-medium text-white transition-all hover:bg-[var(--warm-orange-light)] hover:shadow-md"
+                      >
+                        Crear cuenta
+                      </Link>
+                    </div>
+                    <button
+                      type="button"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
+                      aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+                      onClick={() => setMobileOpen(true)}
+                    >
+                      <FiMenu />
+                    </button>
+                  </>
                 )}
               </div>
-
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
-                aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-                onClick={() => {
-                  setDropdownOpen(false);
-                  setMobileOpen(true);
-                }}
-              >
-                <FiMenu />
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="hidden items-center gap-3 md:flex">
-                <Link
-                  href="/login"
-                  className="rounded-xl px-3 py-2 text-[15px] font-medium text-[#374151] transition hover:bg-[#f3f4f6]"
-                >
-                  Iniciar sesión
-                </Link>
-                <Link
-                  href="/register"
-                  className="rounded-xl bg-[#7061F0] px-4 py-2 text-[15px] font-semibold text-white shadow-sm transition hover:bg-[#5f52d6]"
-                >
-                  Crear cuenta
-                </Link>
-              </div>
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
-                aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-                onClick={() => setMobileOpen(true)}
-              >
-                <FiMenu />
-              </button>
-            </>
-          )}
+          </div>
         </div>
-      </div>
-    </header>
+      </nav>
 
     <div
       role="dialog"

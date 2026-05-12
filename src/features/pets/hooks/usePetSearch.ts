@@ -1,0 +1,42 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+import type { Pet } from "../types";
+
+function normalizeRescueHandle(handle: string) {
+  const normalized = handle.trim().toLowerCase();
+  return normalized.startsWith("@") ? normalized.slice(1) : normalized;
+}
+
+function petMatchesSearchQuery(pet: Pet, rawQuery: string): boolean {
+  const query = rawQuery.trim().toLowerCase();
+  if (!query) return true;
+
+  const rescueQuery = query.startsWith("@") ? query.slice(1) : query;
+  const rescueHandle = normalizeRescueHandle(pet.rescueInstagram ?? "");
+
+  if (rescueHandle.startsWith(rescueQuery) || rescueHandle.includes(rescueQuery)) {
+    return true;
+  }
+
+  if (pet.name.toLowerCase().includes(query)) return true;
+  if (pet.locationLabel.toLowerCase().includes(query)) return true;
+  if (pet.description.toLowerCase().includes(query)) return true;
+
+  return false;
+}
+
+export function usePetSearch(pets: Pet[]) {
+  const [query, setQuery] = useState("");
+
+  const filteredPets = useMemo(() => {
+    return pets.filter((pet) => petMatchesSearchQuery(pet, query));
+  }, [pets, query]);
+
+  return {
+    query,
+    setQuery,
+    filteredPets,
+  };
+}

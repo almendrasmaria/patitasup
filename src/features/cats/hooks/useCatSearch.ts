@@ -1,28 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import type { Cat } from "../types";
+import { usePetSearch } from "@/features/pets/hooks/usePetSearch";
 
 export function useCatSearch(cats: Cat[]) {
-  const [query, setQuery] = useState("");
+  const { query, setQuery, filteredPets } = usePetSearch(cats);
 
-  const filteredCats = useMemo(() => {
-    const qRaw = query.trim().toLowerCase();
-    if (!qRaw) return cats;
-
-    const q = qRaw.startsWith("@") ? qRaw.slice(1) : qRaw;
-
-    return cats.filter((cat) => {
-      const refugeRaw = (cat.rescueInstagram ?? "").trim().toLowerCase();
-      const refuge = refugeRaw.startsWith("@") ? refugeRaw.slice(1) : refugeRaw;
-
-      return refuge.startsWith(q);
-    });
-  }, [cats, query]);
-
-  return {
-    query,
-    setQuery,
-    filteredCats,
-  };
+  return { query, setQuery, filteredCats: filteredPets };
 }

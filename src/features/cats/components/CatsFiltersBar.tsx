@@ -31,7 +31,7 @@ const CatsFiltersBar = ({
               <input
                 value={query}
                 onChange={(e) => onQueryChange(e.target.value)}
-                placeholder="Buscar refugio..."
+                placeholder="Buscar por nombre, ubicación, refugio o características..."
                 className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
               />
             </div>
