@@ -1,11 +1,2 @@
-export type Cat = {
-  id: string;
-  slug: string;
-  name: string;
-  image: string;
-  sex: "male" | "female";
-  ageLabel: string;
-  locationLabel: string;
-  description: string;
-  rescueInstagram: string;
-};
+export type { PetSpecies } from "../pets/types";
+export type { Pet as Cat } from "../pets/types";

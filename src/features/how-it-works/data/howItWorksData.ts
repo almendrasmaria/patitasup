@@ -43,7 +43,7 @@ export const howItWorksCards: HowItWorksCardData[] = [
           "Si todo está ok, coordinan la entrega y la firma del contrato de adopción responsable.",
       },
     ],
-    cta: { label: "Ver felinos en adopción", href: "/adopt", variant: "primary" },
+    cta: { label: "Ver felinos en adopción", href: "/adoption", variant: "primary" },
   },
   {
     tone: "orange",

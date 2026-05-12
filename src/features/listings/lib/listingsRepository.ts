@@ -159,6 +159,7 @@ export function mapListingRowToCat(row: ListingWithAuthor): Cat {
     name: row.petName,
     image: row.imageUrl ?? getFallbackImage(row.id),
     sex: catSexByPrismaSex[row.sex],
+    species: "cat",
     ageLabel: formatAge(row.ageValue, row.ageUnit),
     locationLabel: row.location,
     description: row.description,

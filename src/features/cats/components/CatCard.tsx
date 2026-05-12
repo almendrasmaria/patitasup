@@ -1,14 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FiHeart } from "react-icons/fi";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import CatInfoChip from "./CatInfoChip";
 import type { Cat } from "../types";
 
 type Props = {
   cat: Cat;
+  favorite?: {
+    active: boolean;
+    onToggle: () => void;
+  };
 };
 
-const CatCard = ({ cat }: Props) => {
+const CatCard = ({ cat, favorite }: Props) => {
   const isRemoteImage = /^https?:\/\//.test(cat.image);
   const rescueName = cat.rescueInstagram || "Refugio";
   const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
@@ -24,6 +29,22 @@ const CatCard = ({ cat }: Props) => {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
+
+        {favorite ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              favorite.onToggle();
+            }}
+            aria-label={favorite.active ? "Quitar de favoritos" : "Agregar a favoritos"}
+            aria-pressed={favorite.active}
+            className="absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[var(--warm-orange)] shadow-md backdrop-blur-sm transition hover:bg-white"
+          >
+            <FiHeart className={`h-5 w-5 ${favorite.active ? "fill-current" : ""}`} />
+          </button>
+        ) : null}
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 via-black/30 to-transparent px-5 py-4">
           <div className="text-3xl font-semibold text-white">{cat.name}</div>
@@ -62,7 +83,7 @@ const CatCard = ({ cat }: Props) => {
           </div>
 
           <Link
-            href={`/adopt/${cat.slug}`}
+            href={`/adoption/${cat.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full bg-[#0F172A] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
