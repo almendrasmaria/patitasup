@@ -24,7 +24,7 @@ const Footer = () => {
   );
 
   return (
-    <footer className="w-full bg-[#304543] pb-8 pt-16 text-white">
+    <footer className="w-full bg-[var(--brand-teal)] pb-8 pt-16 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 grid grid-cols-1 gap-10 min-[920px]:grid-cols-2 min-[920px]:gap-12">
           <div className="flex flex-col items-center text-center min-[920px]:items-start min-[920px]:text-left">

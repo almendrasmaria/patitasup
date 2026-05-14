@@ -44,7 +44,7 @@ export default function RequestsTable({
       <table className="w-full min-w-[64rem] table-fixed border-collapse md:min-w-[72rem]">
         {colgroup}
         <thead>
-          <tr className="border-b border-[#ececf2]">
+          <tr className="border-b border-[var(--border-hairline)]">
             <th scope="col" className={`${tableHeaderClass} align-middle`}>
               Mascota
             </th>
@@ -68,7 +68,7 @@ export default function RequestsTable({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[#6b7280]">
+              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
                 No hay solicitudes para este filtro.
               </td>
             </tr>
@@ -87,14 +87,14 @@ export default function RequestsTable({
             return (
               <tr
                 key={row.id}
-                className="border-b border-[#f3f4f6] transition hover:bg-[#fbfbfe] last:border-0"
+                className="border-b border-[var(--surface-row)] transition hover:bg-[var(--surface-row-hover)] last:border-0"
               >
                 <td className={`${tdBase} max-w-0 font-medium`}>
                   <span className="block truncate" title={row.petName}>
                     {row.petName}
                   </span>
                 </td>
-                <td className={`${tdBase} max-w-0 text-[#4b5563]`}>
+                <td className={`${tdBase} max-w-0 text-[var(--neutral-600)]`}>
                   <span className="block truncate" title={row.adoptanteName}>
                     {row.adoptanteName}
                   </span>
@@ -109,7 +109,7 @@ export default function RequestsTable({
                     />
                   </div>
                 </td>
-                <td className={`${tdBase} text-[#4b5563] whitespace-nowrap`}>{row.dateLabel}</td>
+                <td className={`${tdBase} text-[var(--neutral-600)] whitespace-nowrap`}>{row.dateLabel}</td>
                 <td className={`${tdBase} px-2`}>
                   <div className="flex justify-center">
                     <button
@@ -118,7 +118,7 @@ export default function RequestsTable({
                       disabled={rowBusy}
                       className={
                         rowBusy
-                          ? "inline-flex cursor-not-allowed items-center justify-center rounded-full bg-[#d9dbe8] px-4 py-2 text-sm font-semibold text-white shadow-sm"
+                          ? "inline-flex cursor-not-allowed items-center justify-center rounded-full bg-[var(--border-input)] px-4 py-2 text-sm font-semibold text-white shadow-sm"
                           : `${primaryCtaClass} !py-2 !text-[13px]`
                       }
                     >
@@ -140,7 +140,7 @@ export default function RequestsTable({
                       disabled={!canWhatsapp || rowBusy}
                       className={
                         canWhatsapp
-                          ? "text-[#25D366] hover:border-[#25D366]/25 hover:bg-[#25D366]/8 hover:text-[#128C7E]"
+                          ? "text-[var(--whatsapp)] hover:border-[var(--whatsapp-border-hover)] hover:bg-[var(--whatsapp-bg-hover)] hover:text-[var(--whatsapp-fg-hover)]"
                           : ""
                       }
                     >
@@ -152,7 +152,7 @@ export default function RequestsTable({
                         if (mailHref) window.location.href = mailHref;
                       }}
                       disabled={!canEmail || rowBusy}
-                      className="hover:border-[#7061F0]/20 hover:bg-[#7061F0]/8 hover:text-[#5b4eb8]"
+                      className="hover:border-[var(--accent-border-20)] hover:bg-[var(--accent-overlay-8)] hover:text-[var(--accent-contrast)]"
                     >
                       <FiMail className="h-5 w-5" aria-hidden />
                     </ActionIconButton>

@@ -377,7 +377,7 @@ export default function NewListingForm({
         ) : null}
       </div>
 
-      <div className="border-t border-[#ececf2] pt-6">
+      <div className="border-t border-[var(--border-hairline)] pt-6">
         <span className={formLabelClass}>Estado</span>
         <div role="radiogroup" aria-label="Estado de publicación" className="flex flex-wrap gap-2">
           {statusOptions.map((option) => {
@@ -392,8 +392,8 @@ export default function NewListingForm({
                 onClick={() => handleStatusChange(option.value)}
                 className={
                   selected
-                    ? "inline-flex items-center gap-2 rounded-full bg-[#7061F0] px-5 py-2 text-sm font-semibold text-white shadow-sm"
-                    : "inline-flex items-center gap-2 rounded-full border border-[#7061F0]/35 bg-white px-5 py-2 text-sm font-semibold text-[#7061F0] transition hover:bg-[#7061F0]/5"
+                    ? "inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white shadow-sm"
+                    : "inline-flex items-center gap-2 rounded-full border border-[var(--accent-border-35)] bg-white px-5 py-2 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent-overlay-5)]"
                 }
               >
                 {selected ? <FiCheck className="h-4 w-4" aria-hidden /> : null}
@@ -404,7 +404,7 @@ export default function NewListingForm({
         </div>
       </div>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-[#ececf2] pt-6 sm:flex-row sm:items-center sm:justify-end">
+      <div className="flex flex-col-reverse gap-3 border-t border-[var(--border-hairline)] pt-6 sm:flex-row sm:items-center sm:justify-end">
         <button
           type="submit"
           className={`${primaryCtaClass} justify-center disabled:cursor-not-allowed disabled:opacity-65`}

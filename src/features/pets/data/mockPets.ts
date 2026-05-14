@@ -1,12 +1,13 @@
-import type { Cat } from "../types";
+import type { Pet } from "@/features/pets/types";
 
-export const mockCats: Cat[] = [
+export const mockPets: Pet[] = [
   {
     id: "1",
     slug: "copito",
     name: "Copito",
     image: "/cats/cat1.webp",
     sex: "male",
+    species: "cat",
     ageLabel: "60 días",
     locationLabel: "Villa Lugano",
     description:
@@ -19,6 +20,7 @@ export const mockCats: Cat[] = [
     name: "Milo",
     image: "/cats/cat2.webp",
     sex: "male",
+    species: "cat",
     ageLabel: "4 meses",
     locationLabel: "Villa Devoto",
     description:
@@ -31,6 +33,7 @@ export const mockCats: Cat[] = [
     name: "Nina",
     image: "/cats/cat3.webp",
     sex: "female",
+    species: "cat",
     ageLabel: "2 años",
     locationLabel: "Palermo",
     description:
@@ -43,6 +46,7 @@ export const mockCats: Cat[] = [
     name: "Luna",
     image: "/cats/cat1.webp",
     sex: "female",
+    species: "cat",
     ageLabel: "3 meses",
     locationLabel: "Caballito",
     description:
@@ -55,6 +59,7 @@ export const mockCats: Cat[] = [
     name: "Simba",
     image: "/cats/cat2.webp",
     sex: "male",
+    species: "cat",
     ageLabel: "1 año",
     locationLabel: "Flores",
     description:
@@ -67,6 +72,7 @@ export const mockCats: Cat[] = [
     name: "Olivia",
     image: "/cats/cat3.webp",
     sex: "female",
+    species: "cat",
     ageLabel: "5 meses",
     locationLabel: "Almagro",
     description:
@@ -79,6 +85,7 @@ export const mockCats: Cat[] = [
     name: "Toby",
     image: "/cats/cat1.webp",
     sex: "male",
+    species: "cat",
     ageLabel: "2 años",
     locationLabel: "San Telmo",
     description:
@@ -91,6 +98,7 @@ export const mockCats: Cat[] = [
     name: "Mora",
     image: "/cats/cat2.webp",
     sex: "female",
+    species: "cat",
     ageLabel: "8 meses",
     locationLabel: "Belgrano",
     description:
@@ -103,6 +111,7 @@ export const mockCats: Cat[] = [
     name: "Mike",
     image: "/cats/cat3.webp",
     sex: "male",
+    species: "cat",
     ageLabel: "3 años",
     locationLabel: "Boedo",
     description:

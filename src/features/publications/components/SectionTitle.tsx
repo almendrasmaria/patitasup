@@ -36,7 +36,7 @@ export default function SectionTitle({
     );
 
   const heading = (
-    <h1 className="text-[26px] font-semibold tracking-tight text-[#111827] md:text-[28px]">
+    <h1 className="text-[26px] font-semibold tracking-tight text-[var(--foreground-inverse)] md:text-[28px]">
       {headingContent}
     </h1>
   );

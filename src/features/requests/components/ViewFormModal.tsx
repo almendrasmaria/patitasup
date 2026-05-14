@@ -33,11 +33,11 @@ export default function ViewFormModal({ row, onClose }: ViewFormModalProps) {
     >
       {row ? (
         <>
-          <div className="border-b border-[#ececf2] px-5 py-4">
+          <div className="border-b border-[var(--border-hairline)] px-5 py-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-[#111827]">Solicitud de adopción</h2>
-                <p className="mt-1 text-sm text-[#6b7280]">
+                <h2 className="text-lg font-semibold text-[var(--foreground-inverse)]">Solicitud de adopción</h2>
+                <p className="mt-1 text-sm text-[var(--neutral-500)]">
                   {row.petName} · {row.dateLabel}
                 </p>
               </div>
@@ -52,25 +52,25 @@ export default function ViewFormModal({ row, onClose }: ViewFormModalProps) {
             </div>
           </div>
 
-          <div className="space-y-4 px-5 py-5 text-[15px] text-[#374151]">
+          <div className="space-y-4 px-5 py-5 text-[15px] text-[var(--neutral-700)]">
             <div>
-              <p className="text-[13px] font-semibold text-[#6b7280]">Adoptante</p>
-              <p className="mt-1 font-medium text-[#111827]">{row.adoptanteName}</p>
+              <p className="text-[13px] font-semibold text-[var(--neutral-500)]">Adoptante</p>
+              <p className="mt-1 font-medium text-[var(--foreground-inverse)]">{row.adoptanteName}</p>
               {row.adoptanteEmail ? (
-                <p className="mt-1 text-sm text-[#6b7280]">{row.adoptanteEmail}</p>
+                <p className="mt-1 text-sm text-[var(--neutral-500)]">{row.adoptanteEmail}</p>
               ) : null}
               {row.adoptantePhone?.trim() ? (
-                <p className="mt-1 text-sm text-[#6b7280]">{row.adoptantePhone.trim()}</p>
+                <p className="mt-1 text-sm text-[var(--neutral-500)]">{row.adoptantePhone.trim()}</p>
               ) : null}
             </div>
 
-            <p className="rounded-2xl border border-[#ececf2] bg-[#f9fafb] px-4 py-3 text-sm leading-relaxed text-[#6b7280]">
+            <p className="rounded-2xl border border-[var(--border-hairline)] bg-[var(--surface-card-elevated)] px-4 py-3 text-sm leading-relaxed text-[var(--neutral-500)]">
               El formulario completo de pre-adopción se mostrará aquí cuando esté conectado al backend. Por ahora podés
               contactar al adoptante por los datos indicados.
             </p>
           </div>
 
-          <div className="border-t border-[#ececf2] px-5 py-4">
+          <div className="border-t border-[var(--border-hairline)] px-5 py-4">
             <button type="button" className={`${secondaryCtaClass} w-full justify-center`} onClick={onClose}>
               Cerrar
             </button>

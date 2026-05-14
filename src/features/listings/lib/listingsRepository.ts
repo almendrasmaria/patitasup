@@ -9,7 +9,7 @@ import {
   type Publication as PrismaPublication,
 } from "@prisma/client";
 
-import type { Cat } from "@/features/cats/types";
+import type { Pet } from "@/features/pets/types";
 import { formatDashboardDate } from "@/lib/formatDashboardDate";
 import { prisma } from "@/lib/prisma";
 
@@ -38,7 +38,7 @@ const sexByPrismaSex: Record<PrismaSex, string> = {
   [PrismaSex.FEMALE]: "Hembra",
 };
 
-const catSexByPrismaSex: Record<PrismaSex, Cat["sex"]> = {
+const petSexByPrismaSex: Record<PrismaSex, Pet["sex"]> = {
   [PrismaSex.MALE]: "male",
   [PrismaSex.FEMALE]: "female",
 };
@@ -152,13 +152,13 @@ export function mapListingRowToFormValues(row: PrismaPublication): PublicationFo
   };
 }
 
-export function mapListingRowToCat(row: ListingWithAuthor): Cat {
+export function mapListingRowToPet(row: ListingWithAuthor): Pet {
   return {
     id: row.id,
     slug: row.slug,
     name: row.petName,
     image: row.imageUrl ?? getFallbackImage(row.id),
-    sex: catSexByPrismaSex[row.sex],
+    sex: petSexByPrismaSex[row.sex],
     species: "cat",
     ageLabel: formatAge(row.ageValue, row.ageUnit),
     locationLabel: row.location,
@@ -178,7 +178,7 @@ export async function listListingsForProfile(profileId: string) {
   return rows.map(mapListingRow);
 }
 
-export async function listPublishedListingCats() {
+export async function listPublishedListingPets() {
   const rows = await prisma.publication.findMany({
     where: {
       status: PrismaStatus.ACTIVE,
@@ -193,10 +193,10 @@ export async function listPublishedListingCats() {
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
   });
 
-  return rows.map(mapListingRowToCat);
+  return rows.map(mapListingRowToPet);
 }
 
-export async function findPublishedListingCatBySlug(slug: string) {
+export async function findPublishedListingPetBySlug(slug: string) {
   const row = await prisma.publication.findFirst({
     where: {
       slug,
@@ -211,7 +211,7 @@ export async function findPublishedListingCatBySlug(slug: string) {
     },
   });
 
-  return row ? mapListingRowToCat(row) : null;
+  return row ? mapListingRowToPet(row) : null;
 }
 
 export async function createListingForProfile(

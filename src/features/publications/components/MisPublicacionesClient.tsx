@@ -74,8 +74,8 @@ export default function MisPublicacionesClient({
           onDelete={handleDelete}
         />
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-[#ececf2] pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[#6b7280]">
+        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border-hairline)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--neutral-500)]">
             Mostrando {showingCount} de {totalResults} resultados
           </p>
 

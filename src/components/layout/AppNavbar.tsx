@@ -151,7 +151,7 @@ export default function AppNavbar({ navUser }: Props) {
   const publicLinkInactive =
     "text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:text-[var(--warm-orange)]";
   const publicLinkActive = "text-sm font-medium text-[var(--primary)]";
-  const dashboardLinkInactive = "font-medium text-[#4b5563] transition hover:text-[#7061F0]";
+  const dashboardLinkInactive = "font-medium text-[var(--neutral-600)] transition hover:text-[var(--accent)]";
 
   const isActiveDash = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -192,7 +192,7 @@ export default function AppNavbar({ navUser }: Props) {
                           <Link
                             href={href}
                             className={`rounded-xl px-3 py-2 text-[15px] lg:px-4 ${
-                              isActiveDash(href) ? "bg-[#7061F0]/12 text-[#7061F0]" : dashboardLinkInactive
+                              isActiveDash(href) ? "bg-[var(--accent-overlay-12)] text-[var(--accent)]" : dashboardLinkInactive
                             }`}
                           >
                             {label}
@@ -211,12 +211,12 @@ export default function AppNavbar({ navUser }: Props) {
                       <button
                         type="button"
                         onClick={() => setDropdownOpen((o) => !o)}
-                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#ececf2] bg-white shadow-sm transition hover:border-[#7061F0]/30 hover:shadow-md"
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[var(--border-hairline)] bg-white shadow-sm transition hover:border-[var(--accent-border-30)] hover:shadow-md"
                         aria-expanded={dropdownOpen}
                         aria-haspopup="menu"
                         aria-label="Abrir menú de usuario"
                       >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7061F0] text-sm font-semibold text-white">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-sm font-semibold text-white">
                           {initials}
                         </span>
                       </button>
@@ -224,16 +224,16 @@ export default function AppNavbar({ navUser }: Props) {
                       {dropdownOpen && (
                         <div
                           role="menu"
-                          className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[#ececf2] bg-white py-1 shadow-lg"
+                          className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[var(--border-hairline)] bg-white py-1 shadow-lg"
                         >
                           {showMiPerfilInMenu && (
                             <Link
                               href={DASHBOARD_PROFILE_HREF}
                               role="menuitem"
-                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
                               onClick={() => setDropdownOpen(false)}
                             >
-                              <FiUser className="text-[#7061F0]" aria-hidden />
+                              <FiUser className="text-[var(--accent)]" aria-hidden />
                               Mi perfil
                             </Link>
                           )}
@@ -241,10 +241,10 @@ export default function AppNavbar({ navUser }: Props) {
                             <Link
                               href={DASHBOARD_MY_LISTINGS_HREF}
                               role="menuitem"
-                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
                               onClick={() => setDropdownOpen(false)}
                             >
-                              <FiFileText className="text-[#7061F0]" aria-hidden />
+                              <FiFileText className="text-[var(--accent)]" aria-hidden />
                               Mis publicaciones
                             </Link>
                           )}
@@ -252,7 +252,7 @@ export default function AppNavbar({ navUser }: Props) {
                             <Link
                               href="/"
                               role="menuitem"
-                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
                               onClick={() => setDropdownOpen(false)}
                             >
                               Volver a inicio
@@ -273,7 +273,7 @@ export default function AppNavbar({ navUser }: Props) {
 
                     <button
                       type="button"
-                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] md:hidden"
                       aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
                       onClick={() => {
                         setDropdownOpen(false);
@@ -288,20 +288,20 @@ export default function AppNavbar({ navUser }: Props) {
                     <div className="hidden items-center gap-3 md:flex">
                       <Link
                         href="/login"
-                        className="px-1 py-2 text-sm font-medium text-[#304543] transition-colors hover:text-[#304543]/80"
+                        className="px-1 py-2 text-sm font-medium text-[var(--brand-teal)] transition-colors hover:text-[var(--brand-teal-subtle)]"
                       >
                         Iniciar sesión
                       </Link>
                       <Link
                         href="/register"
-                        className="rounded-lg bg-[#304543] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#243633]"
+                        className="rounded-lg bg-[var(--brand-teal)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--brand-teal-hover)]"
                       >
                         Crear cuenta
                       </Link>
                     </div>
                     <button
                       type="button"
-                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] md:hidden"
                       aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
                       onClick={() => setMobileOpen(true)}
                     >
@@ -319,7 +319,7 @@ export default function AppNavbar({ navUser }: Props) {
       aria-modal={mobileOpen ? "true" : undefined}
       aria-hidden={!mobileOpen}
       id="app-navbar-mobile-menu"
-      className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[#304543] transition-transform duration-300 ease-out md:hidden ${
+className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-teal)] transition-transform duration-300 ease-out md:hidden ${
         mobileOpen ? "pointer-events-auto translate-x-0" : "pointer-events-none translate-x-full"
       }`}
     >
@@ -370,7 +370,7 @@ export default function AppNavbar({ navUser }: Props) {
               <Link
                 href="/register"
                 onClick={closeMobile}
-                className="block w-full rounded-lg bg-white py-2 text-center font-semibold text-[#304543]"
+                className="block w-full rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
               >
                 Publicar gato
               </Link>
@@ -406,7 +406,7 @@ export default function AppNavbar({ navUser }: Props) {
               </Link>
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[#304543]"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
                 onClick={() => void handleLogout()}
               >
                 <FiLogOut className="text-lg" aria-hidden />
@@ -437,7 +437,7 @@ export default function AppNavbar({ navUser }: Props) {
               )}
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[#304543]"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
                 onClick={() => void handleLogout()}
               >
                 <FiLogOut className="text-lg" aria-hidden />

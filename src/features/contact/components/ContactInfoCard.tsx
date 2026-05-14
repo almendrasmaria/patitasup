@@ -3,12 +3,12 @@ import { FaInstagram } from "react-icons/fa";
 
 const ContactInfoCard = () => {
   return (
-    <article className="rounded-[22px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.10)] ring-1 ring-black/5 sm:p-7">
+    <article className="rounded-[22px] bg-white p-6 shadow-[var(--shadow-contact-card)] ring-1 ring-black/5 sm:p-7">
       <h3 className="text-[18px] font-bold text-black/85">Información de contacto</h3>
 
       <div className="mt-6 space-y-5">
         <div className="flex gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EEF2FF] text-[#2F55FF]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--contact-icon-muted-bg)] text-[var(--contact-icon-muted-fg)]">
             <FiMail className="text-[18px]" />
           </div>
           <div>
@@ -18,7 +18,7 @@ const ContactInfoCard = () => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF2EA] text-[#FF6A1A]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--contact-social-bg)] text-[var(--contact-social-fg)]">
             <FaInstagram className="text-[18px]" />
           </div>
           <div>
@@ -35,7 +35,7 @@ const ContactInfoCard = () => {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ECFDF3] text-[#16A34A]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--contact-hours-bg)] text-[var(--contact-hours-fg)]">
             <FiClock className="text-[18px]" />
           </div>
           <div>
@@ -48,15 +48,15 @@ const ContactInfoCard = () => {
 
       <div className="mt-8">
         <div className="h-px w-full bg-black/5" />
-        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-[#F2F4FF] px-4 py-4 ring-1 ring-[#2F55FF]/10">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8ECFF] text-[#2F55FF]">
+        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-[var(--contact-panel-bg)] px-4 py-4 ring-1 ring-[var(--contact-panel-ring)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--contact-panel-chip-bg)] text-[var(--warm-orange)]">
             <FiUserPlus className="text-[20px]" />
           </div>
           <div className="leading-tight">
             <p className="text-[13px] font-semibold text-black/80">¿Eres un refugio?</p>
             <a
               href="/register"
-              className="mt-1 inline-block text-[13px] font-semibold text-[#2F55FF] hover:underline"
+              className="mt-1 inline-block text-[13px] font-semibold text-[var(--warm-orange)] hover:underline"
             >
               Registrate como socio aquí
             </a>

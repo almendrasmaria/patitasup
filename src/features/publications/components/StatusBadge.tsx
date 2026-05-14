@@ -11,9 +11,9 @@ const LABEL: Record<PublicationStatus, string> = {
 };
 
 const STYLES: Record<PublicationStatus, string> = {
-  activo: "bg-[#7061F0]/12 text-[#5b4eb8]",
-  adoptado: "bg-sky-100 text-sky-800",
-  borrador: "bg-[#e5e7eb] text-[#4b5563]",
+  activo: "bg-[var(--accent-overlay-12)] text-[var(--accent-contrast)]",
+  adoptado: "bg-[var(--status-info-bg)] text-[var(--status-info-fg)]",
+  borrador: "bg-[var(--border-neutral)] text-[var(--neutral-600)]",
 };
 
 type StatusBadgeProps = {
@@ -24,7 +24,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <button
       type="button"
-      className={`inline-flex min-w-[7.5rem] items-center justify-between gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition hover:brightness-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7061F0] ${STYLES[status]}`}
+      className={`inline-flex min-w-[7.5rem] items-center justify-between gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition hover:brightness-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${STYLES[status]}`}
       aria-label={`Estado: ${LABEL[status]}`}
     >
       <span>{LABEL[status]}</span>
