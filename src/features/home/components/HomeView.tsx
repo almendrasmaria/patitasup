@@ -5,11 +5,11 @@ import HomeProcessSection from "./HomeProcessSection";
 export default function HomeView() {
   return (
     <div className="min-h-screen bg-white">
-      <main>
+      <div>
         <HomeHero />
         <HomeProcessSection />
         <HomeFinalCtaSection />
-      </main>
+      </div>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default async function Page() {
   const emailStatus = user.email_confirmed_at ? "Confirmado" : "Pendiente de confirmación";
 
   return (
-    <main className="min-h-screen bg-[var(--surface-dashboard)]">
+    <div className="min-h-screen bg-[var(--surface-dashboard)]">
       <section className="mx-auto max-w-[1400px] p-4 sm:p-6 md:p-8">
         <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
           <article className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-black/5 md:p-8">
@@ -65,6 +65,6 @@ export default async function Page() {
           </aside>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
