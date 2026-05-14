@@ -1,0 +1,184 @@
+/* PatitasUp design tokens — colors, overlays, shadows. Imported from globals.css after Tailwind. */
+
+:root {
+  /* --- Core (warm marketing + base UI) --- */
+  --background: #ffffff;
+  --warm-sand: #f9f6f2;
+  --warm-beige: #f5f1ed;
+  --warm-beige-dark: #e8e4df;
+  --warm-orange: #ff8856;
+  --warm-orange-light: #ffa07a;
+  --warm-orange-hover: #ff7a45;
+  --primary: #2d2d2d;
+  --muted-foreground: #706f6c;
+  --soft-gray: #a8a6a1;
+  --border: var(--warm-beige-dark);
+
+  /* --- Layout chrome (teal) --- */
+  --brand-teal: #304543;
+  --brand-teal-hover: #243633;
+  /* Texto “muted” sobre fondo claro (~ #304543 al 80% de opacidad sobre blanco) */
+  --brand-teal-subtle: #596968;
+
+  /* --- Acento interactivo (cálido: enlaces, foco, chips, nav dashboard) --- */
+  --accent: var(--warm-orange);
+  --accent-hover: var(--warm-orange-hover);
+  --accent-contrast: var(--primary);
+  --accent-disabled: color-mix(in srgb, var(--warm-orange) 30%, var(--warm-beige));
+  --accent-bg-subtle: color-mix(in srgb, var(--warm-orange) 10%, var(--warm-sand));
+  --accent-bg-soft: color-mix(in srgb, var(--warm-orange) 14%, var(--warm-beige));
+  --accent-bg-chip: var(--surface-peach);
+  --accent-border-hover: var(--warm-orange-light);
+  --accent-select: color-mix(in srgb, var(--warm-orange) 12%, var(--warm-sand));
+  --focus-ring: var(--warm-orange);
+  --focus-ring-30: color-mix(in srgb, var(--warm-orange) 32%, transparent);
+
+  /* Mezclas sobre fondo claro (CTA, hover de filas, estados “activo”) */
+  --accent-overlay-5: color-mix(in srgb, var(--warm-orange) 5%, var(--background));
+  --accent-overlay-8: color-mix(in srgb, var(--warm-orange) 8%, var(--background));
+  --accent-overlay-10: color-mix(in srgb, var(--warm-orange) 10%, var(--background));
+  --accent-overlay-12: color-mix(in srgb, var(--warm-orange) 12%, var(--background));
+  --accent-overlay-18: color-mix(in srgb, var(--warm-orange) 18%, var(--background));
+  --accent-overlay-20: color-mix(in srgb, var(--warm-orange) 20%, var(--background));
+  --accent-ring-25: color-mix(in srgb, var(--warm-orange) 28%, transparent);
+  --accent-border-20: color-mix(in srgb, var(--warm-orange) 22%, transparent);
+  --accent-border-30: color-mix(in srgb, var(--warm-orange) 32%, transparent);
+  --accent-border-35: color-mix(in srgb, var(--warm-orange) 38%, transparent);
+  --accent-border-55: color-mix(in srgb, var(--warm-orange) 55%, transparent);
+  --accent-ring-10: color-mix(in srgb, var(--warm-orange) 14%, transparent);
+  --accent-ring-15: color-mix(in srgb, var(--warm-orange) 20%, transparent);
+
+  /* --- Text --- */
+  --foreground: #1a1a1a;
+  --foreground-strong: #242424;
+  --foreground-heading: #171c3d;
+  --foreground-body: #1e1b39;
+  --foreground-label: #2d325a;
+  --foreground-table: #1f2937;
+  --foreground-inverse: #111827;
+  --foreground-topbar: #1b1b1f;
+
+  --neutral-700: #374151;
+  --neutral-600: #4b5563;
+  --neutral-500: #6b7280;
+  --neutral-400: #9ca3af;
+
+  --caption: #7a8097;
+  --caption-muted: #989db0;
+  --caption-icon: #8e93a8;
+  --text-disabled: #a7adbc;
+
+  --placeholder: #9ca3af;
+  --placeholder-soft: #a0a3b1;
+
+  /* Asteriscos / énfasis en formularios (misma familia que CTA) */
+  --accent-ember: var(--warm-orange);
+
+  /* --- Bordes / divisores --- */
+  --border-hairline: #ececf2;
+  --border-hairline-alt: #ececf3;
+  --border-input-soft: #e7e7ef;
+  --border-input: #d9dbe8;
+  --border-neutral: #e5e7eb;
+  --border-neutral-strong: #d1d5db;
+  --divider: #e5e7eb;
+
+  /* --- Superficies --- */
+  --surface-dashboard: #f5f6fb;
+  --surface-auth: #f3f4f6;
+  --surface-shell: #f6f7f9;
+  --surface-muted: #eef0f5;
+  --surface-select: #f6f7f9;
+  --surface-highlight: #f6f7f9;
+  --surface-row: #f3f4f6;
+  --surface-row-hover: color-mix(in srgb, var(--warm-orange) 5%, var(--background));
+  --surface-card: #f4f4f5;
+  --surface-card-elevated: #f9fafb;
+  --surface-process-icon: #efece9;
+  --surface-quote: #fcf6ef;
+  --surface-peach: #fff0e8;
+  --surface-amber-soft: #fff3e6;
+  --surface-warm-tint: color-mix(in srgb, var(--warm-orange) 8%, var(--warm-sand));
+  --surface-hover-light: color-mix(in srgb, var(--warm-sand) 85%, var(--background));
+  --surface-profile-tint: color-mix(in srgb, var(--warm-beige) 45%, var(--background));
+  --surface-navy: #0b1120;
+
+  /* --- Estados semánticos --- */
+  --destructive: #dc2626;
+  --destructive-strong: #b91c1c;
+  --destructive-bg: #fef2f2;
+  --destructive-border: #ef4444;
+  --destructive-border-soft: color-mix(in srgb, var(--destructive-border) 20%, transparent);
+
+  --success-border: #16a34a;
+  --success-border-soft: color-mix(in srgb, var(--success-border) 20%, transparent);
+  --success-bg: #f0fdf4;
+  --success-fg: #166534;
+
+  --warning-bg: #fff8d8;
+  --warning-fg: #a16207;
+
+  --amber-500: #f59e0b;
+
+  /* --- Botones oscuros / contraste --- */
+  --slate-button: #0f172a;
+  --slate-pagination: #111827;
+
+  /* --- Integraciones --- */
+  --whatsapp: #25d366;
+  --whatsapp-fg-hover: #128c7e;
+  --whatsapp-border-hover: color-mix(in srgb, var(--whatsapp) 25%, transparent);
+  --whatsapp-bg-hover: color-mix(in srgb, var(--whatsapp) 8%, var(--background));
+
+  /* Contacto / bloques informativos (sin azules: arena + naranja cálido) */
+  --contact-icon-muted-bg: var(--warm-sand);
+  --contact-icon-muted-fg: var(--warm-orange);
+  --contact-panel-bg: var(--surface-quote);
+  --contact-panel-ring: color-mix(in srgb, var(--warm-beige-dark) 45%, transparent);
+  --contact-panel-chip-bg: var(--warm-beige);
+  --contact-social-bg: var(--surface-peach);
+  --contact-social-fg: var(--warm-orange);
+  --contact-hours-bg: var(--warm-beige);
+  --contact-hours-fg: var(--muted-foreground);
+  --contact-cta: var(--warm-orange);
+  --status-info-border: var(--warm-beige-dark);
+  --status-info-bg: var(--warm-sand);
+  --status-info-fg: var(--primary);
+
+  /* --- Neutro borrador / hover fila --- */
+  --neutral-hover: #dfe3e8;
+
+  /* --- Sombras reutilizables --- */
+  --shadow-dropdown: 0 18px 50px rgb(15 23 42 / 0.12);
+  --shadow-card-soft: 0 14px 40px rgb(15 23 42 / 0.08);
+  --shadow-accent-button: 0 12px 28px rgb(255 136 86 / 0.32);
+  --shadow-pagination-active: 0 10px 22px rgb(255 136 86 / 0.38);
+  --shadow-contact-card: 0 20px 60px rgb(0 0 0 / 0.1);
+  --shadow-quote: 0 18px 46px rgb(45 45 45 / 0.03);
+  --shadow-cta-warm: 0 24px 60px rgb(255 136 86 / 0.35);
+}
+
+/* Utilidades Tailwind alineadas con tokens (--accent = cálido) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-hover: var(--brand-teal-hover);
+  --color-warm-orange: var(--warm-orange);
+  --color-warm-sand: var(--warm-sand);
+  --color-warm-beige: var(--warm-beige);
+  --color-warm-beige-dark: var(--warm-beige-dark);
+  --color-destructive: var(--destructive);
+  --color-success-fg: var(--success-fg);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-surface-dashboard: var(--surface-dashboard);
+  --color-surface-shell: var(--surface-shell);
+}

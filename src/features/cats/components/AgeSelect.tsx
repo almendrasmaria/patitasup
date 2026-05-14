@@ -26,9 +26,9 @@ const AgeSelect = ({ value, onChange }: Props) => {
         aria-label="Filtro de edad"
         className={[
           "flex h-12 w-full items-center justify-between rounded-xl",
-          "bg-[#F6F7F9] px-4 text-sm text-slate-600",
+          "bg-[var(--surface-select)] px-4 text-sm text-slate-600",
           "ring-1 ring-black/5 outline-none",
-          "focus:ring-[#5170ff]/30 data-[state=open]:ring-[#5170ff]/30",
+          "focus:ring-[var(--focus-ring-30)] data-[state=open]:ring-[var(--focus-ring-30)]",
         ].join(" ")}
       >
         <span className="inline-flex items-center gap-2">
@@ -55,8 +55,8 @@ const AgeSelect = ({ value, onChange }: Props) => {
                 className={[
                   "relative flex cursor-pointer select-none items-center",
                   "rounded-xl px-3 py-2 text-sm text-slate-700 outline-none",
-                  "data-highlighted:bg-[#F6F7F9]",
-                  "data-state=checked:bg-[#EEF2FF]",
+                  "data-highlighted:bg-[var(--surface-select)]",
+                  "data-state=checked:bg-[var(--accent-select)]",
                 ].join(" ")}
               >
                 <Select.ItemText>{opt.label}</Select.ItemText>

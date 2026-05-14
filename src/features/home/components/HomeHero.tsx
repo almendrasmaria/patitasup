@@ -24,7 +24,7 @@ export default function HomeHero() {
           </div>
 
           <h1 className="mt-5 text-center text-[2.125rem] font-bold leading-[1.06] tracking-tight sm:mt-6 sm:text-[2.375rem] md:text-left md:text-[2.625rem] md:leading-[1.05] lg:text-[3rem] xl:text-[3.5rem] 2xl:text-[3.875rem] 2xl:leading-[1.03] max-md:whitespace-nowrap max-md:text-[clamp(1.5rem,5.2vw+0.65rem,2.375rem)]">
-            <span className="text-balance text-[#1a1a1a] md:block">Encontrá a tu </span>
+            <span className="text-balance text-[var(--foreground)] md:block">Encontrá a tu </span>
             <span className="text-balance text-[var(--warm-orange)] md:mt-1 md:block">mejor amigo</span>
           </h1>
 
@@ -36,7 +36,7 @@ export default function HomeHero() {
           <div className="mt-6 flex min-w-0 flex-col gap-3 text-center sm:mt-8 sm:flex-row sm:items-stretch md:text-left">
             <Link
               href="/pets"
-              className="flex min-h-12 w-full min-w-0 flex-1 touch-manipulation items-center justify-center gap-2 rounded-lg bg-[var(--warm-orange)] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[#ff7a45] active:brightness-95 sm:min-h-[3rem] sm:px-6"
+              className="flex min-h-12 w-full min-w-0 flex-1 touch-manipulation items-center justify-center gap-2 rounded-lg bg-[var(--warm-orange)] px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--warm-orange-hover)] active:brightness-95 sm:min-h-[3rem] sm:px-6"
             >
               <FiHeart className="h-[18px] w-[18px] shrink-0" strokeWidth={2.25} aria-hidden />
               Quiero adoptar
@@ -44,7 +44,7 @@ export default function HomeHero() {
 
             <Link
               href="/register"
-              className="group flex min-h-12 w-full min-w-0 flex-1 touch-manipulation items-center justify-center gap-2 rounded-lg border border-[#1a1a1a]/15 bg-white px-4 py-3.5 text-sm font-semibold text-[#1a1a1a] transition hover:border-[#304543] hover:bg-[#304543] hover:text-white active:brightness-95 sm:min-h-[3rem] sm:px-6"
+              className="group flex min-h-12 w-full min-w-0 flex-1 touch-manipulation items-center justify-center gap-2 rounded-lg border border-[var(--foreground)]/15 bg-white px-4 py-3.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--brand-teal)] hover:bg-[var(--brand-teal)] hover:text-white active:brightness-95 sm:min-h-[3rem] sm:px-6"
             >
               <FiShield className="h-[18px] w-[18px] shrink-0 text-[var(--warm-orange)] transition group-hover:text-white" strokeWidth={2.25} aria-hidden />
               Soy refugio

@@ -14,7 +14,7 @@ export default async function Page() {
   }
 
   return (
-    <main className="h-screen w-screen overflow-hidden bg-[#f3f4f6]">
+    <main className="h-screen w-screen overflow-hidden bg-[var(--surface-auth)]">
       <RegisterCard />
     </main>
   );

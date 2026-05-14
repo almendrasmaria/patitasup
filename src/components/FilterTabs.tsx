@@ -14,10 +14,10 @@ type FilterTabsProps<T extends string> = {
 };
 
 const selectedClass =
-  "rounded-full bg-[#7061F0] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#5f51d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7061F0]";
+  "rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 const unselectedClass =
-  "rounded-full border border-[#7061F0]/35 bg-white px-5 py-2 text-sm font-semibold text-[#7061F0] transition hover:border-[#7061F0]/55 hover:bg-[#7061F0]/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7061F0]";
+  "rounded-full border border-[var(--accent-border-35)] bg-white px-5 py-2 text-sm font-semibold text-[var(--accent)] transition hover:border-[var(--accent-border-55)] hover:bg-[var(--accent-overlay-5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 export default function FilterTabs<T extends string>({
   items,

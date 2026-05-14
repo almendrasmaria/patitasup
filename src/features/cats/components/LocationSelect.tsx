@@ -59,7 +59,7 @@ export default function LocationSelect({ value, onChange }: Props) {
 
   return (
     <Select.Root value={value} onValueChange={(v) => onChange(v as LocationFilter)}>
-      <Select.Trigger className="flex h-12 w-full items-center justify-between rounded-xl bg-[#F6F7F9] px-4 text-sm text-slate-600 ring-1 ring-black/5 outline-none focus:ring-[#5170ff]/30 data-[state=open]:ring-[#5170ff]/30">
+      <Select.Trigger className="flex h-12 w-full items-center justify-between rounded-xl bg-[var(--surface-select)] px-4 text-sm text-slate-600 ring-1 ring-black/5 outline-none focus:ring-[var(--focus-ring-30)] data-[state=open]:ring-[var(--focus-ring-30)]">
         <span className="inline-flex items-center gap-2">
           <FiMapPin className="text-slate-400" />
           <span>{triggerLabel}</span>
@@ -79,7 +79,7 @@ export default function LocationSelect({ value, onChange }: Props) {
           <Select.Viewport className="max-h-[360px] overflow-y-auto p-2">
             <Select.Item
               value="any"
-              className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-highlighted:bg-[#F6F7F9] data-[state=checked]:bg-[#EEF2FF]"
+              className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-highlighted:bg-[var(--surface-select)] data-[state=checked]:bg-[var(--accent-select)]"
             >
               <Select.ItemText>Cualquier ubicación</Select.ItemText>
               <Select.ItemIndicator className="absolute right-3 inline-flex items-center text-slate-600">
@@ -101,7 +101,7 @@ export default function LocationSelect({ value, onChange }: Props) {
                 <Select.Item
                   key={it.value}
                   value={it.value}
-                  className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-highlighted:bg-[#F6F7F9] data-[state=checked]:bg-[#EEF2FF]"
+                  className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm text-slate-700 outline-none data-highlighted:bg-[var(--surface-select)] data-[state=checked]:bg-[var(--accent-select)]"
                 >
                   <Select.ItemText>{it.label}</Select.ItemText>
                   <Select.ItemIndicator className="absolute right-3 inline-flex items-center text-slate-600">

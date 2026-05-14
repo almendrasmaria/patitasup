@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type { Pet } from "../types";
+import type { Pet } from "@/features/pets/types";
 
 function normalizeRescueHandle(handle: string) {
   const normalized = handle.trim().toLowerCase();

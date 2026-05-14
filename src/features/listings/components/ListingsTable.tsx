@@ -40,7 +40,7 @@ export default function ListingsTable({
       <table className="w-full min-w-208 table-fixed border-collapse">
         {colgroup}
         <thead>
-          <tr className="border-b border-[#ececf2]">
+          <tr className="border-b border-[var(--border-hairline)]">
             <th scope="col" className={`${tableHeaderClass} text-center`}>
               Mascota
             </th>
@@ -64,13 +64,13 @@ export default function ListingsTable({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[#6b7280]">
+              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
                 No hay publicaciones para este filtro.
               </td>
             </tr>
           ) : null}
           {rows.map((row) => (
-            <tr key={row.id} className="border-b border-[#f3f4f6] transition hover:bg-[#fbfbfe] last:border-0">
+            <tr key={row.id} className="border-b border-[var(--surface-row)] transition hover:bg-[var(--surface-row-hover)] last:border-0">
               {(() => {
                 const currentStatus = pendingStatuses[row.id] ?? row.status;
                 const rowBusy = savingStatuses || busyRowId === row.id;
@@ -82,8 +82,8 @@ export default function ListingsTable({
                   {row.petName}
                 </span>
               </td>
-              <td className={`${tableCellClass} text-center text-[#4b5563]`}>{row.age}</td>
-              <td className={`${tableCellClass} text-center text-[#4b5563]`}>{row.sex}</td>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.age}</td>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.sex}</td>
               <td className={`${tableCellClass} text-center`}>
                 <div className="flex justify-center">
                   <StatusBadge
@@ -94,7 +94,7 @@ export default function ListingsTable({
                   />
                 </div>
               </td>
-              <td className={`${tableCellClass} text-center text-[#4b5563] whitespace-nowrap`}>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)] whitespace-nowrap`}>
                 {row.date}
               </td>
               <td className={`${tableCellClass} px-2 text-center`}>
@@ -103,7 +103,7 @@ export default function ListingsTable({
                     label={`Editar publicación de ${row.petName}`}
                     onClick={() => onEdit(row)}
                     disabled={rowBusy}
-                    className="hover:border-[#7061F0]/20 hover:bg-[#7061F0]/8 hover:text-[#5b4eb8]"
+                    className="hover:border-[var(--accent-border-20)] hover:bg-[var(--accent-overlay-8)] hover:text-[var(--accent-contrast)]"
                   >
                     <FiEdit2 className="h-4.5 w-4.5" />
                   </ActionIconButton>

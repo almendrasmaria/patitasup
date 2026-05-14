@@ -30,25 +30,25 @@ const RegisterForm = () => {
       </div>
 
       <div className="mb-7">
-        <h1 className="text-[32px] font-semibold leading-[1.1] text-[#242424] md:text-[36px]">
+        <h1 className="text-[32px] font-semibold leading-[1.1] text-[var(--foreground-strong)] md:text-[36px]">
           Crea tu cuenta
         </h1>
 
-        <p className="mt-3 max-w-[500px] text-[15px] leading-7 text-[#6b7280]">
+        <p className="mt-3 max-w-[500px] text-[15px] leading-7 text-[var(--neutral-500)]">
           Unite a PatitasUp y empezá a publicar gatos en adopción para ayudarles
           a encontrar una familia.
         </p>
       </div>
 
-      <div className="mb-7 h-px w-full bg-[#ececf2]" />
+      <div className="mb-7 h-px w-full bg-[var(--border-hairline)]" />
 
       <form action={formAction} className="space-y-5">
         {state.message ? (
           <div
             className={`rounded-md px-4 py-3 text-[14px] ${
               state.status === "success"
-                ? "border border-[#16a34a]/20 bg-[#f0fdf4] text-[#166534]"
-                : "border border-[#ef4444]/20 bg-[#fef2f2] text-[#b91c1c]"
+                ? "border border-[var(--success-border-soft)] bg-[var(--success-bg)] text-[var(--success-fg)]"
+                : "border border-[var(--destructive-border-soft)] bg-[var(--destructive-bg)] text-[var(--destructive-strong)]"
             }`}
           >
             {state.message}
@@ -79,7 +79,7 @@ const RegisterForm = () => {
         <div>
           <label
             htmlFor="password"
-            className="mb-2 block text-[14px] font-medium text-[#374151]"
+            className="mb-2 block text-[14px] font-medium text-[var(--neutral-700)]"
           >
             Contraseña
           </label>
@@ -94,13 +94,13 @@ const RegisterForm = () => {
               required
               minLength={8}
               aria-invalid={Boolean(state.fieldErrors?.password?.[0])}
-              className="h-[48px] w-full rounded-md border border-[#d9dbe8] bg-white px-4 pr-11 text-[14px] text-[#111827] outline-none placeholder:text-[#9ca3af] focus:border-[#7061F0] focus:ring-2 focus:ring-[#7061F0]/15"
+              className="h-[48px] w-full rounded-md border border-[var(--border-input)] bg-white px-4 pr-11 text-[14px] text-[var(--foreground-inverse)] outline-none placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring-15)]"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] transition hover:text-[#7061F0]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--placeholder)] transition hover:text-[var(--accent)]"
               aria-label={
                 showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
               }
@@ -110,7 +110,7 @@ const RegisterForm = () => {
           </div>
 
           {state.fieldErrors?.password?.[0] ? (
-            <p className="mt-2 text-[13px] text-[#dc2626]">
+            <p className="mt-2 text-[13px] text-[var(--destructive)]">
               {state.fieldErrors.password[0]}
             </p>
           ) : null}
@@ -119,17 +119,17 @@ const RegisterForm = () => {
         <button
           type="submit"
           disabled={pending}
-          className="h-[46px] w-full rounded-md bg-[#7061F0] text-[14px] font-medium text-white transition hover:opacity-95"
+          className="h-[46px] w-full rounded-md bg-[var(--accent)] text-[14px] font-medium text-white transition hover:opacity-95"
         >
           {pending ? "Creando cuenta..." : "Crear cuenta"}
         </button>
       </form>
 
-      <p className="mt-7 text-center text-[14px] text-[#4b5563]">
+      <p className="mt-7 text-center text-[14px] text-[var(--neutral-600)]">
         ¿Ya tienes una cuenta?{" "}
         <Link
           href="/login"
-          className="font-medium text-[#7061F0] hover:underline"
+          className="font-medium text-[var(--accent)] hover:underline"
         >
           Iniciar sesión
         </Link>
@@ -163,7 +163,7 @@ const Input = ({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block text-[14px] font-medium text-[#374151]"
+        className="mb-2 block text-[14px] font-medium text-[var(--neutral-700)]"
       >
         {label}
       </label>
@@ -177,10 +177,10 @@ const Input = ({
         autoComplete={autoComplete}
         required
         aria-invalid={Boolean(error)}
-        className="h-[48px] w-full rounded-md border border-[#d9dbe8] bg-white px-4 text-[14px] text-[#111827] outline-none placeholder:text-[#9ca3af] focus:border-[#7061F0] focus:ring-2 focus:ring-[#7061F0]/15"
+        className="h-[48px] w-full rounded-md border border-[var(--border-input)] bg-white px-4 text-[14px] text-[var(--foreground-inverse)] outline-none placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring-15)]"
       />
 
-      {error ? <p className="mt-2 text-[13px] text-[#dc2626]">{error}</p> : null}
+      {error ? <p className="mt-2 text-[13px] text-[var(--destructive)]">{error}</p> : null}
     </div>
   );
 };

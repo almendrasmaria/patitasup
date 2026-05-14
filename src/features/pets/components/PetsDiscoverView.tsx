@@ -213,7 +213,7 @@ export default function PetsDiscoverView({ pets }: Props) {
           </div>
         ) : (
           <CatsSection
-            cats={pagePets}
+            pets={pagePets}
             total={petsAfterFilters.length}
             page={page}
             totalPages={totalPages}

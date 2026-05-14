@@ -4,7 +4,7 @@ export default function HomeQuoteSection() {
   return (
     <section className="bg-[var(--background)] py-8 sm:py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[30px] border border-[var(--warm-beige-dark)]/55 bg-[#fcf6ef] px-8 py-10 shadow-[0_18px_46px_rgba(45,45,45,0.03)] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+        <div className="relative overflow-hidden rounded-[30px] border border-[var(--warm-beige-dark)]/55 bg-[var(--surface-quote)] px-8 py-10 shadow-[var(--shadow-quote)] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-[var(--warm-orange)]/8 blur-3xl" />
             <div className="absolute bottom-0 left-1/3 h-32 w-32 rounded-full bg-white/70 blur-3xl" />
