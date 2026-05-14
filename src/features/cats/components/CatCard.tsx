@@ -83,9 +83,10 @@ const CatCard = ({ cat, favorite }: Props) => {
           </div>
 
           <Link
-            href={`/adoption/${cat.slug}`}
+            href={`/pets/adoption/${cat.slug}`}
             target="_blank"
             rel="noopener noreferrer"
+            prefetch={false}
             className="rounded-full bg-[#0F172A] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
           >
             Adoptar
