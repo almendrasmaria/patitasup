@@ -197,7 +197,7 @@ export default function PetsDiscoverView({ pets }: Props) {
         </div>
       </header>
 
-      <main
+      <div
         id="pets-results"
         className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
         style={{
@@ -222,7 +222,7 @@ export default function PetsDiscoverView({ pets }: Props) {
             contained
           />
         )}
-      </main>
+      </div>
     </div>
   );
 }

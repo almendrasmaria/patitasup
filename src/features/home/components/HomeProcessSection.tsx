@@ -1,12 +1,16 @@
-import { HOME_PROCESS_CONTENT } from "../constants/processContent";
+"use client";
 
-const STEPS = HOME_PROCESS_CONTENT.adopters.map(({ number, title, description, icon }) => ({
-  step: number,
-  title,
-  description,
-  Icon: icon,
-}));
+import { useState } from "react";
+
+import { HOME_PROCESS_CONTENT } from "../constants/processContent";
+import type { HomeProcessAudience } from "../types";
+
+import HomeProcessTabs from "./HomeProcessTabs";
+
 export default function HomeProcessSection() {
+  const [audience, setAudience] = useState<HomeProcessAudience>("adopters");
+  const cards = HOME_PROCESS_CONTENT[audience];
+
   return (
     <section id="como-funciona" className="bg-white py-16 sm:py-20 md:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -20,17 +24,21 @@ export default function HomeProcessSection() {
           </p>
         </div>
 
+        <div className="mb-10 flex justify-center sm:mb-12 md:mb-14">
+          <HomeProcessTabs value={audience} onChange={setAudience} />
+        </div>
+
         <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map(({ step, title, description, Icon }) => (
+          {cards.map(({ number, title, description, icon: Icon }) => (
             <article
-              key={step}
+              key={`${audience}-${number}`}
               className="relative h-full rounded-2xl bg-[var(--surface-card)] p-6 pt-3 pl-3 text-left shadow-sm transition-shadow hover:shadow-lg sm:p-7 sm:pt-4 sm:pl-4"
             >
               <div
                 className="absolute -left-1 -top-1 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--warm-orange)] text-sm font-bold text-white shadow-md sm:-left-2 sm:-top-2"
                 aria-hidden
               >
-                {step}
+                {number}
               </div>
 
               <div className="mb-4 mt-2 flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-process-icon)]">

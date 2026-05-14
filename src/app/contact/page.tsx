@@ -6,7 +6,7 @@ import ContactInfoCard from "@/features/contact/components/ContactInfoCard";
 export default function Page() {
   return (
     <div className="min-h-screen bg-[var(--surface-shell)] flex flex-col">
-      <main className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col">
         <PawsSection className="py-12 md:py-20 lg:py-28">
           <div className="mx-auto flex h-full max-w-6xl items-center justify-center px-4 lg:px-8">
             <Hero
@@ -24,7 +24,7 @@ export default function Page() {
             <ContactInfoCard />
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }
