@@ -6,7 +6,6 @@ export type Pet = {
   name: string;
   image: string;
   sex: "male" | "female";
-  /** Defaults to cat when omitted (listings and legacy mocks). */
   species?: PetSpecies;
   ageLabel: string;
   locationLabel: string;

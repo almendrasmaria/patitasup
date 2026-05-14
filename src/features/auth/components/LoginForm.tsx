@@ -23,16 +23,16 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-[520px]">
-      <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-2xl bg-[#7061F0] shadow-[0_12px_30px_rgba(112,97,240,0.25)]">
+      <div className="mb-5">
+        <Link href="/" className="inline-flex">
           <Image
             src="/logo.webp"
-            alt="PatitasUp"
-            width={56}
-            height={56}
-            className="h-20 w-20"
+            alt="PatitasUp Logo"
+            width={240}
+            height={64}
+            className="h-14 w-auto max-w-full object-contain object-left sm:h-16"
           />
-        </div>
+        </Link>
       </div>
 
       <div className="mb-7">

@@ -15,8 +15,7 @@ const PAGE_SIZE = 6;
 
 type SpeciesFilter = "any" | PetSpecies;
 type SexFilter = "any" | "male" | "female";
-/** Subset of AgeFilter without senior for this screen */
-type AdoptAgeFilter = Extract<AgeFilter, "any" | "kitten" | "young" | "adult">;
+type PetListAgeFilter = Extract<AgeFilter, "any" | "kitten" | "young" | "adult">;
 
 const SPECIES_OPTIONS = [
   { value: "any" as const, label: "Todos" },
@@ -29,7 +28,7 @@ const AGE_OPTIONS = [
   { value: "kitten" as const, label: "Cachorro" },
   { value: "young" as const, label: "Joven" },
   { value: "adult" as const, label: "Adulto" },
-] satisfies MinimalSelectOption<AdoptAgeFilter>[];
+] satisfies MinimalSelectOption<PetListAgeFilter>[];
 
 const SEX_OPTIONS = [
   { value: "any" as const, label: "Ambos sexos" },
@@ -55,13 +54,13 @@ type Props = {
   pets: Pet[];
 };
 
-export default function AdoptDiscoverView({ pets }: Props) {
+export default function PetsDiscoverView({ pets }: Props) {
   const { query, setQuery, filteredPets } = usePetSearch(pets);
 
   const headerRef = useRef<HTMLElement>(null);
   const [page, setPage] = useState(1);
   const [species, setSpecies] = useState<SpeciesFilter>("any");
-  const [age, setAge] = useState<AdoptAgeFilter>("any");
+  const [age, setAge] = useState<PetListAgeFilter>("any");
   const [sex, setSex] = useState<SexFilter>("any");
   const [headerHeight, setHeaderHeight] = useState(0);
 
@@ -95,7 +94,7 @@ export default function AdoptDiscoverView({ pets }: Props) {
     setPage(1);
   };
 
-  const handleAgeChange = (value: AdoptAgeFilter) => {
+  const handleAgeChange = (value: PetListAgeFilter) => {
     setAge(value);
     setPage(1);
   };
@@ -124,7 +123,7 @@ export default function AdoptDiscoverView({ pets }: Props) {
 
   const handlePageChange = (nextPage: number) => {
     setPage(nextPage);
-    document.getElementById("adopt-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("pets-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -199,7 +198,7 @@ export default function AdoptDiscoverView({ pets }: Props) {
       </header>
 
       <main
-        id="adopt-results"
+        id="pets-results"
         className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
         style={{
           scrollMarginTop: headerHeight > 0 ? headerHeight + 24 : 96,

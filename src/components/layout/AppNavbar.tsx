@@ -22,10 +22,13 @@ export type NavUser = {
 
 const publicNav = [
   { label: "Inicio", href: "/" },
-  { label: "Adoptar", href: "/adoption" },
-  { label: "Cómo funciona", href: "/how-it-works" },
+  { label: "Mascotas", href: "/pets" },
   { label: "Contacto", href: "/contact" },
 ] as const;
+
+/** Ratio del arte del logo (ancho / alto); el archivo puede ser cuadrado con mucho vacío — sin esto `w-auto` copia el 1:1 del canvas. */
+const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
+const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";
 
 function getInitials(profileName: string) {
   const initials = profileName
@@ -54,32 +57,28 @@ type Props = {
 
 function NavbarBrand({
   onNavigate,
-  variant = "onLight",
   imagePriority = false,
   mode = "full",
 }: {
   onNavigate?: () => void;
-  variant?: "onLight" | "onViolet";
   imagePriority?: boolean;
-  mode?: "full" | "iconOnly";
+  mode?: "full" | "compact";
 }) {
-  const textClass = variant === "onLight" ? "text-[var(--primary)]" : "text-white";
-
-  if (mode === "iconOnly") {
+  if (mode === "compact") {
     return (
       <Link
         href="/"
         onClick={onNavigate}
-        className="flex shrink-0 items-center"
+        className="inline-flex shrink-0 items-center rounded-lg bg-white px-2 py-1.5 shadow-sm"
         aria-label="PatitasUp, ir al inicio"
       >
         <Image
-          src="/logo.webp"
-          alt=""
-          width={32}
-          height={32}
-          className="h-8 w-8 object-contain brightness-0 invert"
-          sizes="32px"
+          src="/logo.png"
+          alt="PatitasUp Logo"
+          width={280}
+          height={74}
+          sizes="200px"
+          className={`${NAV_LOGO_COMPACT_ASPECT_CLASS} h-9 w-auto max-h-9 max-w-[180px] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[200px]`}
           priority={imagePriority}
         />
       </Link>
@@ -90,21 +89,18 @@ function NavbarBrand({
     <Link
       href="/"
       onClick={onNavigate}
-      className="flex min-w-0 max-w-full items-center gap-2.5 sm:gap-3"
+      className="inline-flex shrink-0 items-center"
       aria-label="PatitasUp, ir al inicio"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#7061F0] shadow-sm sm:h-10 sm:w-10">
-        <Image
-          src="/logo.webp"
-          alt=""
-          width={24}
-          height={24}
-          className="h-5.5 w-5.5 object-contain brightness-0 invert"
-          sizes="36px"
-          priority={imagePriority}
-        />
-      </span>
-      <span className={`truncate text-base font-semibold tracking-tight sm:text-[17px] ${textClass}`}>PatitasUp</span>
+      <Image
+        src="/logo.png"
+        alt="PatitasUp Logo"
+        width={320}
+        height={84}
+        sizes="(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"
+        className={`${NAV_LOGO_ASPECT_CLASS} h-11 w-auto max-h-11 max-w-[200px] object-contain object-left sm:h-12 sm:max-h-12 sm:max-w-[240px] md:max-w-[280px]`}
+        priority={imagePriority}
+      />
     </Link>
   );
 }
@@ -167,11 +163,11 @@ export default function AppNavbar({ navUser }: Props) {
 
   return (
     <>
-      <nav data-site-navbar className="relative z-50 border-b border-[var(--border)] bg-white shadow-md">
+      <nav data-site-navbar className="relative z-50 border-b border-[var(--border)] bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex h-16 items-center justify-between">
               <div className="relative z-20 flex items-center gap-2">
-                <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
+                <NavbarBrand onNavigate={closeMobile} imagePriority />
               </div>
 
               <div className="relative hidden flex-1 items-center justify-center px-6 md:flex">
@@ -292,13 +288,13 @@ export default function AppNavbar({ navUser }: Props) {
                     <div className="hidden items-center gap-3 md:flex">
                       <Link
                         href="/login"
-                        className="px-1 py-2 text-sm font-medium text-[var(--primary)] transition-colors hover:text-[var(--warm-orange)]"
+                        className="px-1 py-2 text-sm font-medium text-[#304543] transition-colors hover:text-[#304543]/80"
                       >
                         Iniciar sesión
                       </Link>
                       <Link
                         href="/register"
-                        className="rounded-full bg-[var(--warm-orange)] px-5 py-2 text-sm font-medium text-white transition-all hover:bg-[var(--warm-orange-light)] hover:shadow-md"
+                        className="rounded-lg bg-[#304543] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#243633]"
                       >
                         Crear cuenta
                       </Link>
@@ -323,14 +319,14 @@ export default function AppNavbar({ navUser }: Props) {
       aria-modal={mobileOpen ? "true" : undefined}
       aria-hidden={!mobileOpen}
       id="app-navbar-mobile-menu"
-      className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[#7061F0] transition-transform duration-300 ease-out md:hidden ${
+      className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[#304543] transition-transform duration-300 ease-out md:hidden ${
         mobileOpen ? "pointer-events-auto translate-x-0" : "pointer-events-none translate-x-full"
       }`}
     >
       <div className="flex min-h-screen flex-col px-6 pb-8 pt-6 text-white">
         <div className="flex shrink-0 items-center justify-between gap-4">
           <div className="min-w-0 flex-1 pr-2">
-            <NavbarBrand onNavigate={closeMobile} variant="onViolet" mode="iconOnly" />
+            <NavbarBrand onNavigate={closeMobile} mode="compact" />
           </div>
           <button type="button" onClick={closeMobile} className="shrink-0 text-3xl text-white" aria-label="Cerrar menú">
             <FiX />
@@ -349,7 +345,9 @@ export default function AppNavbar({ navUser }: Props) {
                   href={href}
                   onClick={closeMobile}
                   className={
-                    active ? "text-white underline decoration-white/80 underline-offset-4" : "text-white/90"
+                    active
+                      ? "inline-block border-b-2 border-white pb-1 text-white no-underline"
+                      : "text-white/90"
                   }
                 >
                   {label}
@@ -365,14 +363,14 @@ export default function AppNavbar({ navUser }: Props) {
               <Link
                 href="/login"
                 onClick={closeMobile}
-                className="block w-full rounded-full border border-white py-2 text-center font-medium text-white"
+                className="block w-full rounded-lg border border-white py-2 text-center font-medium text-white"
               >
                 Ingresar
               </Link>
               <Link
                 href="/register"
                 onClick={closeMobile}
-                className="block w-full rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
+                className="block w-full rounded-lg bg-white py-2 text-center font-semibold text-[#304543]"
               >
                 Publicar gato
               </Link>
@@ -383,7 +381,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_PROFILE_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiUser className="text-lg" aria-hidden />
                   Mi perfil
@@ -393,7 +391,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_MY_LISTINGS_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiFileText className="text-lg" aria-hidden />
                   Mis publicaciones
@@ -402,13 +400,13 @@ export default function AppNavbar({ navUser }: Props) {
               <Link
                 href="/"
                 onClick={closeMobile}
-                className="block w-full rounded-full border border-white py-2 text-center font-medium text-white"
+                className="block w-full rounded-lg border border-white py-2 text-center font-medium text-white"
               >
                 Volver a inicio
               </Link>
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[#304543]"
                 onClick={() => void handleLogout()}
               >
                 <FiLogOut className="text-lg" aria-hidden />
@@ -421,7 +419,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_PROFILE_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiUser className="text-lg" aria-hidden />
                   Mi perfil
@@ -431,7 +429,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_MY_LISTINGS_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiFileText className="text-lg" aria-hidden />
                   Mis publicaciones
@@ -439,7 +437,7 @@ export default function AppNavbar({ navUser }: Props) {
               )}
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[#304543]"
                 onClick={() => void handleLogout()}
               >
                 <FiLogOut className="text-lg" aria-hidden />
