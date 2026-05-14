@@ -26,11 +26,12 @@ const LoginForm = () => {
       <div className="mb-5">
         <Link href="/" className="inline-flex">
           <Image
-            src="/logo.webp"
+            src="/logo.png"
             alt="PatitasUp Logo"
-            width={240}
-            height={64}
-            className="h-14 w-auto max-w-full object-contain object-left sm:h-16"
+            width={320}
+            height={84}
+            sizes="(max-width: 640px) 240px, 280px"
+            className="aspect-[320/84] h-14 w-auto max-h-14 max-w-full object-contain object-left sm:h-16 sm:max-h-16"
           />
         </Link>
       </div>
