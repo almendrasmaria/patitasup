@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { findLocalidadCabaByName } from "@/features/cats/lib/georefClient";
+import { findLocalidadCabaByName } from "@/features/geo/lib/georefClient";
 
 import type { PublicationFormStatus } from "../types";
 

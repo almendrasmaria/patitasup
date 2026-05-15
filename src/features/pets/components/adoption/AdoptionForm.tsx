@@ -165,9 +165,7 @@ const AdoptionForm = ({ pet }: Props) => {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white">
               1
             </div>
-            <span className="mt-2 text-xs font-medium text-[var(--accent)]">
-              Tus Datos
-            </span>
+            <span className="mt-2 text-xs font-medium text-[var(--accent)]">Tus Datos</span>
           </div>
 
           <div className="mt-4 h-px w-full bg-[var(--divider)]" />
@@ -222,12 +220,8 @@ const AdoptionForm = ({ pet }: Props) => {
             </div>
 
             <div>
-              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">
-                Tus Datos
-              </h2>
-              <p className="text-sm text-[var(--caption)]">
-                Completa tu información personal para avanzar con la solicitud.
-              </p>
+              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">Tus Datos</h2>
+              <p className="text-sm text-[var(--caption)]">Completa tu información personal para avanzar con la solicitud.</p>
             </div>
           </div>
 
@@ -297,9 +291,7 @@ const AdoptionForm = ({ pet }: Props) => {
             </div>
 
             <div>
-              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">
-                Tu Hogar
-              </h2>
+              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">Tu Hogar</h2>
               <p className="text-sm text-[var(--caption)]">
                 Queremos asegurarnos de que el espacio sea seguro para {pet.name}.
               </p>
@@ -312,9 +304,7 @@ const AdoptionForm = ({ pet }: Props) => {
               required
               placeholder="Selecciona una opción"
               value={form.housingType}
-              onValueChange={(value) =>
-                setForm((prev) => ({ ...prev, housingType: value }))
-              }
+              onValueChange={(value) => setForm((prev) => ({ ...prev, housingType: value }))}
               options={[
                 { label: "Departamento", value: "departamento" },
                 { label: "Casa", value: "casa" },
@@ -327,9 +317,7 @@ const AdoptionForm = ({ pet }: Props) => {
               required
               placeholder="Selecciona una opción"
               value={form.environment}
-              onValueChange={(value) =>
-                setForm((prev) => ({ ...prev, environment: value }))
-              }
+              onValueChange={(value) => setForm((prev) => ({ ...prev, environment: value }))}
               options={[
                 { label: "Monoambiente", value: "monoambiente" },
                 { label: "2 ambientes", value: "2" },
@@ -350,9 +338,7 @@ const AdoptionForm = ({ pet }: Props) => {
                   name="protection"
                   value="si"
                   checked={form.protection === "si"}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, protection: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, protection: e.target.value }))}
                   className="h-4 w-4 accent-[var(--accent)]"
                 />
                 <span>Sí, tengo redes</span>
@@ -364,18 +350,14 @@ const AdoptionForm = ({ pet }: Props) => {
                   name="protection"
                   value="puedo"
                   checked={form.protection === "puedo"}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, protection: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, protection: e.target.value }))}
                   className="h-4 w-4 accent-[var(--accent)]"
                 />
                 <span>No, pero puedo colocarlas</span>
               </label>
             </div>
 
-            <p className="text-xs text-[var(--caption-muted)]">
-              Este requisito es importante para garantizar una adopción segura.
-            </p>
+            <p className="text-xs text-[var(--caption-muted)]">Este requisito es importante para garantizar una adopción segura.</p>
           </div>
 
           <div className="space-y-2">
@@ -400,12 +382,8 @@ const AdoptionForm = ({ pet }: Props) => {
             </div>
 
             <div>
-              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">
-                Sobre {pet.name}
-              </h2>
-              <p className="text-sm text-[var(--caption)]">
-                Queremos conocer tus motivaciones y tu experiencia previa.
-              </p>
+              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">Sobre {pet.name}</h2>
+              <p className="text-sm text-[var(--caption)]">Queremos conocer tus motivaciones y tu experiencia previa.</p>
             </div>
           </div>
 
@@ -428,9 +406,7 @@ const AdoptionForm = ({ pet }: Props) => {
             required
             placeholder="Selecciona una opción"
             value={form.experience}
-            onValueChange={(value) =>
-              setForm((prev) => ({ ...prev, experience: value }))
-            }
+            onValueChange={(value) => setForm((prev) => ({ ...prev, experience: value }))}
             options={[
               { label: "Sí, convivo con perros o gatos", value: "actualmente" },
               { label: "Sí, tuve perros o gatos antes", value: "anteriormente" },
@@ -442,9 +418,8 @@ const AdoptionForm = ({ pet }: Props) => {
           <div className="flex items-start gap-3 rounded-[20px] bg-[var(--warning-bg)] px-4 py-4 text-sm text-[var(--warning-fg)]">
             <HiOutlineShieldCheck size={18} className="mt-0.5 shrink-0" />
             <p>
-              Al enviar esta solicitud te comprometes a brindar un hogar responsable,
-              amoroso y seguro. Revisaremos la información y nos pondremos en contacto
-              contigo dentro de las próximas 48 hs.
+              Al enviar esta solicitud te comprometes a brindar un hogar responsable, amoroso y seguro. Revisaremos la
+              información y nos pondremos en contacto contigo dentro de las próximas 48 hs.
             </p>
           </div>
 

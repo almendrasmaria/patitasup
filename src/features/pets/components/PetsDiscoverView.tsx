@@ -2,12 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaPaw } from "react-icons/fa";
-import { FiCalendar, FiSearch, FiUsers } from "react-icons/fi";
+import { FiMapPin, FiSearch, FiUsers } from "react-icons/fi";
 
 import MinimalSelect, { type MinimalSelectOption } from "@/components/ui/MinimalSelect";
-import type { AgeFilter } from "@/features/cats/components/AgeSelect";
-import CatsSection from "@/features/cats/components/CatsSection";
-import { matchesAgeFilter } from "@/features/cats/lib/matchAge";
+import PetsSection from "./PetsSection";
 import { usePetSearch } from "@/features/pets/hooks/usePetSearch";
 import type { Pet, PetSpecies } from "@/features/pets/types";
 
@@ -15,20 +13,12 @@ const PAGE_SIZE = 6;
 
 type SpeciesFilter = "any" | PetSpecies;
 type SexFilter = "any" | "male" | "female";
-type PetListAgeFilter = Extract<AgeFilter, "any" | "kitten" | "young" | "adult">;
 
 const SPECIES_OPTIONS = [
   { value: "any" as const, label: "Todos" },
   { value: "dog" as const, label: "Perro" },
   { value: "cat" as const, label: "Gato" },
 ] satisfies MinimalSelectOption<SpeciesFilter>[];
-
-const AGE_OPTIONS = [
-  { value: "any" as const, label: "Todas las edades" },
-  { value: "kitten" as const, label: "Cachorro" },
-  { value: "young" as const, label: "Joven" },
-  { value: "adult" as const, label: "Adulto" },
-] satisfies MinimalSelectOption<PetListAgeFilter>[];
 
 const SEX_OPTIONS = [
   { value: "any" as const, label: "Ambos sexos" },
@@ -50,6 +40,11 @@ function matchesSex(pet: Pet, filter: SexFilter): boolean {
   return pet.sex === filter;
 }
 
+function matchesLocation(pet: Pet, filter: string): boolean {
+  if (filter === "any") return true;
+  return pet.locationLabel.trim() === filter;
+}
+
 type Props = {
   pets: Pet[];
 };
@@ -57,12 +52,28 @@ type Props = {
 export default function PetsDiscoverView({ pets }: Props) {
   const { query, setQuery, filteredPets } = usePetSearch(pets);
 
+  const locationOptions = useMemo((): MinimalSelectOption<string>[] => {
+    const unique = new Set<string>();
+    for (const pet of pets) {
+      const label = pet.locationLabel.trim();
+      if (label) unique.add(label);
+    }
+    const sorted = [...unique].sort((a, b) => a.localeCompare(b, "es"));
+    return [{ value: "any", label: "Todas las ubicaciones" }, ...sorted.map((loc) => ({ value: loc, label: loc }))];
+  }, [pets]);
+
   const headerRef = useRef<HTMLElement>(null);
   const [page, setPage] = useState(1);
   const [species, setSpecies] = useState<SpeciesFilter>("any");
-  const [age, setAge] = useState<PetListAgeFilter>("any");
   const [sex, setSex] = useState<SexFilter>("any");
+  const [location, setLocation] = useState<string>("any");
   const [headerHeight, setHeaderHeight] = useState(0);
+
+  useEffect(() => {
+    if (location !== "any" && !locationOptions.some((o) => o.value === location)) {
+      setLocation("any");
+    }
+  }, [location, locationOptions]);
 
   useEffect(() => {
     const header = headerRef.current;
@@ -94,22 +105,22 @@ export default function PetsDiscoverView({ pets }: Props) {
     setPage(1);
   };
 
-  const handleAgeChange = (value: PetListAgeFilter) => {
-    setAge(value);
+  const handleSexChange = (value: SexFilter) => {
+    setSex(value);
     setPage(1);
   };
 
-  const handleSexChange = (value: SexFilter) => {
-    setSex(value);
+  const handleLocationChange = (value: string) => {
+    setLocation(value);
     setPage(1);
   };
 
   const petsAfterFilters = useMemo(() => {
     return filteredPets
       .filter((pet) => matchesSpecies(pet, species))
-      .filter((pet) => matchesAgeFilter(pet.ageLabel, age as AgeFilter))
-      .filter((pet) => matchesSex(pet, sex));
-  }, [filteredPets, species, age, sex]);
+      .filter((pet) => matchesSex(pet, sex))
+      .filter((pet) => matchesLocation(pet, location));
+  }, [filteredPets, species, sex, location]);
 
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(petsAfterFilters.length / PAGE_SIZE)),
@@ -150,7 +161,7 @@ export default function PetsDiscoverView({ pets }: Props) {
               type="search"
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
-              placeholder="Buscar por nombre, ubicación o características..."
+              placeholder="Buscar por nombre del refugio o rescatista..."
               className="
                 w-full
                 rounded-2xl
@@ -178,20 +189,20 @@ export default function PetsDiscoverView({ pets }: Props) {
               leadingIcon={<FaPaw />}
             />
             <MinimalSelect
-              ariaLabel="Edad"
-              label="Edad"
-              value={age}
-              onChange={handleAgeChange}
-              options={AGE_OPTIONS}
-              leadingIcon={<FiCalendar />}
-            />
-            <MinimalSelect
               ariaLabel="Sexo"
               label="Sexo"
               value={sex}
               onChange={handleSexChange}
               options={SEX_OPTIONS}
               leadingIcon={<FiUsers />}
+            />
+            <MinimalSelect
+              ariaLabel="Ubicación"
+              label="Ubicación"
+              value={location}
+              onChange={handleLocationChange}
+              options={locationOptions}
+              leadingIcon={<FiMapPin />}
             />
           </div>
         </div>
@@ -212,7 +223,7 @@ export default function PetsDiscoverView({ pets }: Props) {
             </p>
           </div>
         ) : (
-          <CatsSection
+          <PetsSection
             pets={pagePets}
             total={petsAfterFilters.length}
             page={page}

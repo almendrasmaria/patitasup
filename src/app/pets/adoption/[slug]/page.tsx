@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import AdoptionForm from "@/features/cats/components/AdoptionForm";
+import AdoptionForm from "@/features/pets/components/adoption/AdoptionForm";
 import { mockPets } from "@/features/pets/data/mockPets";
 import type { Pet } from "@/features/pets/types";
 import { findPublishedListingPetBySlug } from "@/features/listings/lib/listingsRepository";

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { FiCheck, FiSave } from "react-icons/fi";
 
-import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/cats/lib/georefClient";
+import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/geo/lib/georefClient";
 
 import {
   formControlClass,

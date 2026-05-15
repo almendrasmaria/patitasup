@@ -40,13 +40,9 @@ export default function MisPublicacionesClient({
     setPage(1);
   };
 
-  const handleEdit = (_row: Publication) => {
-    /* Mock: connect to edit flow when backend is ready */
-  };
+  const handleEdit = (_row: Publication) => {};
 
-  const handleDelete = (_row: Publication) => {
-    /* Mock: connect to delete flow when backend is ready */
-  };
+  const handleDelete = (_row: Publication) => {};
 
   const showingCount = pageRows.length;
 
