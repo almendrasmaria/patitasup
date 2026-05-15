@@ -5,7 +5,7 @@ import { HiOutlineLocationMarker } from "react-icons/hi";
 
 import type { Pet } from "@/features/pets/types";
 
-import CatInfoChip from "./CatInfoChip";
+import PetInfoChip from "./PetInfoChip";
 
 type Props = {
   pet: Pet;
@@ -15,7 +15,7 @@ type Props = {
   };
 };
 
-const CatCard = ({ pet, favorite }: Props) => {
+export default function PetCard({ pet, favorite }: Props) {
   const isRemoteImage = /^https?:\/\//.test(pet.image);
   const rescueName = pet.rescueInstagram || "Refugio";
   const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
@@ -60,8 +60,8 @@ const CatCard = ({ pet, favorite }: Props) => {
 
       <div className="flex flex-col gap-5 px-6 pt-5 pb-6">
         <div className="grid grid-cols-2 gap-4">
-          <CatInfoChip label="Edad" value={pet.ageLabel} />
-          <CatInfoChip label="Sexo" value={pet.sex === "male" ? "Macho" : "Hembra"} />
+          <PetInfoChip label="Edad" value={pet.ageLabel} />
+          <PetInfoChip label="Sexo" value={pet.sex === "male" ? "Macho" : "Hembra"} />
         </div>
 
         <p className="text-sm leading-relaxed text-slate-600">{pet.description}</p>
@@ -75,12 +75,8 @@ const CatCard = ({ pet, favorite }: Props) => {
             </div>
 
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                Rescatado por
-              </div>
-              <div className="text-sm font-semibold text-slate-800">
-                {rescueName}
-              </div>
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Rescatado por</div>
+              <div className="text-sm font-semibold text-slate-800">{rescueName}</div>
             </div>
           </div>
 
@@ -97,6 +93,4 @@ const CatCard = ({ pet, favorite }: Props) => {
       </div>
     </article>
   );
-};
-
-export default CatCard;
+}

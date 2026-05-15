@@ -1,7 +1,4 @@
-/* PatitasUp design tokens — colors, overlays, shadows. Imported from globals.css after Tailwind. */
-
 :root {
-  /* --- Core (warm marketing + base UI) --- */
   --background: #ffffff;
   --warm-sand: #f9f6f2;
   --warm-beige: #f5f1ed;
@@ -14,13 +11,10 @@
   --soft-gray: #a8a6a1;
   --border: var(--warm-beige-dark);
 
-  /* --- Layout chrome (teal) --- */
   --brand-teal: #304543;
   --brand-teal-hover: #243633;
-  /* Texto “muted” sobre fondo claro (~ #304543 al 80% de opacidad sobre blanco) */
   --brand-teal-subtle: #596968;
 
-  /* --- Acento interactivo (cálido: enlaces, foco, chips, nav dashboard) --- */
   --accent: var(--warm-orange);
   --accent-hover: var(--warm-orange-hover);
   --accent-contrast: var(--primary);
@@ -33,7 +27,6 @@
   --focus-ring: var(--warm-orange);
   --focus-ring-30: color-mix(in srgb, var(--warm-orange) 32%, transparent);
 
-  /* Mezclas sobre fondo claro (CTA, hover de filas, estados “activo”) */
   --accent-overlay-5: color-mix(in srgb, var(--warm-orange) 5%, var(--background));
   --accent-overlay-8: color-mix(in srgb, var(--warm-orange) 8%, var(--background));
   --accent-overlay-10: color-mix(in srgb, var(--warm-orange) 10%, var(--background));
@@ -48,7 +41,6 @@
   --accent-ring-10: color-mix(in srgb, var(--warm-orange) 14%, transparent);
   --accent-ring-15: color-mix(in srgb, var(--warm-orange) 20%, transparent);
 
-  /* --- Text --- */
   --foreground: #1a1a1a;
   --foreground-strong: #242424;
   --foreground-heading: #171c3d;
@@ -71,10 +63,8 @@
   --placeholder: #9ca3af;
   --placeholder-soft: #a0a3b1;
 
-  /* Asteriscos / énfasis en formularios (misma familia que CTA) */
   --accent-ember: var(--warm-orange);
 
-  /* --- Bordes / divisores --- */
   --border-hairline: #ececf2;
   --border-hairline-alt: #ececf3;
   --border-input-soft: #e7e7ef;
@@ -83,7 +73,6 @@
   --border-neutral-strong: #d1d5db;
   --divider: #e5e7eb;
 
-  /* --- Superficies --- */
   --surface-dashboard: #f5f6fb;
   --surface-auth: #f3f4f6;
   --surface-shell: #f6f7f9;
@@ -103,7 +92,6 @@
   --surface-profile-tint: color-mix(in srgb, var(--warm-beige) 45%, var(--background));
   --surface-navy: #0b1120;
 
-  /* --- Estados semánticos --- */
   --destructive: #dc2626;
   --destructive-strong: #b91c1c;
   --destructive-bg: #fef2f2;
@@ -120,17 +108,14 @@
 
   --amber-500: #f59e0b;
 
-  /* --- Botones oscuros / contraste --- */
   --slate-button: #0f172a;
   --slate-pagination: #111827;
 
-  /* --- Integraciones --- */
   --whatsapp: #25d366;
   --whatsapp-fg-hover: #128c7e;
   --whatsapp-border-hover: color-mix(in srgb, var(--whatsapp) 25%, transparent);
   --whatsapp-bg-hover: color-mix(in srgb, var(--whatsapp) 8%, var(--background));
 
-  /* Contacto / bloques informativos (sin azules: arena + naranja cálido) */
   --contact-icon-muted-bg: var(--warm-sand);
   --contact-icon-muted-fg: var(--warm-orange);
   --contact-panel-bg: var(--surface-quote);
@@ -145,10 +130,8 @@
   --status-info-bg: var(--warm-sand);
   --status-info-fg: var(--primary);
 
-  /* --- Neutro borrador / hover fila --- */
   --neutral-hover: #dfe3e8;
 
-  /* --- Sombras reutilizables --- */
   --shadow-dropdown: 0 18px 50px rgb(15 23 42 / 0.12);
   --shadow-card-soft: 0 14px 40px rgb(15 23 42 / 0.08);
   --shadow-accent-button: 0 12px 28px rgb(255 136 86 / 0.32);
@@ -158,7 +141,6 @@
   --shadow-cta-warm: 0 24px 60px rgb(255 136 86 / 0.35);
 }
 
-/* Utilidades Tailwind alineadas con tokens (--accent = cálido) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

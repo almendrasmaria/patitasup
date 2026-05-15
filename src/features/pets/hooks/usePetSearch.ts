@@ -16,15 +16,7 @@ function petMatchesSearchQuery(pet: Pet, rawQuery: string): boolean {
   const rescueQuery = query.startsWith("@") ? query.slice(1) : query;
   const rescueHandle = normalizeRescueHandle(pet.rescueInstagram ?? "");
 
-  if (rescueHandle.startsWith(rescueQuery) || rescueHandle.includes(rescueQuery)) {
-    return true;
-  }
-
-  if (pet.name.toLowerCase().includes(query)) return true;
-  if (pet.locationLabel.toLowerCase().includes(query)) return true;
-  if (pet.description.toLowerCase().includes(query)) return true;
-
-  return false;
+  return rescueHandle.startsWith(rescueQuery) || rescueHandle.includes(rescueQuery);
 }
 
 export function usePetSearch(pets: Pet[]) {

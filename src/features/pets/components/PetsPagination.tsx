@@ -33,7 +33,7 @@ const getPages = (current: number, total: number) => {
   return pages;
 };
 
-const Pagination = ({ currentPage, totalPages, onChange }: Props) => {
+export default function PetsPagination({ currentPage, totalPages, onChange }: Props) {
   if (totalPages <= 1) return null;
 
   const pages = getPages(currentPage, totalPages);
@@ -85,6 +85,4 @@ const Pagination = ({ currentPage, totalPages, onChange }: Props) => {
       </button>
     </div>
   );
-};
-
-export default Pagination;
+}

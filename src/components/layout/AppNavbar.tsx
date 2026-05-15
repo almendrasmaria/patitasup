@@ -26,7 +26,6 @@ const publicNav = [
   { label: "Contacto", href: "/contact" },
 ] as const;
 
-/** Ratio del arte del logo (ancho / alto); el archivo puede ser cuadrado con mucho vacío — sin esto `w-auto` copia el 1:1 del canvas. */
 const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
 const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";
 

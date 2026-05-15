@@ -1,6 +1,7 @@
-import CatsGrid from "./CatsGrid";
-import Pagination from "./Pagination";
 import type { Pet } from "@/features/pets/types";
+
+import PetsGrid from "./PetsGrid";
+import PetsPagination from "./PetsPagination";
 
 type Props = {
   pets: Pet[];
@@ -9,14 +10,12 @@ type Props = {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  /** Label for the listing count, e.g. "mascotas". */
   entityLabel?: string;
   petFavorite?: (pet: Pet) => { active: boolean; onToggle: () => void } | undefined;
-  /** When true, horizontal padding is omitted (parent already applies max-w-7xl + px). */
   contained?: boolean;
 };
 
-const CatsSection = ({
+export default function PetsSection({
   pets,
   total,
   page,
@@ -25,12 +24,9 @@ const CatsSection = ({
   entityLabel = "mascotas",
   petFavorite,
   contained = false,
-}: Props) => {
+}: Props) {
   return (
-    <section
-      id="pets-section"
-      className={`scroll-mt-24 pb-12 ${contained ? "pt-0" : "pt-[40px]"}`}
-    >
+    <section id="pets-section" className={`scroll-mt-24 pb-12 ${contained ? "pt-0" : "pt-[40px]"}`}>
       <div className={contained ? "w-full" : "w-full px-6 lg:px-16"}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-slate-500">
@@ -45,13 +41,11 @@ const CatsSection = ({
         </div>
 
         <div className="mt-6">
-          <CatsGrid pets={pets} petFavorite={petFavorite} />
+          <PetsGrid pets={pets} petFavorite={petFavorite} />
         </div>
 
-        <Pagination currentPage={page} totalPages={totalPages} onChange={onPageChange} />
+        <PetsPagination currentPage={page} totalPages={totalPages} onChange={onPageChange} />
       </div>
     </section>
   );
-};
-
-export default CatsSection;
+}
