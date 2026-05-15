@@ -43,14 +43,9 @@ function getInitials(profileName: string) {
   return initials || "PU";
 }
 
-function isActiveMobilePublicHref(pathname: string, href: string) {
+function isActivePublicHref(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
-}
-
-function isActivePublicCenter(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href;
 }
 
 type Props = {
@@ -66,7 +61,6 @@ function NavbarBrand({
   onNavigate?: () => void;
   imagePriority?: boolean;
   mode?: "full" | "compact";
-  /** `dark` en barra blanca; `light` en menú móvil (fondo teal). */
   tone?: "dark" | "light";
 }) {
   const src = tone === "light" ? LOGO_LIGHT_SRC : LOGO_DARK_SRC;
@@ -169,7 +163,7 @@ export default function AppNavbar({ navUser }: Props) {
                         <li key={href}>
                           <Link
                             href={href}
-                            className={isActivePublicCenter(pathname, href) ? publicLinkActive : publicLinkInactive}
+                            className={isActivePublicHref(pathname, href) ? publicLinkActive : publicLinkInactive}
                           >
                             {label}
                           </Link>
@@ -329,7 +323,7 @@ className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-te
           {mobilePrimaryLinks.map(({ label, href, variant }) => {
             const active =
               variant === "public"
-                ? isActiveMobilePublicHref(pathname, href)
+                ? isActivePublicHref(pathname, href)
                 : isActiveDash(href);
             return (
               <li key={href}>
