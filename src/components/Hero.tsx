@@ -40,7 +40,7 @@ const Hero = ({
       <header className="flex flex-col items-center text-center text-white">
         {badgeText && (
           <div className="mb-4">
-            <Badge text={badgeText} />
+            <Badge text={badgeText} variant="onAccent" />
           </div>
         )}
 
