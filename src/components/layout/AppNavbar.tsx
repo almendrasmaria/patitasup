@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FiFileText, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
+import { FiFileText, FiHome, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
 
 import { signOutFromBrowser } from "@/features/auth/lib/signOutApp";
 
@@ -116,7 +116,7 @@ export default function AppNavbar({ navUser }: Props) {
   const usePublicCenterNav = !inDashboard;
 
   const showMiPerfilInMenu = loggedIn;
-  const showMisPublicacionesInMenu = loggedIn && pathname === "/";
+  const showMisPublicacionesInMenu = loggedIn && !inDashboard;
   const showVolverInicio = loggedIn && inDashboard;
   const showMiPerfilInMobileMenu = loggedIn;
   const showMisPublicacionesInMobileMenu = loggedIn && pathname !== DASHBOARD_MY_LISTINGS_HREF;
@@ -254,6 +254,7 @@ export default function AppNavbar({ navUser }: Props) {
                               className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
                               onClick={() => setDropdownOpen(false)}
                             >
+                              <FiHome className="text-[var(--accent)]" aria-hidden />
                               Volver a inicio
                             </Link>
                           )}
@@ -399,8 +400,9 @@ className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-te
               <Link
                 href="/"
                 onClick={closeMobile}
-                className="block w-full rounded-lg border border-white py-2 text-center font-medium text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
               >
+                <FiHome className="text-lg" aria-hidden />
                 Volver a inicio
               </Link>
               <button
