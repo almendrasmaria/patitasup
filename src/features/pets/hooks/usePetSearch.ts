@@ -13,10 +13,18 @@ function petMatchesSearchQuery(pet: Pet, rawQuery: string): boolean {
   const query = rawQuery.trim().toLowerCase();
   if (!query) return true;
 
-  const rescueQuery = query.startsWith("@") ? query.slice(1) : query;
   const rescueHandle = normalizeRescueHandle(pet.rescueInstagram ?? "");
+  const location = pet.locationLabel.trim().toLowerCase();
+  const haystack = `${rescueHandle} ${location}`.trim();
 
-  return rescueHandle.startsWith(rescueQuery) || rescueHandle.includes(rescueQuery);
+  const tokens = query.split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return true;
+
+  return tokens.every((token) => {
+    const t = token.startsWith("@") ? token.slice(1) : token;
+    if (!t) return true;
+    return haystack.includes(t);
+  });
 }
 
 export function usePetSearch(pets: Pet[]) {

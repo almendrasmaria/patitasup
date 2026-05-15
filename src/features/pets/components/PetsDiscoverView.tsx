@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { FaPaw } from "react-icons/fa";
-import { FiMapPin, FiSearch, FiUsers } from "react-icons/fi";
+import { FiSearch, FiUsers } from "react-icons/fi";
 
 import MinimalSelect, { type MinimalSelectOption } from "@/components/ui/MinimalSelect";
+import { petMatchesAgeFilter, type AgeFilter } from "@/features/pets/lib/petAgeFilter";
+import PetAgeRangeFilter from "./PetAgeRangeFilter";
 import PetsSection from "./PetsSection";
 import { usePetSearch } from "@/features/pets/hooks/usePetSearch";
 import type { Pet, PetSpecies } from "@/features/pets/types";
@@ -40,11 +42,6 @@ function matchesSex(pet: Pet, filter: SexFilter): boolean {
   return pet.sex === filter;
 }
 
-function matchesLocation(pet: Pet, filter: string): boolean {
-  if (filter === "any") return true;
-  return pet.locationLabel.trim() === filter;
-}
-
 type Props = {
   pets: Pet[];
 };
@@ -52,48 +49,10 @@ type Props = {
 export default function PetsDiscoverView({ pets }: Props) {
   const { query, setQuery, filteredPets } = usePetSearch(pets);
 
-  const locationOptions = useMemo((): MinimalSelectOption<string>[] => {
-    const unique = new Set<string>();
-    for (const pet of pets) {
-      const label = pet.locationLabel.trim();
-      if (label) unique.add(label);
-    }
-    const sorted = [...unique].sort((a, b) => a.localeCompare(b, "es"));
-    return [{ value: "any", label: "Todas las ubicaciones" }, ...sorted.map((loc) => ({ value: loc, label: loc }))];
-  }, [pets]);
-
-  const headerRef = useRef<HTMLElement>(null);
   const [page, setPage] = useState(1);
   const [species, setSpecies] = useState<SpeciesFilter>("any");
   const [sex, setSex] = useState<SexFilter>("any");
-  const [location, setLocation] = useState<string>("any");
-  const [headerHeight, setHeaderHeight] = useState(0);
-
-  useEffect(() => {
-    if (location !== "any" && !locationOptions.some((o) => o.value === location)) {
-      setLocation("any");
-    }
-  }, [location, locationOptions]);
-
-  useEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
-
-    const updateHeaderMeasurements = () => {
-      setHeaderHeight(header.getBoundingClientRect().height);
-    };
-
-    updateHeaderMeasurements();
-
-    const resizeObserver = new ResizeObserver(updateHeaderMeasurements);
-    resizeObserver.observe(header);
-    window.addEventListener("resize", updateHeaderMeasurements);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updateHeaderMeasurements);
-    };
-  }, []);
+  const [ageFilter, setAgeFilter] = useState<AgeFilter>("any");
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
@@ -110,8 +69,8 @@ export default function PetsDiscoverView({ pets }: Props) {
     setPage(1);
   };
 
-  const handleLocationChange = (value: string) => {
-    setLocation(value);
+  const handleAgeFilterChange = (next: AgeFilter) => {
+    setAgeFilter(next);
     setPage(1);
   };
 
@@ -119,8 +78,8 @@ export default function PetsDiscoverView({ pets }: Props) {
     return filteredPets
       .filter((pet) => matchesSpecies(pet, species))
       .filter((pet) => matchesSex(pet, sex))
-      .filter((pet) => matchesLocation(pet, location));
-  }, [filteredPets, species, sex, location]);
+      .filter((pet) => petMatchesAgeFilter(pet.ageLabel, ageFilter));
+  }, [filteredPets, species, sex, ageFilter]);
 
   const totalPages = useMemo(
     () => Math.max(1, Math.ceil(petsAfterFilters.length / PAGE_SIZE)),
@@ -134,15 +93,12 @@ export default function PetsDiscoverView({ pets }: Props) {
 
   const handlePageChange = (nextPage: number) => {
     setPage(nextPage);
-    document.getElementById("pets-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("pets-results")?.scrollIntoView({ behavior: "auto", block: "start" });
   };
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <header
-        ref={headerRef}
-        className="sticky top-0 z-[950] border-b border-[var(--border)] bg-white/90 backdrop-blur-sm"
-      >
+      <header className="border-b border-[var(--border)]">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="mb-6">
             <h1 className="mb-1 text-3xl font-medium tracking-tight text-[var(--primary)]">Mascotas en adopción</h1>
@@ -161,7 +117,7 @@ export default function PetsDiscoverView({ pets }: Props) {
               type="search"
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
-              placeholder="Buscar por nombre del refugio o rescatista..."
+              placeholder="Buscar por refugio, rescatista o ubicación..."
               className="
                 w-full
                 rounded-2xl
@@ -196,25 +152,12 @@ export default function PetsDiscoverView({ pets }: Props) {
               options={SEX_OPTIONS}
               leadingIcon={<FiUsers />}
             />
-            <MinimalSelect
-              ariaLabel="Ubicación"
-              label="Ubicación"
-              value={location}
-              onChange={handleLocationChange}
-              options={locationOptions}
-              leadingIcon={<FiMapPin />}
-            />
+            <PetAgeRangeFilter value={ageFilter} onChange={handleAgeFilterChange} />
           </div>
         </div>
       </header>
 
-      <div
-        id="pets-results"
-        className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
-        style={{
-          scrollMarginTop: headerHeight > 0 ? headerHeight + 24 : 96,
-        }}
-      >
+      <div id="pets-results" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {petsAfterFilters.length === 0 ? (
           <div className="py-8 text-center">
             <p className="text-lg font-normal text-[var(--primary)]">No encontramos mascotas con esos criterios.</p>
