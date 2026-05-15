@@ -26,6 +26,9 @@ const publicNav = [
   { label: "Contacto", href: "/contact" },
 ] as const;
 
+const LOGO_DARK_SRC = "/logo-dark.png";
+const LOGO_LIGHT_SRC = "/logo-light.png";
+
 const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
 const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";
 
@@ -58,31 +61,20 @@ function NavbarBrand({
   onNavigate,
   imagePriority = false,
   mode = "full",
+  tone = "dark",
 }: {
   onNavigate?: () => void;
   imagePriority?: boolean;
   mode?: "full" | "compact";
+  /** `dark` en barra blanca; `light` en menú móvil (fondo teal). */
+  tone?: "dark" | "light";
 }) {
-  if (mode === "compact") {
-    return (
-      <Link
-        href="/"
-        onClick={onNavigate}
-        className="inline-flex shrink-0 items-center rounded-lg bg-white px-2 py-1.5 shadow-sm"
-        aria-label="PatitasUp, ir al inicio"
-      >
-        <Image
-          src="/logo.png"
-          alt="PatitasUp Logo"
-          width={280}
-          height={74}
-          sizes="200px"
-          className={`${NAV_LOGO_COMPACT_ASPECT_CLASS} h-9 w-auto max-h-9 max-w-[180px] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[200px]`}
-          priority={imagePriority}
-        />
-      </Link>
-    );
-  }
+  const src = tone === "light" ? LOGO_LIGHT_SRC : LOGO_DARK_SRC;
+  const aspectClass = mode === "compact" ? NAV_LOGO_COMPACT_ASPECT_CLASS : NAV_LOGO_ASPECT_CLASS;
+  const sizeClass =
+    mode === "compact"
+      ? "h-9 w-auto max-h-9 max-w-[180px] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[200px]"
+      : "h-11 w-auto max-h-11 max-w-[200px] object-contain object-left sm:h-12 sm:max-h-12 sm:max-w-[240px] md:max-w-[280px]";
 
   return (
     <Link
@@ -92,12 +84,12 @@ function NavbarBrand({
       aria-label="PatitasUp, ir al inicio"
     >
       <Image
-        src="/logo.png"
+        src={src}
         alt="PatitasUp Logo"
-        width={320}
-        height={84}
-        sizes="(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"
-        className={`${NAV_LOGO_ASPECT_CLASS} h-11 w-auto max-h-11 max-w-[200px] object-contain object-left sm:h-12 sm:max-h-12 sm:max-w-[240px] md:max-w-[280px]`}
+        width={mode === "compact" ? 280 : 320}
+        height={mode === "compact" ? 74 : 84}
+        sizes={mode === "compact" ? "200px" : "(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"}
+        className={`${aspectClass} ${sizeClass}`}
         priority={imagePriority}
       />
     </Link>
@@ -326,7 +318,7 @@ className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-te
       <div className="flex min-h-screen flex-col px-6 pb-8 pt-6 text-white">
         <div className="flex shrink-0 items-center justify-between gap-4">
           <div className="min-w-0 flex-1 pr-2">
-            <NavbarBrand onNavigate={closeMobile} mode="compact" />
+            <NavbarBrand onNavigate={closeMobile} mode="compact" tone="light" />
           </div>
           <button type="button" onClick={closeMobile} className="shrink-0 text-3xl text-white" aria-label="Cerrar menú">
             <FiX />

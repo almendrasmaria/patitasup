@@ -20,7 +20,7 @@ const RegisterForm = () => {
       <div className="mb-5">
         <Link href="/" className="inline-flex">
           <Image
-            src="/logo.png"
+            src="/logo-dark.png"
             alt="PatitasUp Logo"
             width={320}
             height={84}
