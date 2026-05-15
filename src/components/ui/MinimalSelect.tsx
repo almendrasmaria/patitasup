@@ -36,9 +36,9 @@ export default function MinimalSelect<T extends string>({
         aria-label={ariaLabel}
         className={[
           "group flex h-12 w-full items-center justify-between gap-3 rounded-2xl px-4 text-[15px] font-normal text-[var(--primary)] outline-none",
-          "border border-[var(--warm-beige-dark)]/45 bg-[var(--background)]",
+          "border border-[var(--border-input)] bg-[var(--background)]",
           "transition-[background-color,border-color,box-shadow] duration-200 ease-out",
-          "hover:border-[var(--warm-beige-dark)]/55 hover:bg-[var(--warm-sand)]",
+          "hover:border-[var(--border-neutral-strong)] hover:bg-[var(--warm-sand)]",
           "focus-visible:border-[var(--warm-orange)]/70 focus-visible:ring-1 focus-visible:ring-[var(--warm-orange)]/25",
           "data-[state=open]:border-[var(--warm-orange)]/85 data-[state=open]:bg-[var(--background)] data-[state=open]:shadow-[0_6px_28px_rgba(45,45,45,0.045)]",
           className,
@@ -63,7 +63,7 @@ export default function MinimalSelect<T extends string>({
           position="popper"
           sideOffset={8}
           className={[
-            "z-[1100] min-w-(--radix-select-trigger-width) overflow-hidden rounded-2xl border border-[var(--warm-beige-dark)]/40 bg-[var(--background)] p-2",
+            "z-[1100] min-w-(--radix-select-trigger-width) overflow-hidden rounded-2xl border border-[var(--border-input)] bg-[var(--background)] p-2",
             "shadow-[0_14px_44px_rgba(45,45,45,0.05)]",
           ].join(" ")}
         >

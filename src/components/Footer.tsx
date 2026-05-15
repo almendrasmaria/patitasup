@@ -30,10 +30,10 @@ const Footer = () => {
           <div className="flex flex-col items-center text-center min-[920px]:items-start min-[920px]:text-left">
             <Link
               href="/"
-              className="inline-flex shrink-0 rounded-lg bg-white px-3 py-2 shadow-sm outline-offset-2 transition hover:bg-white/95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 sm:px-4 sm:py-2.5"
+              className="inline-flex shrink-0 outline-offset-2 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60"
             >
               <Image
-                src="/logo.png"
+                src="/logo-light.png"
                 alt="PatitasUp Logo"
                 width={320}
                 height={84}
