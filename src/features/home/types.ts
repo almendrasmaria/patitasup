@@ -1,8 +1,6 @@
 import type { IconType } from "react-icons";
 
-export type HomeProcessAudience = "adopters" | "rescuers";
-
-export type HomeProcessCardData = {
+export type HomeAdoptionStep = {
   number: string;
   title: string;
   description: string;
