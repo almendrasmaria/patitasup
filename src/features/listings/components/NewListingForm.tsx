@@ -12,13 +12,18 @@ import {
   formLabelClass,
   primaryCtaClass,
 } from "../lib/listingStyles";
-import type { PublicationFormStatus, PublicationFormValues } from "../types";
+import type {
+  PublicationFormSpecies,
+  PublicationFormStatus,
+  PublicationFormValues,
+} from "../types";
 
 type ListingFormState = {
   petName: string;
   ageValue: string;
   ageUnit: "days" | "months" | "years";
   sex: "male" | "female";
+  species: PublicationFormSpecies;
   location: string;
   rescueInstagram: string;
   imageUrl: string;
@@ -44,6 +49,7 @@ const initialForm: ListingFormState = {
   ageValue: "",
   ageUnit: "months",
   sex: "female",
+  species: "cat",
   location: "",
   rescueInstagram: "",
   imageUrl: "",
@@ -67,6 +73,7 @@ function buildFormState(initialValues?: PublicationFormValues): ListingFormState
     ageValue: String(initialValues.ageValue),
     ageUnit: initialValues.ageUnit,
     sex: initialValues.sex,
+    species: initialValues.species,
     location: initialValues.location,
     rescueInstagram: initialValues.rescueInstagram,
     imageUrl: initialValues.imageUrl,
@@ -105,6 +112,7 @@ export default function NewListingForm({
       form.ageValue !== initialFormState.ageValue ||
       form.ageUnit !== initialFormState.ageUnit ||
       form.sex !== initialFormState.sex ||
+      form.species !== initialFormState.species ||
       form.location !== initialFormState.location ||
       form.rescueInstagram !== initialFormState.rescueInstagram ||
       form.imageUrl !== initialFormState.imageUrl ||
@@ -290,6 +298,25 @@ export default function NewListingForm({
             <option value="female">Hembra</option>
             <option value="male">Macho</option>
           </select>
+        </div>
+
+        <div>
+          <label htmlFor="species" className={formLabelClass}>
+            Tipo de mascota
+          </label>
+          <select
+            id="species"
+            name="species"
+            value={form.species}
+            onChange={updateField("species")}
+            className={formControlClass}
+          >
+            <option value="cat">Gato</option>
+            <option value="dog">Perro</option>
+          </select>
+          {getFieldError(fieldErrors, "species") ? (
+            <p className={formErrorClass}>{getFieldError(fieldErrors, "species")}</p>
+          ) : null}
         </div>
 
         <div>

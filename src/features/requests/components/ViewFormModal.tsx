@@ -38,7 +38,7 @@ export default function ViewFormModal({ row, onClose }: ViewFormModalProps) {
               <div>
                 <h2 className="text-lg font-semibold text-[var(--foreground-inverse)]">Solicitud de adopción</h2>
                 <p className="mt-1 text-sm text-[var(--neutral-500)]">
-                  {row.petName} · {row.dateLabel}
+                  {row.petName} · {row.petSpecies} · {row.dateLabel}
                 </p>
               </div>
               <button
