@@ -1,5 +1,7 @@
 import HomeView from "@/features/home/components/HomeView";
 
-export default function Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
   return <HomeView />;
 }

@@ -1,53 +1,62 @@
-"use client";
+import { HOME_ADOPTION_STEPS } from "../constants/processContent";
+import type { HomeAdoptionStep } from "../types";
 
-import { useState } from "react";
+function StepIcon({ step }: { step: HomeAdoptionStep }) {
+  const Icon = step.icon;
 
-import { HOME_PROCESS_CONTENT } from "../constants/processContent";
-import type { HomeProcessAudience } from "../types";
-
-import HomeProcessTabs from "./HomeProcessTabs";
+  return <Icon className="h-7 w-7 shrink-0" strokeWidth={1.85} aria-hidden />;
+}
 
 export default function HomeProcessSection() {
-  const [audience, setAudience] = useState<HomeProcessAudience>("adopters");
-  const cards = HOME_PROCESS_CONTENT[audience];
-
   return (
-    <section id="como-funciona" className="bg-white py-16 sm:py-20 md:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center sm:mb-14 md:mb-16">
-          <h2 className="mb-3 text-balance text-3xl font-bold tracking-tight text-[var(--foreground)] md:mb-4 md:text-4xl">
-            ¿Cómo funciona la adopción?
-          </h2>
-          <p className="mx-auto max-w-2xl text-pretty text-base leading-relaxed text-[var(--muted-foreground)] md:text-lg">
-            Adoptar es fácil y seguro. Seguimos un proceso responsable para garantizar el bienestar de nuestras
-            mascotas.
-          </p>
-        </div>
-
-        <div className="mb-10 flex justify-center sm:mb-12 md:mb-14">
-          <HomeProcessTabs value={audience} onChange={setAudience} />
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {cards.map(({ number, title, description, icon: Icon }) => (
-            <article
-              key={`${audience}-${number}`}
-              className="relative h-full rounded-2xl bg-[var(--surface-card)] p-6 pt-3 pl-3 text-left shadow-sm transition-shadow hover:shadow-lg sm:p-7 sm:pt-4 sm:pl-4"
+    <section
+      id="como-funciona"
+      className="border-t border-[var(--border-hairline)] bg-[var(--warm-sand)] px-6 py-24 md:px-10 lg:px-16"
+    >
+      <div className="mx-auto max-w-7xl">
+        <header className="mb-11 sm:mb-14">
+          <div className="max-w-2xl">
+            <span className="text-[#FF7645] text-sm tracking-widest uppercase">Cómo funciona</span>
+            <h3
+              className="mt-2 tracking-tight text-[#304543]"
+              style={{
+                fontFamily: "Poppins",
+                fontSize: "clamp(2rem, 4vw, 3.25rem)",
+                lineHeight: 1.05,
+                fontWeight: 500,
+              }}
             >
-              <div
-                className="absolute -left-1 -top-1 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--warm-orange)] text-sm font-bold text-white shadow-md sm:-left-2 sm:-top-2"
-                aria-hidden
-              >
-                {number}
+              Adoptar es darle hogar
+              <br />
+              a quien más lo necesita
+            </h3>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-6 xl:gap-7">
+          {HOME_ADOPTION_STEPS.map((step) => (
+            <article
+              key={step.number}
+              className="group flex flex-col rounded-2xl border border-[var(--border-neutral)]/80 bg-white p-6 shadow-[0_2px_12px_rgba(45,45,45,0.04)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-[var(--warm-orange)]/35 hover:shadow-[0_20px_44px_rgba(48,69,67,0.1)] sm:p-7 lg:p-8"
+            >
+              <div className="relative mb-6 flex min-h-[4.5rem] items-start justify-between gap-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-[var(--warm-orange)] text-white shadow-[0_4px_12px_rgba(255,136,86,0.35)] transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:shadow-[0_8px_22px_rgba(255,136,86,0.45)]">
+                  <StepIcon step={step} />
+                </div>
+                <span
+                  className="pointer-events-none -mr-1 -mt-1 select-none font-bold tabular-nums leading-none text-[var(--neutral-400)]/[0.35]"
+                  style={{ fontSize: "clamp(3.5rem, 9vw, 4.25rem)" }}
+                  aria-hidden
+                >
+                  {step.number}
+                </span>
               </div>
 
-              <div className="mb-4 mt-2 flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-process-icon)]">
-                <Icon className="h-8 w-8 text-[var(--warm-orange)]" strokeWidth={1.75} aria-hidden />
-              </div>
-
-              <h3 className="mb-3 text-xl font-semibold tracking-tight text-[var(--foreground)]">{title}</h3>
-              <p className="text-sm leading-relaxed text-[var(--muted-foreground)] sm:text-[15px]">
-                {description}
+              <h4 className="text-lg font-bold tracking-tight text-[var(--foreground-table)] sm:text-[1.125rem]">
+                {step.title}
+              </h4>
+              <p className="mt-2.5 text-pretty text-sm leading-relaxed text-[var(--neutral-600)] sm:text-[15px] sm:leading-[1.65]">
+                {step.description}
               </p>
             </article>
           ))}
