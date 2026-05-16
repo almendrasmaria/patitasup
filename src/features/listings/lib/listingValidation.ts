@@ -19,6 +19,7 @@ export const saveListingSchema = z
     ageValue: z.coerce.number().int().min(1).max(3650),
     ageUnit: z.enum(["days", "months", "years"]),
     sex: z.enum(["male", "female"]),
+    species: z.enum(["cat", "dog"]),
     location: z.string().trim().min(2).max(120),
     description: z.string().trim().min(30).max(1200),
     rescueInstagram: z.preprocess(

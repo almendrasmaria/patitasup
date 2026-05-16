@@ -17,11 +17,12 @@ type ListingsTableProps = {
 
 const colgroup = (
   <colgroup>
-    <col style={{ width: "18%" }} />
-    <col style={{ width: "11%" }} />
-    <col style={{ width: "11%" }} />
-    <col style={{ width: "24%" }} />
-    <col style={{ width: "18%" }} />
+    <col style={{ width: "16%" }} />
+    <col style={{ width: "10%" }} />
+    <col style={{ width: "10%" }} />
+    <col style={{ width: "10%" }} />
+    <col style={{ width: "22%" }} />
+    <col style={{ width: "16%" }} />
     <col style={{ width: "6.25rem" }} />
   </colgroup>
 );
@@ -50,6 +51,9 @@ export default function ListingsTable({
             <th scope="col" className={`${tableHeaderClass} text-center whitespace-nowrap`}>
               Sexo
             </th>
+            <th scope="col" className={`${tableHeaderClass} text-center whitespace-nowrap`}>
+              Tipo
+            </th>
             <th scope="col" className={`${tableHeaderClass} text-center`}>
               Estado
             </th>
@@ -64,7 +68,7 @@ export default function ListingsTable({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
+              <td colSpan={7} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
                 No hay publicaciones para este filtro.
               </td>
             </tr>
@@ -84,6 +88,7 @@ export default function ListingsTable({
               </td>
               <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.age}</td>
               <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.sex}</td>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.species}</td>
               <td className={`${tableCellClass} text-center`}>
                 <div className="flex justify-center">
                   <StatusBadge

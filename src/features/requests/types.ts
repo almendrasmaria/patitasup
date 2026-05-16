@@ -5,6 +5,7 @@ export type AdoptionRequestFilter = "todas" | AdoptionRequestStatus;
 export type AdoptionRequestRow = {
   id: string;
   petName: string;
+  petSpecies: string;
   adoptanteName: string;
   adoptanteEmail?: string;
   adoptantePhone?: string;

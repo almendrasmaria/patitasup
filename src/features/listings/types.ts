@@ -4,6 +4,8 @@ export type PublicationFormAgeUnit = "days" | "months" | "years";
 
 export type PublicationFormSex = "male" | "female";
 
+export type PublicationFormSpecies = "cat" | "dog";
+
 export type PublicationFormStatus = "active" | "adopted" | "draft";
 
 export type Publication = {
@@ -11,6 +13,7 @@ export type Publication = {
   petName: string;
   age: string;
   sex: string;
+  species: string;
   status: PublicationStatus;
   date: string;
 };
@@ -20,6 +23,7 @@ export type PublicationFormValues = {
   ageValue: number;
   ageUnit: PublicationFormAgeUnit;
   sex: PublicationFormSex;
+  species: PublicationFormSpecies;
   location: string;
   rescueInstagram: string;
   imageUrl: string;

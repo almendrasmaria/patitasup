@@ -59,7 +59,7 @@ export const mockPets: Pet[] = [
     name: "Simba",
     image: "/cats/cat2.webp",
     sex: "male",
-    species: "cat",
+    species: "dog",
     ageLabel: "1 año",
     locationLabel: "Flores",
     description:
@@ -85,7 +85,7 @@ export const mockPets: Pet[] = [
     name: "Toby",
     image: "/cats/cat1.webp",
     sex: "male",
-    species: "cat",
+    species: "dog",
     ageLabel: "2 años",
     locationLabel: "San Telmo",
     description:
@@ -111,7 +111,7 @@ export const mockPets: Pet[] = [
     name: "Mike",
     image: "/cats/cat3.webp",
     sex: "male",
-    species: "cat",
+    species: "dog",
     ageLabel: "3 años",
     locationLabel: "Boedo",
     description:

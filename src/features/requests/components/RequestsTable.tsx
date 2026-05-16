@@ -23,12 +23,13 @@ const tdBase = `${tableCellClass} align-middle text-center`;
 
 const colgroup = (
   <colgroup>
+    <col style={{ width: "14%" }} />
+    <col style={{ width: "10%" }} />
     <col style={{ width: "17%" }} />
-    <col style={{ width: "19%" }} />
-    <col style={{ width: "17%" }} />
-    <col style={{ width: "12%" }} />
-    <col style={{ width: "19%" }} />
-    <col style={{ width: "16%" }} />
+    <col style={{ width: "15%" }} />
+    <col style={{ width: "11%" }} />
+    <col style={{ width: "18%" }} />
+    <col style={{ width: "15%" }} />
   </colgroup>
 );
 
@@ -47,6 +48,9 @@ export default function RequestsTable({
           <tr className="border-b border-[var(--border-hairline)]">
             <th scope="col" className={`${tableHeaderClass} align-middle`}>
               Mascota
+            </th>
+            <th scope="col" className={`${tableHeaderClass} align-middle whitespace-nowrap`}>
+              Tipo
             </th>
             <th scope="col" className={`${tableHeaderClass} align-middle`}>
               Adoptante
@@ -68,7 +72,7 @@ export default function RequestsTable({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
+              <td colSpan={7} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
                 No hay solicitudes para este filtro.
               </td>
             </tr>
@@ -94,6 +98,7 @@ export default function RequestsTable({
                     {row.petName}
                   </span>
                 </td>
+                <td className={`${tdBase} text-[var(--neutral-600)] whitespace-nowrap`}>{row.petSpecies}</td>
                 <td className={`${tdBase} max-w-0 text-[var(--neutral-600)]`}>
                   <span className="block truncate" title={row.adoptanteName}>
                     {row.adoptanteName}
