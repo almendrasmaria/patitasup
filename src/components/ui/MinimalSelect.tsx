@@ -40,7 +40,7 @@ export default function MinimalSelect<T extends string>({
           "transition-[background-color,border-color,box-shadow] duration-200 ease-out",
           "hover:border-[var(--border-neutral-strong)] hover:bg-[var(--warm-sand)]",
           "focus-visible:border-[var(--warm-orange)]/70 focus-visible:ring-1 focus-visible:ring-[var(--warm-orange)]/25",
-          "data-[state=open]:border-[var(--warm-orange)]/85 data-[state=open]:bg-[var(--background)] data-[state=open]:shadow-[0_6px_28px_rgba(45,45,45,0.045)]",
+          "data-[state=open]:border-[var(--warm-orange)]/85 data-[state=open]:bg-[var(--background)] data-[state=open]:shadow-[var(--shadow-select-trigger)]",
           className,
         ].join(" ")}
       >
@@ -64,7 +64,7 @@ export default function MinimalSelect<T extends string>({
           sideOffset={8}
           className={[
             "z-[1100] min-w-(--radix-select-trigger-width) overflow-hidden rounded-2xl border border-[var(--border-input)] bg-[var(--background)] p-2",
-            "shadow-[0_14px_44px_rgba(45,45,45,0.05)]",
+            "shadow-[var(--shadow-card-elevated)]",
           ].join(" ")}
         >
           <Select.Viewport className="max-h-[min(360px,70vh)] overflow-y-auto p-1">

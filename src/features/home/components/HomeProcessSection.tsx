@@ -37,10 +37,10 @@ export default function HomeProcessSection() {
           {HOME_ADOPTION_STEPS.map((step) => (
             <article
               key={step.number}
-              className="group flex flex-col rounded-2xl border border-[var(--border-neutral)]/80 bg-white p-6 shadow-[0_2px_12px_rgba(45,45,45,0.04)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-[var(--warm-orange)]/35 hover:shadow-[0_20px_44px_rgba(48,69,67,0.1)] sm:p-7 lg:p-8"
+              className="group flex flex-col rounded-2xl border border-[var(--border-neutral)]/80 bg-white p-6 shadow-[var(--shadow-card-subtle)] transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-[var(--warm-orange)]/35 hover:shadow-[var(--shadow-teal-card-hover)] sm:p-7 lg:p-8"
             >
               <div className="relative mb-6 flex min-h-[4.5rem] items-start justify-between gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-[var(--warm-orange)] text-white shadow-[0_4px_12px_rgba(255,136,86,0.35)] transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:shadow-[0_8px_22px_rgba(255,136,86,0.45)]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-[var(--warm-orange)] text-white shadow-[var(--shadow-accent-icon)] transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:shadow-[var(--shadow-accent-icon-hover)]">
                   <StepIcon step={step} />
                 </div>
                 <span
