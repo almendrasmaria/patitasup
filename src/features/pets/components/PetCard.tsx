@@ -21,8 +21,8 @@ export default function PetCard({ pet, favorite }: Props) {
   const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
 
   return (
-    <article className="group flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
-      <div className="relative w-full">
+    <article className="flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
+      <div className="group relative w-full">
         <div className="relative aspect-[4/5] overflow-hidden bg-[var(--warm-sand)]">
           <Image
             src={pet.image}
