@@ -203,7 +203,7 @@ export default function MyListingsClient({
                 onClick={handleSaveStatuses}
                 disabled={saveButtonDisabled}
                 className={saveButtonDisabled
-                  ? "inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#d9dbe8] px-5 py-2.5 text-sm font-semibold text-white shadow-sm sm:w-auto"
+                  ? "inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--border-input)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm sm:w-auto"
                   : `${primaryCtaClass} w-full justify-center sm:w-auto`}
               >
                 <FiSave className="h-5 w-5 shrink-0" aria-hidden />
@@ -239,8 +239,8 @@ export default function MyListingsClient({
           savingStatuses={savingStatuses}
         />
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-[#ececf2] pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[#6b7280]">
+        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border-hairline)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--neutral-500)]">
             Mostrando {showingCount} de {totalResults} resultados
           </p>
 
@@ -252,7 +252,7 @@ export default function MyListingsClient({
           />
         </div>
 
-        {statusActivityMessage ? <p className="text-right text-sm text-[#6b7280]">{statusActivityMessage}</p> : null}
+        {statusActivityMessage ? <p className="text-right text-sm text-[var(--neutral-500)]">{statusActivityMessage}</p> : null}
       </div>
     </div>
   );

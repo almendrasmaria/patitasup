@@ -23,37 +23,38 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-[520px]">
-      <div className="mb-5 flex items-center gap-3">
-        <div className="flex h-[100px] w-[100px] items-center justify-center rounded-2xl bg-[#7061F0] shadow-[0_12px_30px_rgba(112,97,240,0.25)]">
+      <div className="mb-5">
+        <Link href="/" className="inline-flex">
           <Image
-            src="/logo.webp"
-            alt="PatitasUp"
-            width={56}
-            height={56}
-            className="h-20 w-20"
+            src="/logo-dark.webp"
+            alt="PatitasUp Logo"
+            width={320}
+            height={84}
+            sizes="(max-width: 640px) 240px, 280px"
+            className="aspect-[320/84] h-14 w-auto max-h-14 max-w-full object-contain object-left sm:h-16 sm:max-h-16"
           />
-        </div>
+        </Link>
       </div>
 
       <div className="mb-7">
-        <h1 className="text-[32px] font-semibold leading-[1.1] text-[#242424] md:text-[36px]">
+        <h1 className="text-[32px] font-semibold leading-[1.1] text-[var(--foreground-strong)] md:text-[36px]">
           Bienvenido de nuevo
         </h1>
 
-        <p className="mt-3 max-w-[500px] text-[15px] leading-7 text-[#6b7280]">
+        <p className="mt-3 max-w-[500px] text-[15px] leading-7 text-[var(--neutral-500)]">
           Ingresá a tu cuenta para gestionar publicaciones y seguir ayudando a
           más gatos a encontrar una familia.
         </p>
       </div>
 
-      <div className="mb-7 h-px w-full bg-[#ececf2]" />
+      <div className="mb-7 h-px w-full bg-[var(--border-hairline)]" />
 
       <form action={formAction} className="space-y-5">
         <input type="hidden" name="next" value={next} />
 
         {statusMessage ? (
           <div
-            className="rounded-md border border-[#ef4444]/20 bg-[#fef2f2] px-4 py-3 text-[14px] text-[#b91c1c]"
+            className="rounded-md border border-[var(--destructive-border-soft)] bg-[var(--destructive-bg)] px-4 py-3 text-[14px] text-[var(--destructive-strong)]"
           >
             {statusMessage}
           </div>
@@ -73,7 +74,7 @@ const LoginForm = () => {
         <div>
           <label
             htmlFor="password"
-            className="mb-2 block text-[14px] font-medium text-[#374151]"
+            className="mb-2 block text-[14px] font-medium text-[var(--neutral-700)]"
           >
             Contraseña
           </label>
@@ -87,13 +88,13 @@ const LoginForm = () => {
               autoComplete="current-password"
               required
               aria-invalid={Boolean(state.fieldErrors?.password?.[0])}
-              className="h-[48px] w-full rounded-md border border-[#d9dbe8] bg-white px-4 pr-11 text-[14px] text-[#111827] outline-none placeholder:text-[#9ca3af] focus:border-[#7061F0] focus:ring-2 focus:ring-[#7061F0]/15"
+              className="h-[48px] w-full rounded-md border border-[var(--border-input)] bg-white px-4 pr-11 text-[14px] text-[var(--foreground-inverse)] outline-none placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring-15)]"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] transition hover:text-[#7061F0]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--placeholder)] transition hover:text-[var(--accent)]"
               aria-label={
                 showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
               }
@@ -103,7 +104,7 @@ const LoginForm = () => {
           </div>
 
           {state.fieldErrors?.password?.[0] ? (
-            <p className="mt-2 text-[13px] text-[#dc2626]">
+            <p className="mt-2 text-[13px] text-[var(--destructive)]">
               {state.fieldErrors.password[0]}
             </p>
           ) : null}
@@ -112,7 +113,7 @@ const LoginForm = () => {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-[13px] font-medium text-[#7061F0] hover:underline"
+            className="text-[13px] font-medium text-[var(--accent)] hover:underline"
           >
             ¿Olvidaste tu contraseña?
           </Link>
@@ -121,17 +122,17 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={pending}
-          className="h-[46px] w-full rounded-md bg-[#7061F0] text-[14px] font-medium text-white transition hover:opacity-95"
+          className="h-[46px] w-full rounded-md bg-[var(--accent)] text-[14px] font-medium text-white transition hover:opacity-95"
         >
           {pending ? "Ingresando..." : "Iniciar sesión"}
         </button>
       </form>
 
-      <p className="mt-7 text-center text-[14px] text-[#4b5563]">
+      <p className="mt-7 text-center text-[14px] text-[var(--neutral-600)]">
         ¿No tienes una cuenta?{" "}
         <Link
           href="/register"
-          className="font-medium text-[#7061F0] hover:underline"
+          className="font-medium text-[var(--accent)] hover:underline"
         >
           Crear cuenta
         </Link>
@@ -165,7 +166,7 @@ const Input = ({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block text-[14px] font-medium text-[#374151]"
+        className="mb-2 block text-[14px] font-medium text-[var(--neutral-700)]"
       >
         {label}
       </label>
@@ -179,10 +180,10 @@ const Input = ({
         autoComplete={autoComplete}
         required
         aria-invalid={Boolean(error)}
-        className="h-[48px] w-full rounded-md border border-[#d9dbe8] bg-white px-4 text-[14px] text-[#111827] outline-none placeholder:text-[#9ca3af] focus:border-[#7061F0] focus:ring-2 focus:ring-[#7061F0]/15"
+        className="h-[48px] w-full rounded-md border border-[var(--border-input)] bg-white px-4 text-[14px] text-[var(--foreground-inverse)] outline-none placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring-15)]"
       />
 
-      {error ? <p className="mt-2 text-[13px] text-[#dc2626]">{error}</p> : null}
+      {error ? <p className="mt-2 text-[13px] text-[var(--destructive)]">{error}</p> : null}
     </div>
   );
 };

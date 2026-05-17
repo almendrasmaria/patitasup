@@ -40,13 +40,9 @@ export default function MisPublicacionesClient({
     setPage(1);
   };
 
-  const handleEdit = (_row: Publication) => {
-    /* Mock: connect to edit flow when backend is ready */
-  };
+  const handleEdit = (_row: Publication) => {};
 
-  const handleDelete = (_row: Publication) => {
-    /* Mock: connect to delete flow when backend is ready */
-  };
+  const handleDelete = (_row: Publication) => {};
 
   const showingCount = pageRows.length;
 
@@ -74,8 +70,8 @@ export default function MisPublicacionesClient({
           onDelete={handleDelete}
         />
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-[#ececf2] pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[#6b7280]">
+        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border-hairline)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--neutral-500)]">
             Mostrando {showingCount} de {totalResults} resultados
           </p>
 

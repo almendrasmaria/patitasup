@@ -4,18 +4,22 @@ import { randomUUID } from "node:crypto";
 import {
   PublicationAgeUnit as PrismaAgeUnit,
   PublicationSex as PrismaSex,
+  PublicationSpecies as PrismaSpecies,
   PublicationStatus as PrismaStatus,
   type Profile,
   type Publication as PrismaPublication,
 } from "@prisma/client";
 
-import type { Cat } from "@/features/cats/types";
+import { formatPetSpeciesLabel } from "@/features/pets/lib/formatPetSpeciesLabel";
+import type { Pet } from "@/features/pets/types";
+import { formatDashboardDate } from "@/lib/formatDashboardDate";
 import { prisma } from "@/lib/prisma";
 
 import type {
   Publication,
   PublicationFormAgeUnit,
   PublicationFormSex,
+  PublicationFormSpecies,
   PublicationFormStatus,
   PublicationFormValues,
   PublicationStatus,
@@ -25,12 +29,6 @@ import type {
   SaveListingStatusesInput,
   UpdateListingInput,
 } from "./listingValidation";
-
-const dateFormatter = new Intl.DateTimeFormat("es-AR", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-});
 
 const statusByPrismaStatus: Record<PrismaStatus, PublicationStatus> = {
   [PrismaStatus.ACTIVE]: "activo",
@@ -43,7 +41,12 @@ const sexByPrismaSex: Record<PrismaSex, string> = {
   [PrismaSex.FEMALE]: "Hembra",
 };
 
-const catSexByPrismaSex: Record<PrismaSex, Cat["sex"]> = {
+const speciesByPrismaSpecies: Record<PrismaSpecies, string> = {
+  [PrismaSpecies.CAT]: formatPetSpeciesLabel("cat"),
+  [PrismaSpecies.DOG]: formatPetSpeciesLabel("dog"),
+};
+
+const petSexByPrismaSex: Record<PrismaSex, Pet["sex"]> = {
   [PrismaSex.MALE]: "male",
   [PrismaSex.FEMALE]: "female",
 };
@@ -68,6 +71,21 @@ const prismaSexByInput: Record<PublicationFormSex, PrismaSex> = {
 const inputSexByPrismaSex: Record<PrismaSex, PublicationFormSex> = {
   [PrismaSex.MALE]: "male",
   [PrismaSex.FEMALE]: "female",
+};
+
+const petSpeciesByPrismaSpecies: Record<PrismaSpecies, Pet["species"]> = {
+  [PrismaSpecies.CAT]: "cat",
+  [PrismaSpecies.DOG]: "dog",
+};
+
+const prismaSpeciesByInput: Record<PublicationFormSpecies, PrismaSpecies> = {
+  cat: PrismaSpecies.CAT,
+  dog: PrismaSpecies.DOG,
+};
+
+const inputSpeciesByPrismaSpecies: Record<PrismaSpecies, PublicationFormSpecies> = {
+  [PrismaSpecies.CAT]: "cat",
+  [PrismaSpecies.DOG]: "dog",
 };
 
 const prismaStatusByInput: Record<PublicationFormStatus, PrismaStatus> = {
@@ -121,11 +139,16 @@ function getPublishedAtForStatus(status: PrismaStatus, currentPublishedAt: Date 
   return currentPublishedAt ?? new Date();
 }
 
-function getFallbackImage(rowId: string) {
-  const imageNumber =
-    (Array.from(rowId).reduce((total, char) => total + char.charCodeAt(0), 0) % 3) + 1;
+function getFallbackImage(rowId: string, species: PrismaSpecies) {
+  const hash = Array.from(rowId).reduce((total, char) => total + char.charCodeAt(0), 0);
 
-  return `/cats/cat${imageNumber}.jpg`;
+  if (species === PrismaSpecies.DOG) {
+    const imageNumber = (hash % 4) + 1;
+    return `/dogs/dog${imageNumber}.webp`;
+  }
+
+  const imageNumber = (hash % 5) + 1;
+  return `/cats/cat${imageNumber}.webp`;
 }
 
 type ListingWithAuthor = PrismaPublication & {
@@ -138,8 +161,9 @@ export function mapListingRow(row: PrismaPublication): Publication {
     petName: row.petName,
     age: formatAge(row.ageValue, row.ageUnit),
     sex: sexByPrismaSex[row.sex],
+    species: speciesByPrismaSpecies[row.species],
     status: statusByPrismaStatus[row.status],
-    date: dateFormatter.format(row.publishedAt ?? row.createdAt),
+    date: formatDashboardDate(row.publishedAt ?? row.createdAt),
   };
 }
 
@@ -149,6 +173,7 @@ export function mapListingRowToFormValues(row: PrismaPublication): PublicationFo
     ageValue: row.ageValue,
     ageUnit: inputAgeUnitByPrismaAgeUnit[row.ageUnit],
     sex: inputSexByPrismaSex[row.sex],
+    species: inputSpeciesByPrismaSpecies[row.species],
     location: row.location,
     rescueInstagram: row.rescueInstagram ?? "",
     imageUrl: row.imageUrl ?? "",
@@ -157,13 +182,14 @@ export function mapListingRowToFormValues(row: PrismaPublication): PublicationFo
   };
 }
 
-export function mapListingRowToCat(row: ListingWithAuthor): Cat {
+export function mapListingRowToPet(row: ListingWithAuthor): Pet {
   return {
     id: row.id,
     slug: row.slug,
     name: row.petName,
-    image: row.imageUrl ?? getFallbackImage(row.id),
-    sex: catSexByPrismaSex[row.sex],
+    image: row.imageUrl ?? getFallbackImage(row.id, row.species),
+    sex: petSexByPrismaSex[row.sex],
+    species: petSpeciesByPrismaSpecies[row.species],
     ageLabel: formatAge(row.ageValue, row.ageUnit),
     locationLabel: row.location,
     description: row.description,
@@ -182,7 +208,7 @@ export async function listListingsForProfile(profileId: string) {
   return rows.map(mapListingRow);
 }
 
-export async function listPublishedListingCats() {
+export async function listPublishedListingPets() {
   const rows = await prisma.publication.findMany({
     where: {
       status: PrismaStatus.ACTIVE,
@@ -197,10 +223,10 @@ export async function listPublishedListingCats() {
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
   });
 
-  return rows.map(mapListingRowToCat);
+  return rows.map(mapListingRowToPet);
 }
 
-export async function findPublishedListingCatBySlug(slug: string) {
+export async function findPublishedListingPetBySlug(slug: string) {
   const row = await prisma.publication.findFirst({
     where: {
       slug,
@@ -215,7 +241,7 @@ export async function findPublishedListingCatBySlug(slug: string) {
     },
   });
 
-  return row ? mapListingRowToCat(row) : null;
+  return row ? mapListingRowToPet(row) : null;
 }
 
 export async function createListingForProfile(
@@ -232,6 +258,7 @@ export async function createListingForProfile(
       ageValue: input.ageValue,
       ageUnit: prismaAgeUnitByInput[input.ageUnit],
       sex: prismaSexByInput[input.sex],
+      species: prismaSpeciesByInput[input.species],
       location: input.location,
       description: input.description,
       rescueInstagram: normalizeInstagram(input.rescueInstagram),
@@ -286,6 +313,7 @@ export async function updateListingForProfile(
       ageValue: input.ageValue,
       ageUnit: prismaAgeUnitByInput[input.ageUnit],
       sex: prismaSexByInput[input.sex],
+      species: prismaSpeciesByInput[input.species],
       location: input.location,
       description: input.description,
       rescueInstagram: normalizeInstagram(input.rescueInstagram),

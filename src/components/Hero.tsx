@@ -40,7 +40,7 @@ const Hero = ({
       <header className="flex flex-col items-center text-center text-white">
         {badgeText && (
           <div className="mb-4">
-            <Badge text={badgeText} />
+            <Badge text={badgeText} variant="onAccent" />
           </div>
         )}
 
@@ -70,7 +70,7 @@ const Hero = ({
           {primaryButton && (
             <button
               onClick={primaryButton.onClick}
-              className="rounded-lg bg-white px-6 py-3 text-[14px] font-semibold text-[#7061F0] shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-px"
+              className="rounded-lg bg-white px-6 py-3 text-[14px] font-semibold text-[var(--warm-orange)] shadow-md shadow-black/15 transition hover:bg-white/95 active:translate-y-px"
             >
               {primaryButton.label}
             </button>
