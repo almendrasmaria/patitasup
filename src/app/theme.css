@@ -134,8 +134,20 @@
 
   --shadow-dropdown: 0 18px 50px rgb(15 23 42 / 0.12);
   --shadow-card-soft: 0 14px 40px rgb(15 23 42 / 0.08);
+  --shadow-card-subtle: 0 2px 12px rgb(45 45 45 / 0.04);
+  --shadow-card-elevated: 0 14px 44px rgb(45 45 45 / 0.05);
+  --shadow-select-trigger: 0 6px 28px rgb(45 45 45 / 0.045);
   --shadow-accent-button: 0 12px 28px rgb(255 136 86 / 0.32);
+  --shadow-accent-icon: 0 4px 12px rgb(255 136 86 / 0.35);
+  --shadow-accent-icon-hover: 0 8px 22px rgb(255 136 86 / 0.45);
+  --shadow-accent-badge: 0 4px 12px rgb(255 136 86 / 0.4);
   --shadow-pagination-active: 0 10px 22px rgb(255 136 86 / 0.38);
+  --shadow-teal-badge: 0 4px 12px rgb(48 69 67 / 0.35);
+  --shadow-teal-button: 0 12px 32px rgb(48 69 67 / 0.2);
+  --shadow-teal-button-hover: 0 16px 40px rgb(48 69 67 / 0.26);
+  --shadow-teal-button-strong: 0 12px 32px rgb(48 69 67 / 0.28);
+  --shadow-teal-button-strong-hover: 0 16px 40px rgb(48 69 67 / 0.34);
+  --shadow-teal-card-hover: 0 20px 44px rgb(48 69 67 / 0.1);
   --shadow-contact-card: 0 20px 60px rgb(0 0 0 / 0.1);
   --shadow-quote: 0 18px 46px rgb(45 45 45 / 0.03);
   --shadow-cta-warm: 0 24px 60px rgb(255 136 86 / 0.35);

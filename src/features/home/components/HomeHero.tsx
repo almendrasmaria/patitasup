@@ -110,7 +110,7 @@ export default function HomeHero() {
         >
           <Link
             href="/pets"
-            className="group flex min-h-[3.25rem] w-full touch-manipulation items-center justify-center gap-3 rounded-full bg-white py-2.5 pl-7 pr-2.5 text-[15px] font-semibold text-[var(--brand-teal)] shadow-[0_12px_32px_rgba(48,69,67,0.2)] transition-[transform,box-shadow,background-color,color] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(48,69,67,0.26)] active:translate-y-0 sm:inline-flex sm:w-auto sm:text-base [@media(max-height:680px)]:min-h-11 [@media(max-height:680px)]:py-2 [@media(max-height:680px)]:pl-5 [@media(max-height:680px)]:pr-2 [@media(max-height:680px)]:text-sm"
+            className="group flex min-h-[3.25rem] w-full touch-manipulation items-center justify-center gap-3 rounded-full bg-white py-2.5 pl-7 pr-2.5 text-[15px] font-semibold text-[var(--brand-teal)] shadow-[var(--shadow-teal-button)] transition-[transform,box-shadow,background-color,color] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-teal-button-hover)] active:translate-y-0 sm:inline-flex sm:w-auto sm:text-base [@media(max-height:680px)]:min-h-11 [@media(max-height:680px)]:py-2 [@media(max-height:680px)]:pl-5 [@media(max-height:680px)]:pr-2 [@media(max-height:680px)]:text-sm"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <FiHeart
@@ -119,14 +119,14 @@ export default function HomeHero() {
               aria-hidden
             />
             Quiero adoptar
-            <span className="ml-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--warm-orange)] text-white shadow-[0_4px_12px_rgba(255,136,86,0.4)] transition-colors group-hover:bg-[var(--brand-teal)] group-hover:shadow-[0_4px_12px_rgba(48,69,67,0.35)]">
+            <span className="ml-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--warm-orange)] text-white shadow-[var(--shadow-accent-badge)] transition-colors group-hover:bg-[var(--brand-teal)] group-hover:shadow-[var(--shadow-teal-badge)]">
               <FiArrowUpRight className="h-[18px] w-[18px]" strokeWidth={2.25} aria-hidden />
             </span>
           </Link>
 
           <Link
             href="/register"
-            className="flex min-h-[3.25rem] w-full touch-manipulation items-center justify-center gap-2.5 rounded-full bg-[var(--brand-teal)] px-8 py-3 text-[15px] font-semibold text-white shadow-[0_12px_32px_rgba(48,69,67,0.28)] transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--brand-teal-hover)] hover:shadow-[0_16px_40px_rgba(48,69,67,0.34)] active:translate-y-0 sm:inline-flex sm:w-auto sm:text-base [@media(max-height:680px)]:min-h-11 [@media(max-height:680px)]:px-6 [@media(max-height:680px)]:text-sm"
+            className="flex min-h-[3.25rem] w-full touch-manipulation items-center justify-center gap-2.5 rounded-full bg-[var(--brand-teal)] px-8 py-3 text-[15px] font-semibold text-white shadow-[var(--shadow-teal-button-strong)] transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:bg-[var(--brand-teal-hover)] hover:shadow-[var(--shadow-teal-button-strong-hover)] active:translate-y-0 sm:inline-flex sm:w-auto sm:text-base [@media(max-height:680px)]:min-h-11 [@media(max-height:680px)]:px-6 [@media(max-height:680px)]:text-sm"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <FiHome className="h-5 w-5 shrink-0" strokeWidth={2.25} aria-hidden />
