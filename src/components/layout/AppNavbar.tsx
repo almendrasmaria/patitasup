@@ -150,12 +150,12 @@ export default function AppNavbar({ navUser }: Props) {
     <>
       <nav data-site-navbar className="relative z-50 border-b border-[var(--border)] bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-              <div className="relative z-20 flex items-center gap-2">
+          <div className="grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+              <div className="relative z-20 flex min-w-0 items-center justify-self-start">
                 <NavbarBrand onNavigate={closeMobile} imagePriority />
               </div>
 
-              <div className="relative hidden flex-1 items-center justify-center px-6 md:flex">
+              <div className="relative hidden justify-self-center md:block">
                 <div aria-label={inDashboard ? "Panel principal" : "Navegación principal"} role="navigation">
                   {usePublicCenterNav ? (
                     <ul className="flex flex-wrap items-center justify-center gap-8">
@@ -189,7 +189,7 @@ export default function AppNavbar({ navUser }: Props) {
                 </div>
               </div>
 
-              <div className="relative z-20 flex shrink-0 items-center justify-end">
+              <div className="relative z-20 col-start-2 flex min-w-0 items-center justify-end justify-self-end md:col-start-3">
                 {loggedIn && navUser ? (
                   <>
                     <div ref={dropdownRef} className="relative hidden md:block">
