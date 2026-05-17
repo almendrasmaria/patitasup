@@ -23,9 +23,9 @@ export default function HomeSpotlightPetsSection({ pets }: Props) {
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4 md:mb-12">
           <div>
-            <span className="text-sm uppercase tracking-widest text-[#FF7645]">Listos para adopción</span>
+            <span className="text-sm uppercase tracking-widest text-[var(--warm-orange)]">Listos para adopción</span>
             <h3
-              className="mt-2 tracking-tight text-[#304543]"
+              className="mt-2 tracking-tight text-[var(--brand-teal)]"
               style={{
                 fontFamily: "Poppins",
                 fontSize: "clamp(2rem, 4vw, 3.25rem)",
@@ -40,7 +40,7 @@ export default function HomeSpotlightPetsSection({ pets }: Props) {
           </div>
           <Link
             href="/pets"
-            className="group inline-flex items-center gap-2 text-sm font-medium text-[#304543] transition-colors hover:text-[#FF7645] md:text-base"
+            className="group inline-flex items-center gap-2 text-sm font-medium text-[var(--brand-teal)] transition-colors hover:text-[var(--warm-orange)] md:text-base"
           >
             Ver todos
             <FiArrowUpRight className="h-[18px] w-[18px] shrink-0 transition-transform group-hover:rotate-45" aria-hidden />
@@ -64,7 +64,7 @@ export default function HomeSpotlightPetsSection({ pets }: Props) {
                   className="object-cover transition-all duration-700 group-hover:scale-105"
                 />
                 <div
-                  className="absolute inset-0 bg-linear-to-t from-[#304543]/85 via-[#304543]/20 to-transparent"
+                  className="absolute inset-0 bg-linear-to-t from-[var(--brand-teal)]/85 via-[var(--brand-teal)]/20 to-transparent"
                   aria-hidden
                 />
 
@@ -84,7 +84,7 @@ export default function HomeSpotlightPetsSection({ pets }: Props) {
                     </p>
                   </div>
                   <span
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#FF7645] text-white transition-colors group-hover:bg-white group-hover:text-[#FF7645]"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--warm-orange)] text-white transition-colors group-hover:bg-white group-hover:text-[var(--warm-orange)]"
                     aria-hidden
                   >
                     <FiArrowUpRight className="h-[18px] w-[18px]" />
