@@ -21,16 +21,18 @@ export default function PetCard({ pet, favorite }: Props) {
   const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
 
   return (
-    <article className="w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
-      <div className="relative aspect-16/10 w-full overflow-hidden">
-        <Image
-          src={pet.image}
-          alt={pet.name}
-          fill
-          unoptimized={isRemoteImage}
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 33vw"
-        />
+    <article className="group w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
+      <div className="relative w-full">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[var(--warm-sand)]">
+          <Image
+            src={pet.image}
+            alt={pet.name}
+            fill
+            unoptimized={isRemoteImage}
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-all duration-700 group-hover:scale-105"
+          />
+        </div>
 
         {favorite ? (
           <button
@@ -75,7 +77,9 @@ export default function PetCard({ pet, favorite }: Props) {
             </div>
 
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Rescatado por</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                Rescatado por
+              </div>
               <div className="text-sm font-semibold text-slate-800">{rescueName}</div>
             </div>
           </div>

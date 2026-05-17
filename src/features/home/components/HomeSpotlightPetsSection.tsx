@@ -52,23 +52,24 @@ export default function HomeSpotlightPetsSection({ pets }: Props) {
             <Link
               key={pet.id}
               href={`/pets/adoption/${pet.slug}`}
-              className="group relative aspect-[3/4] cursor-pointer overflow-hidden rounded-[28px] shadow-sm transition-shadow duration-300 hover:shadow-xl"
+              className="group relative cursor-pointer overflow-hidden rounded-[28px] shadow-sm transition-shadow duration-300 hover:shadow-xl"
             >
-              <Image
-                src={pet.image}
-                alt={pet.name}
-                fill
-                unoptimized={/^https?:\/\//.test(pet.image)}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              />
-              <div
-                className="absolute inset-0 bg-linear-to-t from-[#304543]/85 via-[#304543]/20 to-transparent"
-                aria-hidden
-              />
+              <div className="relative aspect-[4/5] overflow-hidden bg-[var(--warm-sand)]">
+                <Image
+                  src={pet.image}
+                  alt={pet.name}
+                  fill
+                  unoptimized={/^https?:\/\//.test(pet.image)}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover transition-all duration-700 group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0 bg-linear-to-t from-[#304543]/85 via-[#304543]/20 to-transparent"
+                  aria-hidden
+                />
 
-              <div className="absolute inset-x-4 bottom-4 text-white">
-                <div className="flex items-end justify-between gap-3">
+                <div className="absolute inset-x-4 bottom-4 text-white">
+                  <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
                     <h4
                       className="truncate tracking-tight"
@@ -88,6 +89,7 @@ export default function HomeSpotlightPetsSection({ pets }: Props) {
                   >
                     <FiArrowUpRight className="h-[18px] w-[18px]" />
                   </span>
+                  </div>
                 </div>
               </div>
             </Link>
