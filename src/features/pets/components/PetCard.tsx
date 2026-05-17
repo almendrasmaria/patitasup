@@ -21,7 +21,7 @@ export default function PetCard({ pet, favorite }: Props) {
   const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
 
   return (
-    <article className="group w-full overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
+    <article className="group flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
       <div className="relative w-full">
         <div className="relative aspect-[4/5] overflow-hidden bg-[var(--warm-sand)]">
           <Image
@@ -60,7 +60,7 @@ export default function PetCard({ pet, favorite }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 px-6 pt-5 pb-6">
+      <div className="flex flex-1 flex-col gap-5 px-6 pt-5 pb-6">
         <div className="grid grid-cols-2 gap-4">
           <PetInfoChip label="Edad" value={pet.ageLabel} />
           <PetInfoChip label="Sexo" value={pet.sex === "male" ? "Macho" : "Hembra"} />
@@ -68,31 +68,33 @@ export default function PetCard({ pet, favorite }: Props) {
 
         <p className="text-sm leading-relaxed text-slate-600">{pet.description}</p>
 
-        <div className="h-px w-full bg-slate-200" />
+        <div className="mt-auto flex flex-col gap-5">
+          <div className="h-px w-full bg-slate-200" />
 
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-bg-chip)] text-[var(--accent)] text-lg font-semibold">
-              {rescueInitial}
-            </div>
-
-            <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                Rescatado por
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-bg-chip)] text-[var(--accent)] text-lg font-semibold">
+                {rescueInitial}
               </div>
-              <div className="text-sm font-semibold text-slate-800">{rescueName}</div>
-            </div>
-          </div>
 
-          <Link
-            href={`/pets/adoption/${pet.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            prefetch={false}
-            className="rounded-full bg-[var(--slate-button)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
-          >
-            Adoptar
-          </Link>
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                  Rescatado por
+                </div>
+                <div className="text-sm font-semibold text-slate-800">{rescueName}</div>
+              </div>
+            </div>
+
+            <Link
+              href={`/pets/adoption/${pet.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              prefetch={false}
+              className="rounded-full bg-[var(--slate-button)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
+            >
+              Adoptar
+            </Link>
+          </div>
         </div>
       </div>
     </article>
