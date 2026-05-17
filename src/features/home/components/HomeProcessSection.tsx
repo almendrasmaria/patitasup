@@ -16,9 +16,9 @@ export default function HomeProcessSection() {
       <div className="mx-auto max-w-7xl">
         <header className="mb-11 sm:mb-14">
           <div className="max-w-2xl">
-            <span className="text-[#FF7645] text-sm tracking-widest uppercase">Cómo funciona</span>
+            <span className="text-sm uppercase tracking-widest text-[var(--warm-orange)]">Cómo funciona</span>
             <h3
-              className="mt-2 tracking-tight text-[#304543]"
+              className="mt-2 tracking-tight text-[var(--brand-teal)]"
               style={{
                 fontFamily: "Poppins",
                 fontSize: "clamp(2rem, 4vw, 3.25rem)",
