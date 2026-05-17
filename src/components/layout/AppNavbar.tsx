@@ -26,8 +26,8 @@ const publicNav = [
   { label: "Contacto", href: "/contact" },
 ] as const;
 
-const LOGO_DARK_SRC = "/logo-dark.png";
-const LOGO_LIGHT_SRC = "/logo-light.png";
+const LOGO_DARK_SRC = "/logo-dark.webp";
+const LOGO_LIGHT_SRC = "/logo-light.webp";
 
 const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
 const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";

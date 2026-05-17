@@ -33,7 +33,7 @@ const Footer = () => {
               className="inline-flex shrink-0 outline-offset-2 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60"
             >
               <Image
-                src="/logo-light.png"
+                src="/logo-light.webp"
                 alt="PatitasUp Logo"
                 width={320}
                 height={84}

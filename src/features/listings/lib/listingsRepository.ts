@@ -143,7 +143,7 @@ function getFallbackImage(rowId: string) {
   const imageNumber =
     (Array.from(rowId).reduce((total, char) => total + char.charCodeAt(0), 0) % 3) + 1;
 
-  return `/cats/cat${imageNumber}.jpg`;
+  return `/cats/cat${imageNumber}.webp`;
 }
 
 type ListingWithAuthor = PrismaPublication & {
