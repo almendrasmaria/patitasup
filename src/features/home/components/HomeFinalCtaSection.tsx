@@ -5,7 +5,7 @@ export default function HomeFinalCtaSection() {
   return (
     <section className="bg-[var(--warm-sand)] px-6 py-24 md:px-10 lg:px-16">
       <div className="mx-auto max-w-7xl">
-        <div className="rounded-[28px] bg-[var(--warm-orange)] px-6 py-14 text-center shadow-[0_24px_60px_rgba(255,136,86,0.35)] sm:rounded-3xl sm:px-10 sm:py-16 lg:py-20">
+        <div className="rounded-[28px] bg-[var(--warm-orange)] px-6 py-14 text-center shadow-[var(--shadow-cta-warm)] sm:rounded-3xl sm:px-10 sm:py-16 lg:py-20">
           <h3
             className="relative tracking-tight text-white"
             style={{
