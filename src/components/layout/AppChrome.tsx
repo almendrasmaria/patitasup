@@ -29,10 +29,8 @@ export default function AppChrome({ children, navUser }: Props) {
   return (
     <>
       <AppNavbar navUser={navUser} />
-      <div className="min-h-0 pt-[61px] sm:pt-[65px]">
-        {children}
-        {showFooter && <Footer />}
-      </div>
+      <main className="min-h-0">{children}</main>
+      {showFooter && <Footer />}
     </>
   );
 }

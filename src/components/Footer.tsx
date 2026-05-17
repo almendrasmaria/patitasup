@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FaInstagram, FaGithub } from "react-icons/fa";
 import { useCallback } from "react";
+import { FaGithub, FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   const pathname = usePathname();
@@ -24,20 +24,25 @@ const Footer = () => {
   );
 
   return (
-    <footer className="w-full border-t border-white/10 bg-[#0F172A]">
-      <div className="container mx-auto px-4 py-8 md:px-6 sm:py-12">
-        <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
-          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#7061F0]">
-                <Image src="/logo.webp" alt="PatitasUp" width={24} height={24} className="h-6 w-6" />
-              </div>
-              <span className="text-lg font-semibold text-white">PatitasUp</span>
-            </div>
+    <footer className="w-full bg-[var(--brand-teal)] pb-8 pt-16 text-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 grid grid-cols-1 gap-10 min-[920px]:grid-cols-2 min-[920px]:gap-12">
+          <div className="flex flex-col items-center text-center min-[920px]:items-start min-[920px]:text-left">
+            <Link
+              href="/"
+              className="inline-flex shrink-0 outline-offset-2 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60"
+            >
+              <Image
+                src="/logo-light.webp"
+                alt="PatitasUp Logo"
+                width={320}
+                height={84}
+                className="aspect-[320/84] h-9 w-auto max-h-9 max-w-[min(100%,240px)] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[min(100%,280px)]"
+              />
+            </Link>
 
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-              Conectamos gatitos rescatados con familias responsables, promoviendo la adopción
-              responsable.
+              Conectamos gatitos rescatados con familias responsables, promoviendo la adopción responsable.
             </p>
 
             <div className="mt-4 flex items-center gap-3">
@@ -46,7 +51,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 hover:bg-white/20"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/20"
               >
                 <FaInstagram className="text-lg" />
               </a>
@@ -56,35 +61,32 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 hover:bg-white/20"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/20"
               >
                 <FaGithub className="text-lg" />
               </a>
             </div>
           </div>
 
-          <nav className="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/70 lg:w-auto">
-            <Link href="/" onClick={go("/")} className="hover:text-white">
+          <nav className="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/70 min-[920px]:justify-end">
+            <Link href="/" onClick={go("/")} className="transition hover:text-white">
               Inicio
             </Link>
-            <Link href="/how-it-works" onClick={go("/how-it-works")} className="hover:text-white">
-              Cómo funciona
-            </Link>
-            <Link href="/contact" onClick={go("/contact")} className="hover:text-white">
+            <Link href="/contact" onClick={go("/contact")} className="transition hover:text-white">
               Contacto
             </Link>
-            <Link href="/register" onClick={go("/register")} className="hover:text-white">
+            <Link href="/register" onClick={go("/register")} className="transition hover:text-white">
               Crear cuenta
             </Link>
           </nav>
         </div>
+
+        <div className="h-px w-full bg-white/10" />
+
+        <p className="py-6 text-center text-sm text-white/50">
+          © {new Date().getFullYear()} PatitasUp · Todos los derechos reservados.
+        </p>
       </div>
-
-      <div className="h-px w-full bg-white/10" />
-
-      <p className="py-6 text-center text-sm text-white/50">
-        © {new Date().getFullYear()} PatitasUp · Todos los derechos reservados.
-      </p>
     </footer>
   );
 };

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { FiCheck, FiSave } from "react-icons/fi";
 
-import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/cats/lib/georefClient";
+import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/geo/lib/georefClient";
 
 import {
   formControlClass,
@@ -12,13 +12,18 @@ import {
   formLabelClass,
   primaryCtaClass,
 } from "../lib/listingStyles";
-import type { PublicationFormStatus, PublicationFormValues } from "../types";
+import type {
+  PublicationFormSpecies,
+  PublicationFormStatus,
+  PublicationFormValues,
+} from "../types";
 
 type ListingFormState = {
   petName: string;
   ageValue: string;
   ageUnit: "days" | "months" | "years";
   sex: "male" | "female";
+  species: PublicationFormSpecies;
   location: string;
   rescueInstagram: string;
   imageUrl: string;
@@ -44,6 +49,7 @@ const initialForm: ListingFormState = {
   ageValue: "",
   ageUnit: "months",
   sex: "female",
+  species: "cat",
   location: "",
   rescueInstagram: "",
   imageUrl: "",
@@ -67,6 +73,7 @@ function buildFormState(initialValues?: PublicationFormValues): ListingFormState
     ageValue: String(initialValues.ageValue),
     ageUnit: initialValues.ageUnit,
     sex: initialValues.sex,
+    species: initialValues.species,
     location: initialValues.location,
     rescueInstagram: initialValues.rescueInstagram,
     imageUrl: initialValues.imageUrl,
@@ -105,6 +112,7 @@ export default function NewListingForm({
       form.ageValue !== initialFormState.ageValue ||
       form.ageUnit !== initialFormState.ageUnit ||
       form.sex !== initialFormState.sex ||
+      form.species !== initialFormState.species ||
       form.location !== initialFormState.location ||
       form.rescueInstagram !== initialFormState.rescueInstagram ||
       form.imageUrl !== initialFormState.imageUrl ||
@@ -293,6 +301,25 @@ export default function NewListingForm({
         </div>
 
         <div>
+          <label htmlFor="species" className={formLabelClass}>
+            Tipo de mascota
+          </label>
+          <select
+            id="species"
+            name="species"
+            value={form.species}
+            onChange={updateField("species")}
+            className={formControlClass}
+          >
+            <option value="cat">Gato</option>
+            <option value="dog">Perro</option>
+          </select>
+          {getFieldError(fieldErrors, "species") ? (
+            <p className={formErrorClass}>{getFieldError(fieldErrors, "species")}</p>
+          ) : null}
+        </div>
+
+        <div>
           <label htmlFor="location" className={formLabelClass}>
             Ubicación
           </label>
@@ -377,7 +404,7 @@ export default function NewListingForm({
         ) : null}
       </div>
 
-      <div className="border-t border-[#ececf2] pt-6">
+      <div className="border-t border-[var(--border-hairline)] pt-6">
         <span className={formLabelClass}>Estado</span>
         <div role="radiogroup" aria-label="Estado de publicación" className="flex flex-wrap gap-2">
           {statusOptions.map((option) => {
@@ -392,8 +419,8 @@ export default function NewListingForm({
                 onClick={() => handleStatusChange(option.value)}
                 className={
                   selected
-                    ? "inline-flex items-center gap-2 rounded-full bg-[#7061F0] px-5 py-2 text-sm font-semibold text-white shadow-sm"
-                    : "inline-flex items-center gap-2 rounded-full border border-[#7061F0]/35 bg-white px-5 py-2 text-sm font-semibold text-[#7061F0] transition hover:bg-[#7061F0]/5"
+                    ? "inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white shadow-sm"
+                    : "inline-flex items-center gap-2 rounded-full border border-[var(--accent-border-35)] bg-white px-5 py-2 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent-overlay-5)]"
                 }
               >
                 {selected ? <FiCheck className="h-4 w-4" aria-hidden /> : null}
@@ -404,7 +431,7 @@ export default function NewListingForm({
         </div>
       </div>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-[#ececf2] pt-6 sm:flex-row sm:items-center sm:justify-end">
+      <div className="flex flex-col-reverse gap-3 border-t border-[var(--border-hairline)] pt-6 sm:flex-row sm:items-center sm:justify-end">
         <button
           type="submit"
           className={`${primaryCtaClass} justify-center disabled:cursor-not-allowed disabled:opacity-65`}

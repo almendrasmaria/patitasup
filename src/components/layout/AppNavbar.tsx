@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FiFileText, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
+import { FiFileText, FiHome, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
 
 import { signOutFromBrowser } from "@/features/auth/lib/signOutApp";
 
@@ -22,9 +22,15 @@ export type NavUser = {
 
 const publicNav = [
   { label: "Inicio", href: "/" },
-  { label: "Cómo funciona", href: "/how-it-works" },
+  { label: "Mascotas", href: "/pets" },
   { label: "Contacto", href: "/contact" },
 ] as const;
+
+const LOGO_DARK_SRC = "/logo-dark.webp";
+const LOGO_LIGHT_SRC = "/logo-light.webp";
+
+const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
+const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";
 
 function getInitials(profileName: string) {
   const initials = profileName
@@ -37,14 +43,9 @@ function getInitials(profileName: string) {
   return initials || "PU";
 }
 
-function isActiveMobilePublicHref(pathname: string, href: string) {
+function isActivePublicHref(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
-}
-
-function isActivePublicCenter(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href;
 }
 
 type Props = {
@@ -53,57 +54,38 @@ type Props = {
 
 function NavbarBrand({
   onNavigate,
-  variant = "onLight",
   imagePriority = false,
   mode = "full",
+  tone = "dark",
 }: {
   onNavigate?: () => void;
-  variant?: "onLight" | "onViolet";
   imagePriority?: boolean;
-  mode?: "full" | "iconOnly";
+  mode?: "full" | "compact";
+  tone?: "dark" | "light";
 }) {
-  const textClass = variant === "onLight" ? "text-[#7061F0]" : "text-white";
-
-  if (mode === "iconOnly") {
-    return (
-      <Link
-        href="/"
-        onClick={onNavigate}
-        className="flex shrink-0 items-center"
-        aria-label="PatitasUp, ir al inicio"
-      >
-        <Image
-          src="/logo.webp"
-          alt=""
-          width={32}
-          height={32}
-          className="h-8 w-8 object-contain brightness-0 invert"
-          sizes="32px"
-          priority={imagePriority}
-        />
-      </Link>
-    );
-  }
+  const src = tone === "light" ? LOGO_LIGHT_SRC : LOGO_DARK_SRC;
+  const aspectClass = mode === "compact" ? NAV_LOGO_COMPACT_ASPECT_CLASS : NAV_LOGO_ASPECT_CLASS;
+  const sizeClass =
+    mode === "compact"
+      ? "h-9 w-auto max-h-9 max-w-[180px] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[200px]"
+      : "h-11 w-auto max-h-11 max-w-[200px] object-contain object-left sm:h-12 sm:max-h-12 sm:max-w-[240px] md:max-w-[280px]";
 
   return (
     <Link
       href="/"
       onClick={onNavigate}
-      className="flex min-w-0 max-w-full items-center gap-2.5 sm:gap-3"
+      className="inline-flex shrink-0 items-center"
       aria-label="PatitasUp, ir al inicio"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#7061F0] shadow-sm sm:h-10 sm:w-10">
-        <Image
-          src="/logo.webp"
-          alt=""
-          width={24}
-          height={24}
-          className="h-5.5 w-5.5 object-contain brightness-0 invert"
-          sizes="36px"
-          priority={imagePriority}
-        />
-      </span>
-      <span className={`truncate text-base font-semibold tracking-tight sm:text-[17px] ${textClass}`}>PatitasUp</span>
+      <Image
+        src={src}
+        alt="PatitasUp Logo"
+        width={mode === "compact" ? 280 : 320}
+        height={mode === "compact" ? 74 : 84}
+        sizes={mode === "compact" ? "200px" : "(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"}
+        className={`${aspectClass} ${sizeClass}`}
+        priority={imagePriority}
+      />
     </Link>
   );
 }
@@ -120,7 +102,7 @@ export default function AppNavbar({ navUser }: Props) {
   const usePublicCenterNav = !inDashboard;
 
   const showMiPerfilInMenu = loggedIn;
-  const showMisPublicacionesInMenu = loggedIn && pathname === "/";
+  const showMisPublicacionesInMenu = loggedIn && !inDashboard;
   const showVolverInicio = loggedIn && inDashboard;
   const showMiPerfilInMobileMenu = loggedIn;
   const showMisPublicacionesInMobileMenu = loggedIn && pathname !== DASHBOARD_MY_LISTINGS_HREF;
@@ -151,8 +133,10 @@ export default function AppNavbar({ navUser }: Props) {
     });
   }, [router]);
 
-  const linkInactive = "font-medium text-[#4b5563] transition hover:text-[#7061F0]";
-  const linkActive = "font-semibold text-[#7061F0]";
+  const publicLinkInactive =
+    "text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:text-[var(--warm-orange)]";
+  const publicLinkActive = "text-sm font-medium text-[var(--primary)]";
+  const dashboardLinkInactive = "font-medium text-[var(--neutral-600)] transition hover:text-[var(--accent)]";
 
   const isActiveDash = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -164,172 +148,171 @@ export default function AppNavbar({ navUser }: Props) {
 
   return (
     <>
-    <header
-      data-site-navbar
-      className="fixed top-0 right-0 left-0 z-1000 w-full max-w-none border-b border-gray-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-    >
-      <div className="mx-auto grid h-15 w-full max-w-350 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:h-16 sm:gap-4 sm:px-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-8">
-        <div className="relative z-20 flex justify-start">
-          <NavbarBrand onNavigate={closeMobile} variant="onLight" imagePriority />
-        </div>
+      <nav data-site-navbar className="relative z-50 border-b border-[var(--border)] bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+              <div className="relative z-20 flex min-w-0 items-center justify-self-start">
+                <NavbarBrand onNavigate={closeMobile} imagePriority />
+              </div>
 
-        <nav
-          className="hidden min-w-0 justify-center justify-self-center md:flex"
-          aria-label={inDashboard ? "Panel principal" : "Navegación principal"}
-        >
-          {usePublicCenterNav ? (
-            <ul className="flex flex-wrap items-center justify-center gap-4 text-[15px] lg:gap-8">
-              {publicNav.map(({ label, href }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className={isActivePublicCenter(pathname, href) ? linkActive : linkInactive}
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <ul className="flex flex-wrap items-center justify-center gap-1">
-              {DASHBOARD_NAV_ITEMS.map(({ label, href }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className={`rounded-xl px-3 py-2 text-[15px] lg:px-4 ${
-                      isActiveDash(href) ? "bg-[#7061F0]/12 text-[#7061F0]" : linkInactive
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </nav>
+              <div className="relative hidden justify-self-center md:block">
+                <div aria-label={inDashboard ? "Panel principal" : "Navegación principal"} role="navigation">
+                  {usePublicCenterNav ? (
+                    <ul className="flex flex-wrap items-center justify-center gap-8">
+                      {publicNav.map(({ label, href }) => (
+                        <li key={href}>
+                          <Link
+                            href={href}
+                            className={isActivePublicHref(pathname, href) ? publicLinkActive : publicLinkInactive}
+                          >
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <ul className="flex flex-wrap items-center justify-center gap-1">
+                      {DASHBOARD_NAV_ITEMS.map(({ label, href }) => (
+                        <li key={href}>
+                          <Link
+                            href={href}
+                            className={`rounded-xl px-3 py-2 text-[15px] lg:px-4 ${
+                              isActiveDash(href) ? "bg-[var(--accent-overlay-12)] text-[var(--accent)]" : dashboardLinkInactive
+                            }`}
+                          >
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
 
-        <div className="relative z-20 flex shrink-0 justify-end">
-          {loggedIn && navUser ? (
-            <>
-              <div ref={dropdownRef} className="relative hidden md:block">
-                <button
-                  type="button"
-                  onClick={() => setDropdownOpen((o) => !o)}
-                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#ececf2] bg-white shadow-sm transition hover:border-[#7061F0]/30 hover:shadow-md"
-                  aria-expanded={dropdownOpen}
-                  aria-haspopup="menu"
-                  aria-label="Abrir menú de usuario"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#7061F0] text-sm font-semibold text-white">
-                    {initials}
-                  </span>
-                </button>
+              <div className="relative z-20 col-start-2 flex min-w-0 items-center justify-end justify-self-end md:col-start-3">
+                {loggedIn && navUser ? (
+                  <>
+                    <div ref={dropdownRef} className="relative hidden md:block">
+                      <button
+                        type="button"
+                        onClick={() => setDropdownOpen((o) => !o)}
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[var(--border-hairline)] bg-white shadow-sm transition hover:border-[var(--accent-border-30)] hover:shadow-md"
+                        aria-expanded={dropdownOpen}
+                        aria-haspopup="menu"
+                        aria-label="Abrir menú de usuario"
+                      >
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-sm font-semibold text-white">
+                          {initials}
+                        </span>
+                      </button>
 
-                {dropdownOpen && (
-                  <div
-                    role="menu"
-                    className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[#ececf2] bg-white py-1 shadow-lg"
-                  >
-                    {showMiPerfilInMenu && (
-                      <Link
-                        href={DASHBOARD_PROFILE_HREF}
-                        role="menuitem"
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <FiUser className="text-[#7061F0]" aria-hidden />
-                        Mi perfil
-                      </Link>
-                    )}
-                    {showMisPublicacionesInMenu && (
-                      <Link
-                        href={DASHBOARD_MY_LISTINGS_HREF}
-                        role="menuitem"
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <FiFileText className="text-[#7061F0]" aria-hidden />
-                        Mis publicaciones
-                      </Link>
-                    )}
-                    {showVolverInicio && (
-                      <Link
-                        href="/"
-                        role="menuitem"
-                        className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[#374151] transition hover:bg-[#f5f6fb]"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        Volver a inicio
-                      </Link>
-                    )}
+                      {dropdownOpen && (
+                        <div
+                          role="menu"
+                          className="absolute right-0 mt-2 min-w-50 overflow-hidden rounded-2xl border border-[var(--border-hairline)] bg-white py-1 shadow-lg"
+                        >
+                          {showMiPerfilInMenu && (
+                            <Link
+                              href={DASHBOARD_PROFILE_HREF}
+                              role="menuitem"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              <FiUser className="text-[var(--accent)]" aria-hidden />
+                              Mi perfil
+                            </Link>
+                          )}
+                          {showMisPublicacionesInMenu && (
+                            <Link
+                              href={DASHBOARD_MY_LISTINGS_HREF}
+                              role="menuitem"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              <FiFileText className="text-[var(--accent)]" aria-hidden />
+                              Mis publicaciones
+                            </Link>
+                          )}
+                          {showVolverInicio && (
+                            <Link
+                              href="/"
+                              role="menuitem"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              <FiHome className="text-[var(--accent)]" aria-hidden />
+                              Volver a inicio
+                            </Link>
+                          )}
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 transition hover:bg-red-50"
+                            onClick={() => void handleLogout()}
+                          >
+                            <FiLogOut aria-hidden />
+                            Cerrar sesión
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     <button
                       type="button"
-                      role="menuitem"
-                      className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 transition hover:bg-red-50"
-                      onClick={() => void handleLogout()}
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] md:hidden"
+                      aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        setMobileOpen(true);
+                      }}
                     >
-                      <FiLogOut aria-hidden />
-                      Cerrar sesión
+                      <FiMenu />
                     </button>
-                  </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="hidden items-center gap-3 md:flex">
+                      <Link
+                        href="/login"
+                        className="px-1 py-2 text-sm font-medium text-[var(--brand-teal)] transition-colors hover:text-[var(--brand-teal-subtle)]"
+                      >
+                        Iniciar sesión
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="rounded-lg bg-[var(--brand-teal)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--brand-teal-hover)]"
+                      >
+                        Crear cuenta
+                      </Link>
+                    </div>
+                    <button
+                      type="button"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] md:hidden"
+                      aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+                      onClick={() => setMobileOpen(true)}
+                    >
+                      <FiMenu />
+                    </button>
+                  </>
                 )}
               </div>
-
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
-                aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-                onClick={() => {
-                  setDropdownOpen(false);
-                  setMobileOpen(true);
-                }}
-              >
-                <FiMenu />
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="hidden items-center gap-3 md:flex">
-                <Link
-                  href="/login"
-                  className="rounded-xl px-3 py-2 text-[15px] font-medium text-[#374151] transition hover:bg-[#f3f4f6]"
-                >
-                  Iniciar sesión
-                </Link>
-                <Link
-                  href="/register"
-                  className="rounded-xl bg-[#7061F0] px-4 py-2 text-[15px] font-semibold text-white shadow-sm transition hover:bg-[#5f52d6]"
-                >
-                  Crear cuenta
-                </Link>
-              </div>
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#ececf2] text-2xl text-[#374151] md:hidden"
-                aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-                onClick={() => setMobileOpen(true)}
-              >
-                <FiMenu />
-              </button>
-            </>
-          )}
+          </div>
         </div>
-      </div>
-    </header>
+      </nav>
 
     <div
       role="dialog"
       aria-modal={mobileOpen ? "true" : undefined}
       aria-hidden={!mobileOpen}
       id="app-navbar-mobile-menu"
-      className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[#7061F0] transition-transform duration-300 ease-out md:hidden ${
+className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-teal)] transition-transform duration-300 ease-out md:hidden ${
         mobileOpen ? "pointer-events-auto translate-x-0" : "pointer-events-none translate-x-full"
       }`}
     >
       <div className="flex min-h-screen flex-col px-6 pb-8 pt-6 text-white">
         <div className="flex shrink-0 items-center justify-between gap-4">
           <div className="min-w-0 flex-1 pr-2">
-            <NavbarBrand onNavigate={closeMobile} variant="onViolet" mode="iconOnly" />
+            <NavbarBrand onNavigate={closeMobile} mode="compact" tone="light" />
           </div>
           <button type="button" onClick={closeMobile} className="shrink-0 text-3xl text-white" aria-label="Cerrar menú">
             <FiX />
@@ -340,7 +323,7 @@ export default function AppNavbar({ navUser }: Props) {
           {mobilePrimaryLinks.map(({ label, href, variant }) => {
             const active =
               variant === "public"
-                ? isActiveMobilePublicHref(pathname, href)
+                ? isActivePublicHref(pathname, href)
                 : isActiveDash(href);
             return (
               <li key={href}>
@@ -348,7 +331,9 @@ export default function AppNavbar({ navUser }: Props) {
                   href={href}
                   onClick={closeMobile}
                   className={
-                    active ? "text-white underline decoration-white/80 underline-offset-4" : "text-white/90"
+                    active
+                      ? "inline-block border-b-2 border-white pb-1 text-white no-underline"
+                      : "text-white/90"
                   }
                 >
                   {label}
@@ -364,16 +349,16 @@ export default function AppNavbar({ navUser }: Props) {
               <Link
                 href="/login"
                 onClick={closeMobile}
-                className="block w-full rounded-full border border-white py-2 text-center font-medium text-white"
+                className="block w-full rounded-lg border border-white py-2 text-center font-medium text-white"
               >
                 Ingresar
               </Link>
               <Link
                 href="/register"
                 onClick={closeMobile}
-                className="block w-full rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
+                className="block w-full rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
               >
-                Publicar gato
+                Publicar mascota
               </Link>
             </>
           ) : inDashboard ? (
@@ -382,7 +367,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_PROFILE_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiUser className="text-lg" aria-hidden />
                   Mi perfil
@@ -392,7 +377,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_MY_LISTINGS_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiFileText className="text-lg" aria-hidden />
                   Mis publicaciones
@@ -401,13 +386,14 @@ export default function AppNavbar({ navUser }: Props) {
               <Link
                 href="/"
                 onClick={closeMobile}
-                className="block w-full rounded-full border border-white py-2 text-center font-medium text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
               >
+                <FiHome className="text-lg" aria-hidden />
                 Volver a inicio
               </Link>
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
                 onClick={() => void handleLogout()}
               >
                 <FiLogOut className="text-lg" aria-hidden />
@@ -420,7 +406,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_PROFILE_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiUser className="text-lg" aria-hidden />
                   Mi perfil
@@ -430,7 +416,7 @@ export default function AppNavbar({ navUser }: Props) {
                 <Link
                   href={DASHBOARD_MY_LISTINGS_HREF}
                   onClick={closeMobile}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-white py-2 text-center font-medium text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-white py-2 text-center font-medium text-white"
                 >
                   <FiFileText className="text-lg" aria-hidden />
                   Mis publicaciones
@@ -438,7 +424,7 @@ export default function AppNavbar({ navUser }: Props) {
               )}
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-white py-2 text-center font-semibold text-[#7061F0]"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
                 onClick={() => void handleLogout()}
               >
                 <FiLogOut className="text-lg" aria-hidden />

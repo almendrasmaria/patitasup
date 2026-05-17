@@ -8,7 +8,7 @@ type Props = {
   pawsCount?: number;
 };
 
-const PawsSection = ({ children, className, bgColor = "#7061F0", pawsCount = 60 }: Props) => {
+const PawsSection = ({ children, className, bgColor = "var(--accent)", pawsCount = 60 }: Props) => {
   return (
     <section
       className={["relative w-full overflow-hidden text-white", className]

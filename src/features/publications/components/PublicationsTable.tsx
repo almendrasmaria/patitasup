@@ -28,7 +28,7 @@ export default function PublicationsTable({ rows, onEdit, onDelete }: Publicatio
       <table className="w-full min-w-[52rem] table-fixed border-collapse">
         {colgroup}
         <thead>
-          <tr className="border-b border-[#ececf2]">
+          <tr className="border-b border-[var(--border-hairline)]">
             <th scope="col" className={`${tableHeaderClass} text-center`}>
               Mascota
             </th>
@@ -52,26 +52,26 @@ export default function PublicationsTable({ rows, onEdit, onDelete }: Publicatio
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[#6b7280]">
+              <td colSpan={6} className="px-4 py-14 text-center text-sm text-[var(--neutral-500)]">
                 No hay publicaciones para este filtro.
               </td>
             </tr>
           ) : null}
           {rows.map((row) => (
-            <tr key={row.id} className="border-b border-[#f3f4f6] last:border-0">
+            <tr key={row.id} className="border-b border-[var(--surface-row)] last:border-0">
               <td className={`${tableCellClass} max-w-0 text-center font-medium`}>
                 <span className="block truncate" title={row.petName}>
                   {row.petName}
                 </span>
               </td>
-              <td className={`${tableCellClass} text-center text-[#4b5563]`}>{row.age}</td>
-              <td className={`${tableCellClass} text-center text-[#4b5563]`}>{row.sex}</td>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.age}</td>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)]`}>{row.sex}</td>
               <td className={`${tableCellClass} text-center`}>
                 <div className="flex justify-center">
                   <StatusBadge status={row.status} />
                 </div>
               </td>
-              <td className={`${tableCellClass} text-center text-[#4b5563] whitespace-nowrap`}>
+              <td className={`${tableCellClass} text-center text-[var(--neutral-600)] whitespace-nowrap`}>
                 {row.date}
               </td>
               <td className={`${tableCellClass} px-2 text-center`}>

@@ -43,13 +43,13 @@ export default function Topbar({ profileName, email }: TopbarProps) {
           onClick={() => setOpen(!open)}
           className="flex items-center gap-3 rounded-xl bg-white px-3 py-2 transition hover:bg-gray-100"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#6C5CE7] text-sm font-semibold text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--warm-orange)] text-sm font-semibold text-white">
             {initials}
           </div>
 
           <div className="text-left leading-tight">
-            <p className="text-sm font-semibold text-[#1B1B1F]">{profileName}</p>
-            <p className="text-xs text-[#6b7280]">{email}</p>
+            <p className="text-sm font-semibold text-[var(--foreground-topbar)]">{profileName}</p>
+            <p className="text-xs text-[var(--neutral-500)]">{email}</p>
           </div>
 
           <FiChevronDown className="text-gray-400" />
