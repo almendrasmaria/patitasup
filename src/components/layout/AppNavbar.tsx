@@ -358,7 +358,7 @@ className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-te
                 onClick={closeMobile}
                 className="block w-full rounded-lg bg-white py-2 text-center font-semibold text-[var(--brand-teal)]"
               >
-                Publicar gato
+                Publicar mascota
               </Link>
             </>
           ) : inDashboard ? (
