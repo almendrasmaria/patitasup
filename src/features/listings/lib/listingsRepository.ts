@@ -139,10 +139,15 @@ function getPublishedAtForStatus(status: PrismaStatus, currentPublishedAt: Date 
   return currentPublishedAt ?? new Date();
 }
 
-function getFallbackImage(rowId: string) {
-  const imageNumber =
-    (Array.from(rowId).reduce((total, char) => total + char.charCodeAt(0), 0) % 3) + 1;
+function getFallbackImage(rowId: string, species: PrismaSpecies) {
+  const hash = Array.from(rowId).reduce((total, char) => total + char.charCodeAt(0), 0);
 
+  if (species === PrismaSpecies.DOG) {
+    const imageNumber = (hash % 4) + 1;
+    return `/dogs/dog${imageNumber}.webp`;
+  }
+
+  const imageNumber = (hash % 5) + 1;
   return `/cats/cat${imageNumber}.webp`;
 }
 
@@ -182,7 +187,7 @@ export function mapListingRowToPet(row: ListingWithAuthor): Pet {
     id: row.id,
     slug: row.slug,
     name: row.petName,
-    image: row.imageUrl ?? getFallbackImage(row.id),
+    image: row.imageUrl ?? getFallbackImage(row.id, row.species),
     sex: petSexByPrismaSex[row.sex],
     species: petSpeciesByPrismaSpecies[row.species],
     ageLabel: formatAge(row.ageValue, row.ageUnit),
