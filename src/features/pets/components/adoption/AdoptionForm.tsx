@@ -1,117 +1,37 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import * as Select from "@radix-ui/react-select";
-import {
-  HiCheck,
-  HiChevronDown,
-  HiOutlineHome,
-  HiOutlineShieldCheck,
-  HiOutlineUser,
-} from "react-icons/hi";
-import { FaHeart, FaPaw } from "react-icons/fa";
+import { FaPaw } from "react-icons/fa";
+import { HiArrowRight } from "react-icons/hi";
 
 import type { Pet } from "@/features/pets/types";
+
+import AdoptionFormCardIntro from "./AdoptionFormCardIntro";
+import AdoptionFormStepper from "./AdoptionFormStepper";
+import AdoptionFormTrustFooter from "./AdoptionFormTrustFooter";
+import { isAdoptionFormComplete, isAdoptionStepComplete } from "./adoptionFormConfig";
+import {
+  INITIAL_ADOPTION_FORM,
+  type AdoptionFormData,
+  type AdoptionFormStep,
+} from "./adoptionFormTypes";
+import HomeStep from "./steps/HomeStep";
+import PersonalDataStep from "./steps/PersonalDataStep";
+import PetStep from "./steps/PetStep";
 
 type Props = {
   pet: Pet;
 };
 
-type FormData = {
-  fullName: string;
-  phone: string;
-  email: string;
-  address: string;
-  housingType: string;
-  environment: string;
-  protection: string;
-  otherPets: string;
-  reason: string;
-  experience: string;
-};
-
-type SelectFieldProps = {
-  label: string;
-  required?: boolean;
-  placeholder: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: { label: string; value: string }[];
-};
-
-const initialForm: FormData = {
-  fullName: "",
-  phone: "",
-  email: "",
-  address: "",
-  housingType: "",
-  environment: "",
-  protection: "",
-  otherPets: "",
-  reason: "",
-  experience: "",
-};
-
-const inputClassName =
-  "h-14 w-full rounded-[18px] border border-[var(--border-input-soft)] bg-white px-4 text-[15px] text-[var(--foreground-body)] outline-none transition placeholder:text-[var(--placeholder-soft)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent-ring-10)]";
-
-const textareaClassName =
-  "w-full rounded-[18px] border border-[var(--border-input-soft)] bg-white px-4 py-3 text-[15px] text-[var(--foreground-body)] outline-none transition placeholder:text-[var(--placeholder-soft)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent-ring-10)]";
-
-function SelectField({
-  label,
-  required,
-  placeholder,
-  value,
-  onValueChange,
-  options,
-}: SelectFieldProps) {
-  return (
-    <div className="space-y-2">
-      <label className="text-[15px] font-medium text-[var(--foreground-label)]">
-        {label} {required && <span className="text-[var(--accent-ember)]">*</span>}
-      </label>
-
-      <Select.Root value={value} onValueChange={onValueChange}>
-        <Select.Trigger className="flex h-14 w-full items-center justify-between rounded-[18px] border border-[var(--border-input-soft)] bg-white px-4 text-left text-[15px] text-[var(--foreground-body)] outline-none transition data-placeholder:text-[var(--placeholder-soft)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent-ring-10)]">
-          <Select.Value placeholder={placeholder} />
-          <Select.Icon className="text-[var(--caption-icon)]">
-            <HiChevronDown size={20} />
-          </Select.Icon>
-        </Select.Trigger>
-
-        <Select.Portal>
-          <Select.Content
-            position="popper"
-            sideOffset={8}
-            className="z-50 overflow-hidden rounded-[18px] border border-[var(--border-hairline-alt)] bg-white shadow-[var(--shadow-dropdown)]"
-          >
-            <Select.Viewport className="p-2">
-              {options.map((option) => (
-                <Select.Item
-                  key={option.value}
-                  value={option.value}
-                  className="relative flex h-11 cursor-pointer items-center rounded-xl px-10 pr-4 text-[15px] text-[var(--foreground-body)] outline-none transition hover:bg-[var(--accent-bg-subtle)] data-highlighted:bg-[var(--accent-bg-subtle)]"
-                >
-                  <Select.ItemText>{option.label}</Select.ItemText>
-                  <Select.ItemIndicator className="absolute left-3 inline-flex items-center text-[var(--accent)]">
-                    <HiCheck size={18} />
-                  </Select.ItemIndicator>
-                </Select.Item>
-              ))}
-            </Select.Viewport>
-          </Select.Content>
-        </Select.Portal>
-      </Select.Root>
-    </div>
-  );
-}
-
 const AdoptionForm = ({ pet }: Props) => {
-  const [form, setForm] = useState<FormData>(initialForm);
+  const [form, setForm] = useState<AdoptionFormData>(INITIAL_ADOPTION_FORM);
+  const [step, setStep] = useState<AdoptionFormStep>(1);
+
+  const stepComplete = useMemo(() => isAdoptionStepComplete(step, form), [step, form]);
+  const formComplete = useMemo(() => isAdoptionFormComplete(form), [form]);
 
   const handleChange =
-    (field: keyof FormData) =>
+    (field: keyof AdoptionFormData) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((prev) => ({
         ...prev,
@@ -119,325 +39,108 @@ const AdoptionForm = ({ pet }: Props) => {
       }));
     };
 
-  const personalStepDone = useMemo(() => {
-    return (
-      form.fullName.trim() !== "" &&
-      form.phone.trim() !== "" &&
-      form.email.trim() !== "" &&
-      form.address.trim() !== ""
-    );
-  }, [form.fullName, form.phone, form.email, form.address]);
+  const handleField = <K extends keyof AdoptionFormData>(
+    field: K,
+    value: AdoptionFormData[K],
+  ) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const homeStepDone = useMemo(() => {
-    return (
-      form.housingType.trim() !== "" &&
-      form.environment.trim() !== "" &&
-      form.protection.trim() !== ""
-    );
-  }, [form.housingType, form.environment, form.protection]);
+  const goNext = () => {
+    if (!stepComplete || step >= 3) return;
+    setStep((prev) => (prev + 1) as AdoptionFormStep);
+  };
 
-  const petStepDone = useMemo(() => {
-    return form.reason.trim() !== "" && form.experience.trim() !== "";
-  }, [form.reason, form.experience]);
-
-  const isFormValid = personalStepDone && homeStepDone && petStepDone;
-
-  const radioCardClass = (selected: boolean) =>
-    `flex min-h-[56px] cursor-pointer items-center gap-3 rounded-[18px] border px-4 py-3 text-[15px] transition ${
-      selected
-        ? "border-[var(--accent)] bg-[var(--accent-bg-subtle)] text-[var(--foreground-body)] ring-4 ring-[var(--accent-ring-10)]"
-        : "border-[var(--border-input-soft)] bg-white text-[var(--neutral-600)] hover:border-[var(--accent-border-hover)]"
-    }`;
+  const goBack = () => {
+    if (step <= 1) return;
+    setStep((prev) => (prev - 1) as AdoptionFormStep);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!formComplete) return;
 
-    if (!isFormValid) return;
-
-    console.log("Solicitud enviada:", form);
+    const fullName = `${form.firstName} ${form.lastName}`.trim();
+    console.log("Solicitud enviada:", { petId: pet.id, petSlug: pet.slug, fullName, ...form });
   };
 
   return (
-    <article className="rounded-[28px] bg-white p-6 shadow-[var(--shadow-card-soft)] ring-1 ring-black/5 md:p-8">
-      <div className="mb-10">
-        <div className="grid grid-cols-[auto_1fr_auto_1fr_auto] items-start gap-4">
-          <div className="flex min-w-[72px] flex-col items-center text-center">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white">
-              1
+    <>
+      <article className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card-soft)] ring-1 ring-black/[0.06]">
+        <div className="h-2.5 bg-[var(--accent)]" aria-hidden />
+
+        <div className="p-6 sm:p-8">
+          <AdoptionFormCardIntro petName={pet.name} />
+          <AdoptionFormStepper currentStep={step} petName={pet.name} />
+
+          <form className="mt-6" onSubmit={handleSubmit} noValidate>
+            <div className="w-full">
+              {step === 1 ? (
+                <PersonalDataStep form={form} onChange={handleChange} onField={handleField} />
+              ) : null}
+              {step === 2 ? (
+                <HomeStep form={form} onChange={handleChange} onField={handleField} />
+              ) : null}
+              {step === 3 ? (
+                <PetStep
+                  petName={pet.name}
+                  form={form}
+                  onChange={handleChange}
+                  onField={handleField}
+                />
+              ) : null}
             </div>
-            <span className="mt-2 text-xs font-medium text-[var(--accent)]">Tus Datos</span>
-          </div>
 
-          <div className="mt-4 h-px w-full bg-[var(--divider)]" />
-
-          <div className="flex min-w-[72px] flex-col items-center text-center">
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all ${
-                homeStepDone
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--surface-muted)] text-[var(--text-disabled)]"
+            <footer
+              className={`mt-8 flex flex-col gap-3 sm:flex-row sm:items-center ${
+                step > 1 ? "sm:justify-between" : "sm:justify-end"
               }`}
             >
-              2
-            </div>
-            <span
-              className={`mt-2 text-xs font-medium transition-colors ${
-                homeStepDone ? "text-[var(--accent)]" : "text-[var(--text-disabled)]"
-              }`}
-            >
-              Tu Hogar
-            </span>
-          </div>
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="inline-flex h-11 items-center justify-center rounded-lg border border-[var(--border-input-soft)] bg-white px-5 text-[14px] font-medium text-[var(--foreground-body)] transition hover:bg-[var(--surface-select)]"
+                >
+                  Paso anterior
+                </button>
+              ) : null}
 
-          <div className="mt-4 h-px w-full bg-[var(--divider)]" />
-
-          <div className="flex min-w-[72px] flex-col items-center text-center">
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-all ${
-                petStepDone
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--surface-muted)] text-[var(--text-disabled)]"
-              }`}
-            >
-              3
-            </div>
-            <span
-              className={`mt-2 text-xs font-medium transition-colors ${
-                petStepDone ? "text-[var(--accent)]" : "text-[var(--text-disabled)]"
-              }`}
-            >
-              Sobre {pet.name}
-            </span>
-          </div>
+              {step < 3 ? (
+                <button
+                  type="button"
+                  disabled={!stepComplete}
+                  onClick={goNext}
+                  className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg px-6 text-[14px] font-semibold text-white transition sm:ml-auto ${
+                    stepComplete
+                      ? "bg-[var(--accent)] hover:bg-[var(--accent-hover)]"
+                      : "cursor-not-allowed bg-[var(--accent-disabled)]"
+                  }`}
+                >
+                  Siguiente paso
+                  <HiArrowRight size={18} aria-hidden />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!formComplete}
+                  className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg px-6 text-[14px] font-semibold text-white transition sm:ml-auto ${
+                    formComplete
+                      ? "bg-[var(--accent)] hover:bg-[var(--accent-hover)]"
+                      : "cursor-not-allowed bg-[var(--accent-disabled)]"
+                  }`}
+                >
+                  Enviar solicitud para {pet.name}
+                  <FaPaw aria-hidden />
+                </button>
+              )}
+            </footer>
+          </form>
         </div>
-      </div>
+      </article>
 
-      <form className="space-y-10" onSubmit={handleSubmit}>
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--accent-bg-soft)] text-[var(--accent)]">
-              <HiOutlineUser size={20} />
-            </div>
-
-            <div>
-              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">Tus Datos</h2>
-              <p className="text-sm text-[var(--caption)]">Completa tu información personal para avanzar con la solicitud.</p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="fullName" className="text-[15px] font-medium text-[var(--foreground-label)]">
-              Nombre completo <span className="text-[var(--accent-ember)]">*</span>
-            </label>
-            <input
-              id="fullName"
-              type="text"
-              value={form.fullName}
-              onChange={handleChange("fullName")}
-              placeholder="Ej: María González"
-              className={inputClassName}
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <label htmlFor="phone" className="text-[15px] font-medium text-[var(--foreground-label)]">
-                Teléfono / WhatsApp <span className="text-[var(--accent-ember)]">*</span>
-              </label>
-              <input
-                id="phone"
-                type="text"
-                value={form.phone}
-                onChange={handleChange("phone")}
-                placeholder="Ej: 11 1234 5678"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-[15px] font-medium text-[var(--foreground-label)]">
-                Email <span className="text-[var(--accent-ember)]">*</span>
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange("email")}
-                placeholder="Ej: maria@email.com"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="address" className="text-[15px] font-medium text-[var(--foreground-label)]">
-              Dirección y barrio <span className="text-[var(--accent-ember)]">*</span>
-            </label>
-            <input
-              id="address"
-              type="text"
-              value={form.address}
-              onChange={handleChange("address")}
-              placeholder="Ej: Av. Santa Fe 1234, Palermo"
-              className={inputClassName}
-            />
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--surface-amber-soft)] text-[var(--amber-500)]">
-              <HiOutlineHome size={20} />
-            </div>
-
-            <div>
-              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">Tu Hogar</h2>
-              <p className="text-sm text-[var(--caption)]">
-                Queremos asegurarnos de que el espacio sea seguro para {pet.name}.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <SelectField
-              label="Tipo de vivienda"
-              required
-              placeholder="Selecciona una opción"
-              value={form.housingType}
-              onValueChange={(value) => setForm((prev) => ({ ...prev, housingType: value }))}
-              options={[
-                { label: "Departamento", value: "departamento" },
-                { label: "Casa", value: "casa" },
-                { label: "PH", value: "ph" },
-              ]}
-            />
-
-            <SelectField
-              label="Ambiente"
-              required
-              placeholder="Selecciona una opción"
-              value={form.environment}
-              onValueChange={(value) => setForm((prev) => ({ ...prev, environment: value }))}
-              options={[
-                { label: "Monoambiente", value: "monoambiente" },
-                { label: "2 ambientes", value: "2" },
-                { label: "3 ambientes o más", value: "3+" },
-              ]}
-            />
-          </div>
-
-          <div className="space-y-3">
-            <label className="text-[15px] font-medium text-[var(--foreground-label)]">
-              ¿Tienes protección en balcones y ventanas? <span className="text-[var(--accent-ember)]">*</span>
-            </label>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              <label className={radioCardClass(form.protection === "si")}>
-                <input
-                  type="radio"
-                  name="protection"
-                  value="si"
-                  checked={form.protection === "si"}
-                  onChange={(e) => setForm((prev) => ({ ...prev, protection: e.target.value }))}
-                  className="h-4 w-4 accent-[var(--accent)]"
-                />
-                <span>Sí, tengo redes</span>
-              </label>
-
-              <label className={radioCardClass(form.protection === "puedo")}>
-                <input
-                  type="radio"
-                  name="protection"
-                  value="puedo"
-                  checked={form.protection === "puedo"}
-                  onChange={(e) => setForm((prev) => ({ ...prev, protection: e.target.value }))}
-                  className="h-4 w-4 accent-[var(--accent)]"
-                />
-                <span>No, pero puedo colocarlas</span>
-              </label>
-            </div>
-
-            <p className="text-xs text-[var(--caption-muted)]">Este requisito es importante para garantizar una adopción segura.</p>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="otherPets" className="text-[15px] font-medium text-[var(--foreground-label)]">
-              ¿Tienes otras mascotas?
-            </label>
-            <textarea
-              id="otherPets"
-              rows={4}
-              value={form.otherPets}
-              onChange={handleChange("otherPets")}
-              placeholder="Contanos si convivís con otros perros o gatos y cómo es su comportamiento."
-              className={textareaClassName}
-            />
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--surface-warm-tint)] text-[var(--warm-orange)]">
-              <FaHeart size={16} />
-            </div>
-
-            <div>
-              <h2 className="text-[22px] font-semibold text-[var(--foreground-heading)]">Sobre {pet.name}</h2>
-              <p className="text-sm text-[var(--caption)]">Queremos conocer tus motivaciones y tu experiencia previa.</p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="reason" className="text-[15px] font-medium text-[var(--foreground-label)]">
-              ¿Por qué quieres adoptar a {pet.name}? <span className="text-[var(--accent-ember)]">*</span>
-            </label>
-            <textarea
-              id="reason"
-              rows={5}
-              value={form.reason}
-              onChange={handleChange("reason")}
-              placeholder={`Cuéntanos qué te enamoró de ${pet.name}, cómo imaginas su adaptación y qué tipo de hogar le darías.`}
-              className={textareaClassName}
-            />
-          </div>
-
-          <SelectField
-            label="¿Tenés experiencia con mascotas?"
-            required
-            placeholder="Selecciona una opción"
-            value={form.experience}
-            onValueChange={(value) => setForm((prev) => ({ ...prev, experience: value }))}
-            options={[
-              { label: "Sí, convivo con perros o gatos", value: "actualmente" },
-              { label: "Sí, tuve perros o gatos antes", value: "anteriormente" },
-              { label: "Tengo algo de experiencia", value: "algo" },
-              { label: "No, sería mi primera vez", value: "no" },
-            ]}
-          />
-
-          <div className="flex items-start gap-3 rounded-[20px] bg-[var(--warning-bg)] px-4 py-4 text-sm text-[var(--warning-fg)]">
-            <HiOutlineShieldCheck size={18} className="mt-0.5 shrink-0" />
-            <p>
-              Al enviar esta solicitud te comprometes a brindar un hogar responsable, amoroso y seguro. Revisaremos la
-              información y nos pondremos en contacto contigo dentro de las próximas 48 hs.
-            </p>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!isFormValid}
-            className={`flex h-14 w-full items-center justify-center gap-2 rounded-[18px] text-sm font-semibold text-white transition ${
-              isFormValid
-                ? "bg-[var(--accent)] shadow-[var(--shadow-accent-button)] hover:bg-[var(--accent-hover)]"
-                : "cursor-not-allowed bg-[var(--accent-disabled)]"
-            }`}
-          >
-            Enviar solicitud para {pet.name}
-            <FaPaw />
-          </button>
-        </section>
-      </form>
-    </article>
+      <AdoptionFormTrustFooter />
+    </>
   );
 };
 
