@@ -33,7 +33,7 @@ export default function AdoptionFormInput({
 }: Props) {
   return (
     <div className={adoptionInputWrapClassName}>
-      <Icon className={adoptionInputIconClassName} size={18} aria-hidden />
+      <Icon className={adoptionInputIconClassName} size={16} aria-hidden />
       <input
         id={id}
         name={name}

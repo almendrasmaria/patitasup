@@ -13,6 +13,7 @@ import AdoptionFormField from "../AdoptionFormField";
 import AdoptionFormInput from "../AdoptionFormInput";
 import AdoptionSelectField from "../AdoptionSelectField";
 import { PREFERRED_CONTACT_OPTIONS } from "../adoptionFormConfig";
+import { adoptionStepGridClassName, adoptionStepStackClassName } from "../adoptionFormStyles";
 import type { AdoptionFormData } from "../adoptionFormTypes";
 
 type Props = {
@@ -21,12 +22,10 @@ type Props = {
   onField: <K extends keyof AdoptionFormData>(field: K, value: AdoptionFormData[K]) => void;
 };
 
-const twoColGrid = "grid grid-cols-1 gap-5 md:grid-cols-2";
-
 export default function PersonalDataStep({ form, onChange, onField }: Props) {
   return (
-    <section className="space-y-5" aria-label="Tus datos de contacto">
-      <div className={twoColGrid}>
+    <section className={adoptionStepStackClassName} aria-label="Tus datos de contacto">
+      <div className={adoptionStepGridClassName}>
         <AdoptionFormField label="Nombre" htmlFor="firstName" required>
           <AdoptionFormInput
             id="firstName"
@@ -35,7 +34,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="given-name"
             value={form.firstName}
             onChange={onChange("firstName")}
-            placeholder="Ej. María"
+            placeholder="Tu nombre"
           />
         </AdoptionFormField>
 
@@ -47,19 +46,19 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="family-name"
             value={form.lastName}
             onChange={onChange("lastName")}
-            placeholder="Ej. Pérez"
+            placeholder="Tu apellido"
           />
         </AdoptionFormField>
       </div>
 
-      <div className={twoColGrid}>
+      <div className={adoptionStepGridClassName}>
         <AdoptionFormField
           label="Correo electrónico"
           htmlFor="email"
           required
           footer={
-            <p className="flex items-center gap-1.5 text-[12px] text-[var(--muted-foreground)]">
-              <HiOutlineShieldCheck size={14} className="shrink-0 text-[var(--accent)]" aria-hidden />
+            <p className="flex items-center gap-1 text-xs text-[var(--neutral-400)]">
+              <HiOutlineShieldCheck size={11} className="shrink-0 text-[var(--accent)]" aria-hidden />
               No compartimos tu correo con terceros.
             </p>
           }
@@ -72,7 +71,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="email"
             value={form.email}
             onChange={onChange("email")}
-            placeholder="maria@ejemplo.com"
+            placeholder="correo@ejemplo.com"
           />
         </AdoptionFormField>
 
@@ -85,7 +84,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="tel"
             value={form.phone}
             onChange={onChange("phone")}
-            placeholder="Ej. 11 1234 5678"
+            placeholder="+54 11 0000-0000"
           />
         </AdoptionFormField>
       </div>
@@ -98,11 +97,11 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
           autoComplete="street-address"
           value={form.domicilio}
           onChange={onChange("domicilio")}
-          placeholder="Ej. Av. Santa Fe 1234"
+          placeholder="Calle y número"
         />
       </AdoptionFormField>
 
-      <div className={twoColGrid}>
+      <div className={adoptionStepGridClassName}>
         <AdoptionFormField label="Barrio" htmlFor="barrio" required>
           <AdoptionFormInput
             id="barrio"
@@ -110,7 +109,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             icon={HiOutlineLocationMarker}
             value={form.barrio}
             onChange={onChange("barrio")}
-            placeholder="Ej. Palermo"
+            placeholder="Tu barrio"
           />
         </AdoptionFormField>
 

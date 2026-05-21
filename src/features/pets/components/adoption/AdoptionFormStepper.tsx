@@ -1,7 +1,8 @@
 "use client";
 
+import { motion } from "motion/react";
 import type { IconType } from "react-icons";
-import { HiOutlineHeart, HiOutlineHome, HiOutlineUser } from "react-icons/hi";
+import { HiCheck, HiOutlineHeart, HiOutlineHome, HiOutlineUser } from "react-icons/hi";
 
 import type { AdoptionFormStep } from "./adoptionFormTypes";
 
@@ -20,53 +21,58 @@ const STEPS: {
   { id: 3, label: (petName) => `Sobre ${petName}`, icon: HiOutlineHeart },
 ];
 
-function circleClass(isActive: boolean, isCompleted: boolean) {
-  if (isActive || isCompleted) {
-    return "bg-[var(--accent)] text-white";
-  }
-  return "border-2 border-[var(--border-input-soft)] bg-white text-[var(--text-disabled)]";
-}
-
-function labelClass(isActive: boolean, isCompleted: boolean) {
-  if (isActive || isCompleted) return "text-[var(--accent)]";
-  return "text-[var(--text-disabled)]";
-}
-
 export default function AdoptionFormStepper({ currentStep, petName }: Props) {
   return (
-    <nav aria-label="Progreso del formulario" className="mt-6 w-full">
-      <ol className="flex w-full items-start">
+    <nav aria-label="Progreso del formulario" className="mb-8 mt-6 w-full">
+      <ol className="flex items-center justify-center gap-0">
         {STEPS.map((step, index) => {
-          const isActive = currentStep === step.id;
-          const isCompleted = currentStep > step.id;
+          const done = currentStep > step.id;
+          const active = currentStep === step.id;
           const Icon = step.icon;
 
           return (
-            <li
-              key={step.id}
-              className={`flex items-start ${index < STEPS.length - 1 ? "min-w-0 flex-1" : "shrink-0"}`}
-            >
-              <div className="flex w-[5rem] shrink-0 flex-col items-center text-center sm:w-[6.25rem] md:w-[7rem]">
-                <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${circleClass(isActive, isCompleted)}`}
-                  aria-current={isActive ? "step" : undefined}
+            <li key={step.id} className="flex items-center">
+              <div className="flex flex-col items-center gap-1.5">
+                <motion.div
+                  animate={{
+                    backgroundColor: done || active ? "var(--accent)" : "#f3f3f5",
+                    boxShadow: active ? "0 0 0 4px var(--accent-ring-15)" : "none",
+                    scale: active ? 1.05 : 1,
+                  }}
+                  transition={{ duration: 0.3 }}
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    border: done || active ? "none" : "2px solid var(--border-neutral)",
+                  }}
+                  aria-current={active ? "step" : undefined}
                 >
-                  <Icon size={20} aria-hidden />
-                </div>
+                  {done ? (
+                    <HiCheck size={18} className="text-white" aria-hidden />
+                  ) : (
+                    <Icon size={16} className={active ? "text-white" : "text-[var(--neutral-400)]"} aria-hidden />
+                  )}
+                </motion.div>
+
                 <span
-                  className={`mt-2 text-[11px] font-medium leading-tight sm:text-xs ${labelClass(isActive, isCompleted)}`}
+                  className="whitespace-nowrap text-xs"
+                  style={{
+                    color: active ? "var(--accent)" : "var(--neutral-400)",
+                    fontWeight: active ? 600 : 400,
+                  }}
                 >
                   {step.label(petName)}
                 </span>
               </div>
 
               {index < STEPS.length - 1 ? (
-                <div
-                  className={`mx-1 mt-[22px] h-px min-w-[1rem] flex-1 self-start sm:mx-2 ${
-                    isCompleted ? "bg-[var(--accent)]" : "bg-[var(--divider)]"
-                  }`}
-                  aria-hidden
-                />
+                <div className="relative mx-1 mb-5 w-12 sm:w-16">
+                  <div className="h-0.5 w-full rounded-full bg-[var(--divider)]" aria-hidden />
+                  <motion.div
+                    className="absolute left-0 top-0 h-0.5 rounded-full bg-[var(--accent)]"
+                    animate={{ width: done ? "100%" : "0%" }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                  />
+                </div>
               ) : null}
             </li>
           );

@@ -1,9 +1,13 @@
 "use client";
 
+import { FaPaw } from "react-icons/fa";
+import { HiOutlineHome } from "react-icons/hi";
+
 import AdoptionFormField from "../AdoptionFormField";
+import AdoptionFormTextarea from "../AdoptionFormTextarea";
 import AdoptionSelectField from "../AdoptionSelectField";
 import type { AdoptionFormData } from "../adoptionFormTypes";
-import { adoptionRadioCardClass, adoptionTextareaClassName } from "../adoptionFormStyles";
+import { adoptionRadioCardClass, adoptionStepStackClassName } from "../adoptionFormStyles";
 
 type Props = {
   form: AdoptionFormData;
@@ -13,10 +17,11 @@ type Props = {
 
 export default function HomeStep({ form, onChange, onField }: Props) {
   return (
-    <section className="space-y-5" aria-label="Tu hogar">
+    <section className={adoptionStepStackClassName} aria-label="Tu hogar">
       <AdoptionSelectField
         label="Tipo de vivienda"
         required
+        icon={HiOutlineHome}
         placeholder="Seleccioná una opción"
         value={form.housingType}
         onValueChange={(value) => onField("housingType", value)}
@@ -30,7 +35,7 @@ export default function HomeStep({ form, onChange, onField }: Props) {
       <AdoptionFormField label="¿Tenés redes o protección en balcones y ventanas?" required>
         <fieldset>
           <legend className="sr-only">Protección en balcones y ventanas</legend>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className={adoptionRadioCardClass(form.protection === "si")}>
               <input
                 type="radio"
@@ -59,14 +64,14 @@ export default function HomeStep({ form, onChange, onField }: Props) {
       </AdoptionFormField>
 
       <AdoptionFormField label="¿Tenés otras mascotas en casa?" htmlFor="otherPets">
-        <textarea
+        <AdoptionFormTextarea
           id="otherPets"
           name="otherPets"
-          rows={4}
+          icon={FaPaw}
+          rows={3}
           value={form.otherPets}
           onChange={onChange("otherPets")}
-          placeholder="Opcional"
-          className={adoptionTextareaClassName}
+          placeholder="Opcional — contanos si tenés otras mascotas"
         />
       </AdoptionFormField>
     </section>

@@ -33,7 +33,7 @@ export default function AdoptionSelectField({
     <AdoptionFormField label={label} required={required}>
       <Select.Root value={value} onValueChange={onValueChange}>
         <Select.Trigger className={adoptionSelectTriggerClassName}>
-          {Icon ? <Icon className={adoptionInputIconClassName} size={18} aria-hidden /> : null}
+          {Icon ? <Icon className={adoptionInputIconClassName} size={16} aria-hidden /> : null}
           <span className="min-w-0 flex-1 text-left">
             <Select.Value placeholder={placeholder} />
           </span>

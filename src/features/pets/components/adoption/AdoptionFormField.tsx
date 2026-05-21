@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { adoptionFieldGapClassName } from "./adoptionFormStyles";
+import { adoptionFieldGapClassName, adoptionLabelClassName } from "./adoptionFormStyles";
 
 type Props = {
   label: string;
@@ -25,9 +25,9 @@ export default function AdoptionFormField({
     <div className={className}>
       <label
         htmlFor={htmlFor}
-        className="block text-[13px] font-medium leading-snug text-[var(--neutral-600)]"
+        className={adoptionLabelClassName}
       >
-        {label} {required ? <span className="text-[var(--accent-ember)]">*</span> : null}
+        {label} {required ? <span className="text-[var(--accent)]">*</span> : null}
       </label>
       <div className={adoptionFieldGapClassName}>
         {children}
