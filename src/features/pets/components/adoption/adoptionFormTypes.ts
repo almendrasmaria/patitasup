@@ -29,8 +29,3 @@ export const INITIAL_ADOPTION_FORM: AdoptionFormData = {
 };
 
 export type AdoptionFormStep = 1 | 2 | 3;
-
-export {
-  isAdoptionFormComplete,
-  isAdoptionStepComplete,
-} from "./adoptionFormConfig";
