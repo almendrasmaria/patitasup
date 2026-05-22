@@ -7,6 +7,7 @@ import { HiCheck, HiChevronDown } from "react-icons/hi";
 import AdoptionFormField from "./AdoptionFormField";
 import {
   adoptionInputIconClassName,
+  adoptionInputWrapErrorClassName,
   adoptionSelectTriggerClassName,
 } from "./adoptionFormStyles";
 
@@ -18,6 +19,8 @@ type Props = {
   onValueChange: (value: string) => void;
   options: { label: string; value: string }[];
   icon?: IconType;
+  error?: string;
+  invalid?: boolean;
 };
 
 export default function AdoptionSelectField({
@@ -28,11 +31,18 @@ export default function AdoptionSelectField({
   onValueChange,
   options,
   icon: Icon,
+  error,
+  invalid,
 }: Props) {
+  const hasError = Boolean(error) || invalid;
+
   return (
-    <AdoptionFormField label={label} required={required}>
+    <AdoptionFormField label={label} required={required} error={error}>
       <Select.Root value={value} onValueChange={onValueChange}>
-        <Select.Trigger className={adoptionSelectTriggerClassName}>
+        <Select.Trigger
+          className={`${adoptionSelectTriggerClassName} ${hasError ? adoptionInputWrapErrorClassName : ""}`}
+          aria-invalid={hasError}
+        >
           {Icon ? <Icon className={adoptionInputIconClassName} size={16} aria-hidden /> : null}
           <span className="min-w-0 flex-1 text-left">
             <Select.Value placeholder={placeholder} />

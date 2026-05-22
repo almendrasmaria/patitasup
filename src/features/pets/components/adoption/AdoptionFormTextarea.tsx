@@ -4,6 +4,7 @@ import type { IconType } from "react-icons";
 
 import {
   adoptionInputIconClassName,
+  adoptionInputWrapErrorClassName,
   adoptionTextareaInnerClassName,
   adoptionTextareaWrapClassName,
 } from "./adoptionFormStyles";
@@ -16,6 +17,8 @@ type Props = {
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   rows?: number;
+  error?: string;
+  invalid?: boolean;
 };
 
 export default function AdoptionFormTextarea({
@@ -26,9 +29,15 @@ export default function AdoptionFormTextarea({
   onChange,
   placeholder,
   rows = 3,
+  error,
+  invalid,
 }: Props) {
+  const hasError = Boolean(error) || invalid;
+
   return (
-    <div className={adoptionTextareaWrapClassName}>
+    <div
+      className={`${adoptionTextareaWrapClassName} ${hasError ? adoptionInputWrapErrorClassName : ""}`}
+    >
       {Icon ? <Icon className={`${adoptionInputIconClassName} mt-0.5`} size={16} aria-hidden /> : null}
       <textarea
         id={id}
@@ -37,6 +46,8 @@ export default function AdoptionFormTextarea({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        aria-invalid={hasError}
+        aria-describedby={error ? `${id}-error` : undefined}
         className={adoptionTextareaInnerClassName}
       />
     </div>

@@ -6,6 +6,11 @@ export const adoptionLabelClassName =
 export const adoptionInputWrapClassName =
   "group flex w-full items-center gap-3 rounded-xl border-[1.5px] border-[var(--border-neutral)] bg-[#fafafa] px-4 py-3 transition-all duration-200 focus-within:border-[var(--accent)] focus-within:bg-white focus-within:shadow-[0_0_0_3px_var(--accent-ring-10)]";
 
+export const adoptionInputWrapErrorClassName =
+  "border-[var(--destructive)] focus-within:border-[var(--destructive)] focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--destructive)_15%,transparent)]";
+
+export const adoptionFieldErrorClassName = "text-xs text-[var(--destructive)]";
+
 export const adoptionInputInnerClassName =
   "min-w-0 flex-1 bg-transparent text-sm text-[var(--foreground-body)] outline-none placeholder:text-[var(--placeholder)]";
 

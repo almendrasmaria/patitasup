@@ -2,7 +2,11 @@
 
 import type { ReactNode } from "react";
 
-import { adoptionFieldGapClassName, adoptionLabelClassName } from "./adoptionFormStyles";
+import {
+  adoptionFieldErrorClassName,
+  adoptionFieldGapClassName,
+  adoptionLabelClassName,
+} from "./adoptionFormStyles";
 
 type Props = {
   label: string;
@@ -11,6 +15,7 @@ type Props = {
   footer?: ReactNode;
   children: ReactNode;
   className?: string;
+  error?: string;
 };
 
 export default function AdoptionFormField({
@@ -20,7 +25,10 @@ export default function AdoptionFormField({
   footer,
   children,
   className = "",
+  error,
 }: Props) {
+  const errorId = htmlFor ? `${htmlFor}-error` : undefined;
+
   return (
     <div className={className}>
       <label
@@ -31,6 +39,11 @@ export default function AdoptionFormField({
       </label>
       <div className={adoptionFieldGapClassName}>
         {children}
+        {error ? (
+          <p id={errorId} className={adoptionFieldErrorClassName} role="alert">
+            {error}
+          </p>
+        ) : null}
         {footer ? <div className="mt-2">{footer}</div> : null}
       </div>
     </div>

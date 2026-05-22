@@ -6,6 +6,7 @@ import {
   adoptionInputIconClassName,
   adoptionInputInnerClassName,
   adoptionInputWrapClassName,
+  adoptionInputWrapErrorClassName,
 } from "./adoptionFormStyles";
 
 type Props = {
@@ -18,6 +19,8 @@ type Props = {
   placeholder?: string;
   autoComplete?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  error?: string;
+  invalid?: boolean;
 };
 
 export default function AdoptionFormInput({
@@ -30,9 +33,15 @@ export default function AdoptionFormInput({
   placeholder,
   autoComplete,
   inputMode,
+  error,
+  invalid,
 }: Props) {
+  const hasError = Boolean(error) || invalid;
+
   return (
-    <div className={adoptionInputWrapClassName}>
+    <div
+      className={`${adoptionInputWrapClassName} ${hasError ? adoptionInputWrapErrorClassName : ""}`}
+    >
       <Icon className={adoptionInputIconClassName} size={16} aria-hidden />
       <input
         id={id}
@@ -43,6 +52,8 @@ export default function AdoptionFormInput({
         placeholder={placeholder}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        aria-invalid={hasError}
+        aria-describedby={error ? `${id}-error` : undefined}
         className={adoptionInputInnerClassName}
       />
     </div>

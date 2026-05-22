@@ -6,16 +6,25 @@ import { HiOutlineHome } from "react-icons/hi";
 import AdoptionFormField from "../AdoptionFormField";
 import AdoptionFormTextarea from "../AdoptionFormTextarea";
 import AdoptionSelectField from "../AdoptionSelectField";
+import type { AdoptionFieldKey } from "../adoptionFormConfig";
 import type { AdoptionFormData } from "../adoptionFormTypes";
 import { adoptionRadioCardClass, adoptionStepStackClassName } from "../adoptionFormStyles";
 
 type Props = {
   form: AdoptionFormData;
+  fieldErrors?: Partial<Record<AdoptionFieldKey, string>>;
+  emptyRequired?: Partial<Record<AdoptionFieldKey, true>>;
   onChange: (field: keyof AdoptionFormData) => (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onField: <K extends keyof AdoptionFormData>(field: K, value: AdoptionFormData[K]) => void;
 };
 
-export default function HomeStep({ form, onChange, onField }: Props) {
+export default function HomeStep({
+  form,
+  fieldErrors = {},
+  emptyRequired = {},
+  onChange,
+  onField,
+}: Props) {
   return (
     <section className={adoptionStepStackClassName} aria-label="Tu hogar">
       <AdoptionSelectField
@@ -30,9 +39,19 @@ export default function HomeStep({ form, onChange, onField }: Props) {
           { label: "Casa", value: "casa" },
           { label: "PH", value: "ph" },
         ]}
+        error={fieldErrors.housingType}
+        invalid={emptyRequired.housingType}
       />
 
-      <AdoptionFormField label="¿Tenés redes o protección en balcones y ventanas?" required>
+      <AdoptionFormField
+        label="¿Tenés redes o protección en balcones y ventanas?"
+        required
+        className={
+          emptyRequired.protection
+            ? "rounded-xl ring-1 ring-[var(--destructive)] ring-offset-2"
+            : undefined
+        }
+      >
         <fieldset>
           <legend className="sr-only">Protección en balcones y ventanas</legend>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

@@ -11,7 +11,13 @@ import AdoptionFormCardIntro from "./AdoptionFormCardIntro";
 import AdoptionFormStepper from "./AdoptionFormStepper";
 import AdoptionFormSuccess from "./AdoptionFormSuccess";
 import AdoptionFormTrustFooter from "./AdoptionFormTrustFooter";
-import { isAdoptionFormComplete, isAdoptionStepComplete } from "./adoptionFormConfig";
+import { isAdoptionFormComplete } from "./adoptionFormConfig";
+import {
+  getAdoptionStepErrors,
+  getEmptyRequiredFields,
+  isAdoptionStepComplete,
+  sanitizePhoneInput,
+} from "./adoptionFormValidation";
 import {
   INITIAL_ADOPTION_FORM,
   type AdoptionFormData,
@@ -36,9 +42,16 @@ const AdoptionForm = ({ pet }: Props) => {
   const [step, setStep] = useState<AdoptionFormStep>(1);
   const [direction, setDirection] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [validationStep, setValidationStep] = useState<AdoptionFormStep | null>(null);
 
-  const stepComplete = useMemo(() => isAdoptionStepComplete(step, form), [step, form]);
+  const showErrors = validationStep === step;
   const formComplete = useMemo(() => isAdoptionFormComplete(form), [form]);
+  const stepErrors = useMemo(() => getAdoptionStepErrors(step, form), [step, form]);
+  const emptyRequired = useMemo(
+    () => (showErrors ? getEmptyRequiredFields(step, form) : {}),
+    [showErrors, step, form],
+  );
+  const visibleErrors = showErrors ? stepErrors : {};
 
   const handleChange =
     (field: keyof AdoptionFormData) =>
@@ -56,24 +69,37 @@ const AdoptionForm = ({ pet }: Props) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({
+      ...prev,
+      phone: sanitizePhoneInput(event.target.value),
+    }));
+  };
+
   const goNext = () => {
-    if (!stepComplete || step >= 3) return;
+    if (step >= 3) return;
+
+    setValidationStep(step);
+    if (!isAdoptionStepComplete(step, form)) return;
+
+    setValidationStep(null);
     setDirection(1);
     setStep((prev) => (prev + 1) as AdoptionFormStep);
   };
 
   const goBack = () => {
     if (step <= 1) return;
+    setValidationStep(null);
     setDirection(-1);
     setStep((prev) => (prev - 1) as AdoptionFormStep);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!formComplete) return;
 
-    const fullName = `${form.firstName} ${form.lastName}`.trim();
-    console.log("Solicitud enviada:", { petId: pet.id, petSlug: pet.slug, fullName, ...form });
+    setValidationStep(3);
+    if (!isAdoptionStepComplete(3, form) || !formComplete) return;
+
     setSubmitted(true);
   };
 
@@ -112,15 +138,30 @@ const AdoptionForm = ({ pet }: Props) => {
                 transition={{ duration: 0.25, ease: "easeInOut" }}
               >
                 {step === 1 ? (
-                  <PersonalDataStep form={form} onChange={handleChange} onField={handleField} />
+                  <PersonalDataStep
+                    form={form}
+                    fieldErrors={visibleErrors}
+                    emptyRequired={emptyRequired}
+                    onChange={handleChange}
+                    onPhoneChange={handlePhoneChange}
+                    onField={handleField}
+                  />
                 ) : null}
                 {step === 2 ? (
-                  <HomeStep form={form} onChange={handleChange} onField={handleField} />
+                  <HomeStep
+                    form={form}
+                    fieldErrors={visibleErrors}
+                    emptyRequired={emptyRequired}
+                    onChange={handleChange}
+                    onField={handleField}
+                  />
                 ) : null}
                 {step === 3 ? (
                   <PetStep
                     petName={pet.name}
                     form={form}
+                    fieldErrors={visibleErrors}
+                    emptyRequired={emptyRequired}
                     onChange={handleChange}
                     onField={handleField}
                   />
@@ -145,16 +186,13 @@ const AdoptionForm = ({ pet }: Props) => {
               {step < 3 ? (
                 <motion.button
                   type="button"
-                  disabled={!stepComplete}
                   onClick={goNext}
-                  whileHover={stepComplete ? { scale: 1.02 } : undefined}
-                  whileTap={stepComplete ? { scale: 0.98 } : undefined}
-                  className={`inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-opacity ${
-                    stepComplete ? "cursor-pointer" : "cursor-not-allowed opacity-50"
-                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-opacity"
                   style={{
                     background: "linear-gradient(135deg, var(--warm-orange-light) 0%, var(--accent) 100%)",
-                    boxShadow: stepComplete ? "0 4px 15px color-mix(in srgb, var(--accent) 35%, transparent)" : "none",
+                    boxShadow: "0 4px 15px color-mix(in srgb, var(--accent) 35%, transparent)",
                   }}
                 >
                   Siguiente paso
@@ -163,17 +201,12 @@ const AdoptionForm = ({ pet }: Props) => {
               ) : (
                 <motion.button
                   type="submit"
-                  disabled={!formComplete}
-                  whileHover={formComplete ? { scale: 1.02 } : undefined}
-                  whileTap={formComplete ? { scale: 0.98 } : undefined}
-                  className={`inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-opacity ${
-                    formComplete ? "cursor-pointer" : "cursor-not-allowed opacity-50"
-                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-opacity"
                   style={{
                     background: "linear-gradient(135deg, var(--warm-orange-light) 0%, var(--accent) 100%)",
-                    boxShadow: formComplete
-                      ? "0 4px 15px color-mix(in srgb, var(--accent) 35%, transparent)"
-                      : "none",
+                    boxShadow: "0 4px 15px color-mix(in srgb, var(--accent) 35%, transparent)",
                   }}
                 >
                   Enviar solicitud

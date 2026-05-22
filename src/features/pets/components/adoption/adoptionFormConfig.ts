@@ -40,12 +40,4 @@ export function getAdoptionFieldsForStep(step: AdoptionFormStep) {
   return ADOPTION_FORM_FIELDS.filter((field) => field.step === step);
 }
 
-export function isAdoptionStepComplete(step: AdoptionFormStep, form: AdoptionFormData) {
-  return getAdoptionFieldsForStep(step)
-    .filter((field) => field.required)
-    .every((field) => String(form[field.key]).trim() !== "");
-}
-
-export function isAdoptionFormComplete(form: AdoptionFormData) {
-  return ([1, 2, 3] as AdoptionFormStep[]).every((step) => isAdoptionStepComplete(step, form));
-}
+export { isAdoptionFormComplete, isAdoptionStepComplete } from "./adoptionFormValidation";
