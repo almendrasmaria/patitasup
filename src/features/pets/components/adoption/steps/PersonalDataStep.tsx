@@ -34,7 +34,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="given-name"
             value={form.firstName}
             onChange={onChange("firstName")}
-            placeholder="Tu nombre"
+            placeholder="Ej: María"
           />
         </AdoptionFormField>
 
@@ -46,7 +46,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="family-name"
             value={form.lastName}
             onChange={onChange("lastName")}
-            placeholder="Tu apellido"
+            placeholder="Ej: González"
           />
         </AdoptionFormField>
       </div>
@@ -71,7 +71,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="email"
             value={form.email}
             onChange={onChange("email")}
-            placeholder="correo@ejemplo.com"
+            placeholder="Ej: maria@email.com"
           />
         </AdoptionFormField>
 
@@ -84,7 +84,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             autoComplete="tel"
             value={form.phone}
             onChange={onChange("phone")}
-            placeholder="+54 11 0000-0000"
+            placeholder="Ej: 11 1234 5678"
           />
         </AdoptionFormField>
       </div>
@@ -97,7 +97,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
           autoComplete="street-address"
           value={form.domicilio}
           onChange={onChange("domicilio")}
-          placeholder="Calle y número"
+          placeholder="Ej: Av. Santa Fe 1234"
         />
       </AdoptionFormField>
 
@@ -109,7 +109,7 @@ export default function PersonalDataStep({ form, onChange, onField }: Props) {
             icon={HiOutlineLocationMarker}
             value={form.barrio}
             onChange={onChange("barrio")}
-            placeholder="Tu barrio"
+            placeholder="Ej: Palermo"
           />
         </AdoptionFormField>
 
