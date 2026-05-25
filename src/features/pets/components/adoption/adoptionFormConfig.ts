@@ -39,5 +39,3 @@ export const ALONE_HOURS_OPTIONS = [
 export function getAdoptionFieldsForStep(step: AdoptionFormStep) {
   return ADOPTION_FORM_FIELDS.filter((field) => field.step === step);
 }
-
-export { isAdoptionFormComplete, isAdoptionStepComplete } from "./adoptionFormValidation";
