@@ -11,10 +11,10 @@ import AdoptionFormCardIntro from "./AdoptionFormCardIntro";
 import AdoptionFormStepper from "./AdoptionFormStepper";
 import AdoptionFormSuccess from "./AdoptionFormSuccess";
 import AdoptionFormTrustFooter from "./AdoptionFormTrustFooter";
-import { isAdoptionFormComplete } from "./adoptionFormConfig";
 import {
   getAdoptionStepErrors,
   getEmptyRequiredFields,
+  isAdoptionFormComplete,
   isAdoptionStepComplete,
   sanitizePhoneInput,
 } from "./adoptionFormValidation";
