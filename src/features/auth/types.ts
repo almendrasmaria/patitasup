@@ -1,4 +1,4 @@
-export type AuthFieldName = "name" | "email" | "password";
+export type AuthFieldName = "name" | "email" | "password" | "confirmPassword";
 
 export type AuthActionState = {
   status: "idle" | "error" | "success";

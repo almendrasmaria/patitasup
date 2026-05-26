@@ -25,6 +25,20 @@ const registerSchema = z.object({
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().trim().email("Ingresá un correo válido."),
+});
+
+const resetPasswordSchema = z
+  .object({
+    password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres."),
+    confirmPassword: z.string().min(1, "Confirmá tu nueva contraseña."),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Las contraseñas no coinciden.",
+  });
+
 function getString(formDataEntryValue: FormDataEntryValue | null) {
   return typeof formDataEntryValue === "string" ? formDataEntryValue : "";
 }
@@ -50,6 +64,24 @@ function mapSupabaseError(message: string) {
 
   if (normalizedMessage.includes("password should be at least")) {
     return "La contraseña debe tener al menos 8 caracteres.";
+  }
+
+  if (
+    normalizedMessage.includes("rate limit") ||
+    normalizedMessage.includes("security purposes")
+  ) {
+    return "Por seguridad, esperá unos minutos antes de intentarlo nuevamente.";
+  }
+
+  if (
+    normalizedMessage.includes("same password") ||
+    normalizedMessage.includes("different from the old password")
+  ) {
+    return "Elegí una contraseña diferente a la anterior.";
+  }
+
+  if (normalizedMessage.includes("session") || normalizedMessage.includes("jwt")) {
+    return "El enlace expiró o ya fue usado. Pedí uno nuevo para continuar.";
   }
 
   return "No pudimos completar la operación. Intentá nuevamente.";
@@ -176,5 +208,77 @@ export async function registerAction(
       email: parsed.data.email,
       name: parsed.data.name,
     },
+  };
+}
+
+export async function forgotPasswordAction(
+  previousState: AuthActionState = INITIAL_AUTH_ACTION_STATE,
+  formData: FormData,
+): Promise<AuthActionState> {
+  void previousState;
+
+  const email = normalizeEmail(getString(formData.get("email")));
+  const parsed = forgotPasswordSchema.safeParse({ email });
+
+  if (!parsed.success) {
+    return buildValidationErrorState(parsed.error.flatten().fieldErrors, { email });
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const redirectTo = await getAbsoluteUrl("/auth/confirm?next=/reset-password");
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo,
+  });
+
+  if (error) {
+    return buildAuthErrorState(mapSupabaseError(error.message), {
+      email: parsed.data.email,
+    });
+  }
+
+  return {
+    status: "success",
+    message: "Si existe una cuenta con ese correo, te enviamos un enlace para cambiar la contraseña.",
+    values: {
+      email: parsed.data.email,
+    },
+  };
+}
+
+export async function resetPasswordAction(
+  previousState: AuthActionState = INITIAL_AUTH_ACTION_STATE,
+  formData: FormData,
+): Promise<AuthActionState> {
+  void previousState;
+
+  const password = getString(formData.get("password"));
+  const confirmPassword = getString(formData.get("confirmPassword"));
+  const parsed = resetPasswordSchema.safeParse({ password, confirmPassword });
+
+  if (!parsed.success) {
+    return buildValidationErrorState(parsed.error.flatten().fieldErrors, {});
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return buildAuthErrorState("El enlace expiró o ya fue usado. Pedí uno nuevo para continuar.", {});
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+
+  if (error) {
+    return buildAuthErrorState(mapSupabaseError(error.message), {});
+  }
+
+  return {
+    status: "success",
+    message: "Tu contraseña fue actualizada correctamente.",
   };
 }
