@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const tokenHash = requestUrl.searchParams.get("token_hash");
   const type = requestUrl.searchParams.get("type") as EmailOtpType | null;
   const next = getSafeRedirectPath(requestUrl.searchParams.get("next"), "/profile");
+  const errorPath = type === "recovery" ? "/forgot-password?error=confirm" : "/login?error=confirm";
 
   if (tokenHash && type) {
     const supabase = await createSupabaseServerClient();
@@ -22,5 +23,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL("/login?error=confirm", requestUrl.origin));
+  return NextResponse.redirect(new URL(errorPath, requestUrl.origin));
 }

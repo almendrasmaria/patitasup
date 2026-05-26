@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import AppNavbar, { type NavUser } from "./AppNavbar";
 import { isDashboardRoute } from "./dashboardRoutes";
 
-const AUTH_PATHS = ["/login", "/register"];
+const AUTH_PATHS = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 type Props = {
   children: ReactNode;

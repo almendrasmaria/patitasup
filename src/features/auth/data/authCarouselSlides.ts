@@ -39,3 +39,24 @@ export const loginSlides = [
       "Entrá a PatitasUp y continuá conectando gatos con familias responsables.",
   },
 ];
+
+export const passwordRecoverySlides = [
+  {
+    image: "/auth/cat1.webp",
+    title: "Volvé a entrar con tranquilidad.",
+    description:
+      "Recuperá el acceso a tu cuenta para seguir acompañando cada historia.",
+  },
+  {
+    image: "/auth/cat2.webp",
+    title: "Tus publicaciones siguen a salvo.",
+    description:
+      "Cambiá tu contraseña y retomá la gestión de adopciones cuando quieras.",
+  },
+  {
+    image: "/auth/cat3.webp",
+    title: "Seguimos cerca de cada adopción.",
+    description:
+      "Mantené tu cuenta protegida y continuá conectando gatos con familias.",
+  },
+];
