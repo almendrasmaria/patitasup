@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
+import BrandLogo from "@/components/BrandLogo";
 import { resetPasswordAction } from "@/features/auth/actions";
 import { INITIAL_AUTH_ACTION_STATE } from "@/features/auth/types";
 
@@ -18,22 +18,13 @@ const ResetPasswordForm = () => {
   const passwordUpdated = state.status === "success";
 
   return (
-    <div className="w-full max-w-[520px]">
-      <div className="mb-5">
-        <Link href="/" className="inline-flex">
-          <Image
-            src="/logo-dark.webp"
-            alt="PatitasUp Logo"
-            width={320}
-            height={84}
-            sizes="(max-width: 640px) 240px, 280px"
-            className="aspect-[320/84] h-14 w-auto max-h-14 max-w-full object-contain object-left sm:h-16 sm:max-h-16"
-          />
-        </Link>
+    <div className="w-full max-w-[420px] xl:max-w-[520px]">
+      <div className="mb-10">
+        <BrandLogo tone="dark" size="lg" />
       </div>
 
       <div className="mb-7">
-        <h1 className="text-[32px] font-semibold leading-[1.1] text-[var(--foreground-strong)] md:text-[36px]">
+        <h1 className="text-[28px] font-semibold leading-[1.1] text-[var(--foreground-strong)] md:text-[30px] xl:text-[36px]">
           Nueva contraseña
         </h1>
 

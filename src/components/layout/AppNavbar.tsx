@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiFileText, FiHome, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
 
+import BrandLogo from "@/components/BrandLogo";
 import { signOutFromBrowser } from "@/features/auth/lib/signOutApp";
 
 import {
@@ -14,6 +14,7 @@ import {
   DASHBOARD_PROFILE_HREF,
   isDashboardRoute,
 } from "./dashboardRoutes";
+import PublicNavLinks from "./PublicNavLinks";
 
 export type NavUser = {
   email: string;
@@ -25,12 +26,6 @@ const publicNav = [
   { label: "Mascotas", href: "/pets" },
   { label: "Contacto", href: "/contact" },
 ] as const;
-
-const LOGO_DARK_SRC = "/logo-dark.webp";
-const LOGO_LIGHT_SRC = "/logo-light.webp";
-
-const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
-const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";
 
 function getInitials(profileName: string) {
   const initials = profileName
@@ -54,39 +49,19 @@ type Props = {
 
 function NavbarBrand({
   onNavigate,
-  imagePriority = false,
   mode = "full",
   tone = "dark",
 }: {
   onNavigate?: () => void;
-  imagePriority?: boolean;
   mode?: "full" | "compact";
   tone?: "dark" | "light";
 }) {
-  const src = tone === "light" ? LOGO_LIGHT_SRC : LOGO_DARK_SRC;
-  const aspectClass = mode === "compact" ? NAV_LOGO_COMPACT_ASPECT_CLASS : NAV_LOGO_ASPECT_CLASS;
-  const sizeClass =
-    mode === "compact"
-      ? "h-9 w-auto max-h-9 max-w-[180px] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[200px]"
-      : "h-11 w-auto max-h-11 max-w-[200px] object-contain object-left sm:h-12 sm:max-h-12 sm:max-w-[240px] md:max-w-[280px]";
-
   return (
-    <Link
-      href="/"
+    <BrandLogo
+      tone={tone}
+      size={mode === "compact" ? "sm" : "md"}
       onClick={onNavigate}
-      className="inline-flex shrink-0 items-center"
-      aria-label="PatitasUp, ir al inicio"
-    >
-      <Image
-        src={src}
-        alt="PatitasUp Logo"
-        width={mode === "compact" ? 280 : 320}
-        height={mode === "compact" ? 74 : 84}
-        sizes={mode === "compact" ? "200px" : "(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"}
-        className={`${aspectClass} ${sizeClass}`}
-        priority={imagePriority}
-      />
-    </Link>
+    />
   );
 }
 
@@ -133,9 +108,6 @@ export default function AppNavbar({ navUser }: Props) {
     });
   }, [router]);
 
-  const publicLinkInactive =
-    "text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:text-[var(--warm-orange)]";
-  const publicLinkActive = "text-sm font-medium text-[var(--primary)]";
   const dashboardLinkInactive = "font-medium text-[var(--neutral-600)] transition hover:text-[var(--accent)]";
 
   const isActiveDash = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -150,26 +122,15 @@ export default function AppNavbar({ navUser }: Props) {
     <>
       <nav data-site-navbar className="relative z-50 border-b border-[var(--border)] bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+          <div className="grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
               <div className="relative z-20 flex min-w-0 items-center justify-self-start">
-                <NavbarBrand onNavigate={closeMobile} imagePriority />
+                <NavbarBrand onNavigate={closeMobile} />
               </div>
 
-              <div className="relative hidden justify-self-center md:block">
+              <div className="relative hidden justify-self-center lg:block">
                 <div aria-label={inDashboard ? "Panel principal" : "Navegación principal"} role="navigation">
                   {usePublicCenterNav ? (
-                    <ul className="flex flex-wrap items-center justify-center gap-8">
-                      {publicNav.map(({ label, href }) => (
-                        <li key={href}>
-                          <Link
-                            href={href}
-                            className={isActivePublicHref(pathname, href) ? publicLinkActive : publicLinkInactive}
-                          >
-                            {label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+                    <PublicNavLinks links={publicNav} pathname={pathname} />
                   ) : (
                     <ul className="flex flex-wrap items-center justify-center gap-1">
                       {DASHBOARD_NAV_ITEMS.map(({ label, href }) => (
@@ -189,10 +150,10 @@ export default function AppNavbar({ navUser }: Props) {
                 </div>
               </div>
 
-              <div className="relative z-20 col-start-2 flex min-w-0 items-center justify-end justify-self-end md:col-start-3">
+              <div className="relative z-20 col-start-2 flex min-w-0 items-center justify-end justify-self-end lg:col-start-3">
                 {loggedIn && navUser ? (
                   <>
-                    <div ref={dropdownRef} className="relative hidden md:block">
+                    <div ref={dropdownRef} className="relative hidden lg:block">
                       <button
                         type="button"
                         onClick={() => setDropdownOpen((o) => !o)}
@@ -259,7 +220,7 @@ export default function AppNavbar({ navUser }: Props) {
 
                     <button
                       type="button"
-                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] md:hidden"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] lg:hidden"
                       aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
                       onClick={() => {
                         setDropdownOpen(false);
@@ -271,7 +232,7 @@ export default function AppNavbar({ navUser }: Props) {
                   </>
                 ) : (
                   <>
-                    <div className="hidden items-center gap-3 md:flex">
+                    <div className="hidden items-center gap-3 lg:flex">
                       <Link
                         href="/login"
                         className="px-1 py-2 text-sm font-medium text-[var(--brand-teal)] transition-colors hover:text-[var(--brand-teal-subtle)]"
@@ -287,7 +248,7 @@ export default function AppNavbar({ navUser }: Props) {
                     </div>
                     <button
                       type="button"
-                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] md:hidden"
+                      className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border-hairline)] text-2xl text-[var(--neutral-700)] lg:hidden"
                       aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
                       onClick={() => setMobileOpen(true)}
                     >
@@ -305,7 +266,7 @@ export default function AppNavbar({ navUser }: Props) {
       aria-modal={mobileOpen ? "true" : undefined}
       aria-hidden={!mobileOpen}
       id="app-navbar-mobile-menu"
-className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-teal)] transition-transform duration-300 ease-out md:hidden ${
+className={`fixed inset-0 z-9999 min-h-screen overflow-y-auto bg-[var(--brand-teal)] transition-transform duration-300 ease-out lg:hidden ${
         mobileOpen ? "pointer-events-auto translate-x-0" : "pointer-events-none translate-x-full"
       }`}
     >
