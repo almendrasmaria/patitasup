@@ -22,13 +22,13 @@ const ForgotPasswordForm = () => {
   const statusMessage = state.message ?? fallbackMessage;
 
   return (
-    <div className="w-full max-w-[520px]">
-      <div className="mb-5">
-        <BrandLogo tone="dark" size="lg" iconOnly />
+    <div className="w-full max-w-[420px] xl:max-w-[520px]">
+      <div className="mb-10">
+        <BrandLogo tone="dark" size="lg" />
       </div>
 
       <div className="mb-7">
-        <h1 className="text-[32px] font-semibold leading-[1.1] text-[var(--foreground-strong)] md:text-[36px]">
+        <h1 className="text-[28px] font-semibold leading-[1.1] text-[var(--foreground-strong)] md:text-[30px] xl:text-[36px]">
           Recuperá tu contraseña
         </h1>
 

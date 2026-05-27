@@ -13,49 +13,16 @@ type BrandLogoProps = {
   iconOnly?: boolean;
 };
 
-type SizeTokens = {
-  icon: string;
-  paw: string;
-  text: string;
-  gap: string;
+const SIZE_TEXT_CLASS: Record<BrandLogoSize, string> = {
+  sm: "text-xl",
+  md: "text-2xl",
+  lg: "text-[26px] xl:text-[34px]",
 };
 
-const SIZE_TOKENS: Record<BrandLogoSize, SizeTokens> = {
-  sm: {
-    icon: "h-7 w-7 rounded-lg",
-    paw: "text-[14px]",
-    text: "text-base",
-    gap: "gap-2",
-  },
-  md: {
-    icon: "h-9 w-9 rounded-xl",
-    paw: "text-[18px]",
-    text: "text-xl",
-    gap: "gap-2.5",
-  },
-  lg: {
-    icon: "h-12 w-12 rounded-2xl",
-    paw: "text-[24px]",
-    text: "text-[28px]",
-    gap: "gap-3",
-  },
-};
-
-type IconOnlyTokens = Pick<SizeTokens, "icon" | "paw">;
-
-const ICON_ONLY_TOKENS: Record<BrandLogoSize, IconOnlyTokens> = {
-  sm: {
-    icon: "h-9 w-9 rounded-lg",
-    paw: "text-[18px]",
-  },
-  md: {
-    icon: "h-12 w-12 rounded-xl",
-    paw: "text-[22px]",
-  },
-  lg: {
-    icon: "h-16 w-16 rounded-2xl",
-    paw: "text-[32px]",
-  },
+const ICON_ONLY_SIZE_CLASS: Record<BrandLogoSize, string> = {
+  sm: "text-[28px]",
+  md: "text-[36px]",
+  lg: "text-[64px]",
 };
 
 const TONE_TEXT_CLASS: Record<BrandLogoTone, string> = {
@@ -71,33 +38,29 @@ export default function BrandLogo({
   className,
   iconOnly = false,
 }: BrandLogoProps) {
-  const tokens = SIZE_TOKENS[size];
-  const iconTokens = iconOnly ? ICON_ONLY_TOKENS[size] : tokens;
   const textColor = TONE_TEXT_CLASS[tone];
 
-  const iconNode = (
-    <span
-      aria-hidden
-      className={`${iconTokens.icon} inline-flex shrink-0 items-center justify-center bg-[var(--warm-orange)] text-white shadow-sm`}
-    >
-      <FaPaw className={iconTokens.paw} />
-    </span>
-  );
-
   const content = iconOnly ? (
-    iconNode
+    <FaPaw
+      aria-hidden
+      className={`${ICON_ONLY_SIZE_CLASS[size]} text-[var(--warm-orange)]`}
+    />
   ) : (
-    <span className={`inline-flex items-center ${tokens.gap}`}>
-      {iconNode}
-      <span className={`font-bold leading-none tracking-tight ${tokens.text} ${textColor}`}>
-        Patitas<span className="text-[var(--warm-orange)]">Up</span>
-      </span>
+    <span
+      className={`inline-flex items-center font-extrabold lowercase leading-none tracking-tight ${SIZE_TEXT_CLASS[size]} ${textColor}`}
+    >
+      <span>p</span>
+      <FaPaw
+        aria-hidden
+        className="mx-[0.02em] shrink-0 text-[var(--warm-orange)]"
+      />
+      <span>titas.up</span>
     </span>
   );
 
   if (!href) {
     return (
-      <span className={className} aria-label="PatitasUp">
+      <span className={className} aria-label="patitas.up">
         {content}
       </span>
     );
@@ -107,7 +70,7 @@ export default function BrandLogo({
     <Link
       href={href}
       onClick={onClick}
-      aria-label="PatitasUp, ir al inicio"
+      aria-label="patitas.up, ir al inicio"
       className={`inline-flex shrink-0 items-center outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--warm-orange)] ${className ?? ""}`}
     >
       {content}
