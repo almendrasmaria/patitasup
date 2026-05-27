@@ -59,7 +59,7 @@ const ICON_ONLY_TOKENS: Record<BrandLogoSize, IconOnlyTokens> = {
 };
 
 const TONE_TEXT_CLASS: Record<BrandLogoTone, string> = {
-  dark: "text-[var(--foreground-strong)]",
+  dark: "text-[var(--brand-teal)]",
   light: "text-white",
 };
 
@@ -108,7 +108,7 @@ export default function BrandLogo({
       href={href}
       onClick={onClick}
       aria-label="PatitasUp, ir al inicio"
-      className={`inline-flex shrink-0 items-center outline-offset-4 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--warm-orange)] ${className ?? ""}`}
+      className={`inline-flex shrink-0 items-center outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--warm-orange)] ${className ?? ""}`}
     >
       {content}
     </Link>
