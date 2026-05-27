@@ -20,7 +20,7 @@ const ResetPasswordForm = () => {
   return (
     <div className="w-full max-w-[520px]">
       <div className="mb-5">
-        <BrandLogo tone="dark" size="lg" />
+        <BrandLogo tone="dark" size="lg" iconOnly />
       </div>
 
       <div className="mb-7">

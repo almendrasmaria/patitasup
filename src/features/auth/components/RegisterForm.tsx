@@ -18,7 +18,7 @@ const RegisterForm = () => {
   return (
     <div className="w-full max-w-[520px]">
       <div className="mb-5">
-        <BrandLogo tone="dark" size="lg" />
+        <BrandLogo tone="dark" size="lg" iconOnly />
       </div>
 
       <div className="mb-7">
@@ -27,8 +27,8 @@ const RegisterForm = () => {
         </h1>
 
         <p className="mt-3 max-w-[500px] text-[15px] leading-7 text-[var(--neutral-500)]">
-          Unite a PatitasUp y empezá a publicar gatos en adopción para ayudarles
-          a encontrar una familia.
+          Unite a PatitasUp y empezá a publicar mascotas en adopción para
+          ayudarles a encontrar una familia.
         </p>
       </div>
 

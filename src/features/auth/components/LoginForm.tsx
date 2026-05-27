@@ -24,7 +24,7 @@ const LoginForm = () => {
   return (
     <div className="w-full max-w-[520px]">
       <div className="mb-5">
-        <BrandLogo tone="dark" size="lg" />
+        <BrandLogo tone="dark" size="lg" iconOnly />
       </div>
 
       <div className="mb-7">
@@ -34,7 +34,7 @@ const LoginForm = () => {
 
         <p className="mt-3 max-w-[500px] text-[15px] leading-7 text-[var(--neutral-500)]">
           Ingresá a tu cuenta para gestionar publicaciones y seguir ayudando a
-          más gatos a encontrar una familia.
+          más mascotas a encontrar una familia.
         </p>
       </div>
 

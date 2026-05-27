@@ -10,6 +10,7 @@ type BrandLogoProps = {
   href?: string | null;
   onClick?: () => void;
   className?: string;
+  iconOnly?: boolean;
 };
 
 type SizeTokens = {
@@ -40,6 +41,23 @@ const SIZE_TOKENS: Record<BrandLogoSize, SizeTokens> = {
   },
 };
 
+type IconOnlyTokens = Pick<SizeTokens, "icon" | "paw">;
+
+const ICON_ONLY_TOKENS: Record<BrandLogoSize, IconOnlyTokens> = {
+  sm: {
+    icon: "h-9 w-9 rounded-lg",
+    paw: "text-[18px]",
+  },
+  md: {
+    icon: "h-12 w-12 rounded-xl",
+    paw: "text-[22px]",
+  },
+  lg: {
+    icon: "h-16 w-16 rounded-2xl",
+    paw: "text-[32px]",
+  },
+};
+
 const TONE_TEXT_CLASS: Record<BrandLogoTone, string> = {
   dark: "text-[var(--foreground-strong)]",
   light: "text-white",
@@ -51,18 +69,26 @@ export default function BrandLogo({
   href = "/",
   onClick,
   className,
+  iconOnly = false,
 }: BrandLogoProps) {
   const tokens = SIZE_TOKENS[size];
+  const iconTokens = iconOnly ? ICON_ONLY_TOKENS[size] : tokens;
   const textColor = TONE_TEXT_CLASS[tone];
 
-  const content = (
+  const iconNode = (
+    <span
+      aria-hidden
+      className={`${iconTokens.icon} inline-flex shrink-0 items-center justify-center bg-[var(--warm-orange)] text-white shadow-sm`}
+    >
+      <FaPaw className={iconTokens.paw} />
+    </span>
+  );
+
+  const content = iconOnly ? (
+    iconNode
+  ) : (
     <span className={`inline-flex items-center ${tokens.gap}`}>
-      <span
-        aria-hidden
-        className={`${tokens.icon} inline-flex shrink-0 items-center justify-center bg-[var(--warm-orange)] text-white shadow-sm`}
-      >
-        <FaPaw className={tokens.paw} />
-      </span>
+      {iconNode}
       <span className={`font-bold leading-none tracking-tight ${tokens.text} ${textColor}`}>
         Patitas<span className="text-[var(--warm-orange)]">Up</span>
       </span>
