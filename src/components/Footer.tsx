@@ -1,16 +1,46 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { FaGithub, FaInstagram } from "react-icons/fa";
 
+import BrandLogo from "./BrandLogo";
+
+type FooterLink = {
+  label: string;
+  href: string;
+};
+
+const SITE_LINKS: ReadonlyArray<FooterLink> = [
+  { label: "Inicio", href: "/" },
+  { label: "Mascotas", href: "/pets" },
+  { label: "Contacto", href: "/contact" },
+];
+
+const ACCOUNT_LINKS: ReadonlyArray<FooterLink> = [
+  { label: "Crear cuenta", href: "/register" },
+  { label: "Iniciar sesión", href: "/login" },
+];
+
+const SOCIAL_LINKS = [
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/patitasup.ar/",
+    Icon: FaInstagram,
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/almendrasmaria/patitasup",
+    Icon: FaGithub,
+  },
+] as const;
+
 const Footer = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const go = useCallback(
+  const navigateTo = useCallback(
     (to: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
 
@@ -26,59 +56,18 @@ const Footer = () => {
   return (
     <footer className="w-full bg-[var(--brand-teal)] pb-8 pt-16 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 grid grid-cols-1 gap-10 min-[920px]:grid-cols-2 min-[920px]:gap-12">
-          <div className="flex flex-col items-center text-center min-[920px]:items-start min-[920px]:text-left">
-            <Link
-              href="/"
-              className="inline-flex shrink-0 outline-offset-2 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60"
-            >
-              <Image
-                src="/logo-light.webp"
-                alt="PatitasUp Logo"
-                width={320}
-                height={84}
-                className="aspect-[320/84] h-9 w-auto max-h-9 max-w-[min(100%,240px)] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[min(100%,280px)]"
-              />
-            </Link>
+        <div className="mb-12 grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,360px)_1fr] md:items-start md:gap-x-16">
+          <FooterBrandCard />
 
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-              Conectamos gatitos rescatados con familias responsables, promoviendo la adopción responsable.
-            </p>
+          <div className="flex flex-wrap items-start justify-center gap-x-14 gap-y-8 sm:gap-x-16 md:justify-end">
+            <FooterLinksColumn
+              title="Sitio"
+              links={SITE_LINKS}
+              onNavigate={navigateTo}
+            />
 
-            <div className="mt-4 flex items-center gap-3">
-              <a
-                href="https://www.instagram.com/patitasup.ar/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/20"
-              >
-                <FaInstagram className="text-lg" />
-              </a>
-
-              <a
-                href="https://github.com/almendrasmaria/patitasup"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/20"
-              >
-                <FaGithub className="text-lg" />
-              </a>
-            </div>
+            <FooterLinksColumn title="Cuenta" links={ACCOUNT_LINKS} />
           </div>
-
-          <nav className="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-medium text-white/70 min-[920px]:justify-end">
-            <Link href="/" onClick={go("/")} className="transition hover:text-white">
-              Inicio
-            </Link>
-            <Link href="/contact" onClick={go("/contact")} className="transition hover:text-white">
-              Contacto
-            </Link>
-            <Link href="/register" onClick={go("/register")} className="transition hover:text-white">
-              Crear cuenta
-            </Link>
-          </nav>
         </div>
 
         <div className="h-px w-full bg-white/10" />
@@ -88,6 +77,68 @@ const Footer = () => {
         </p>
       </div>
     </footer>
+  );
+};
+
+const FooterBrandCard = () => {
+  return (
+    <div className="flex flex-col items-center text-center md:items-start md:text-left">
+      <BrandLogo tone="light" size="md" />
+
+      <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
+        Conectamos mascotas rescatadas con familias responsables, promoviendo la
+        adopción responsable.
+      </p>
+
+      <ul className="mt-5 flex items-center gap-3">
+        {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+          <li key={href}>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/80 transition hover:bg-white/20 hover:text-white"
+            >
+              <Icon className="text-lg" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+type FooterLinksColumnProps = {
+  title: string;
+  links: ReadonlyArray<FooterLink>;
+  onNavigate?: (to: string) => (e: React.MouseEvent<HTMLAnchorElement>) => void;
+};
+
+const FooterLinksColumn = ({ title, links, onNavigate }: FooterLinksColumnProps) => {
+  return (
+    <nav
+      aria-label={title}
+      className="flex flex-col items-center text-center md:items-start md:text-left"
+    >
+      <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-white/50">
+        {title}
+      </h3>
+
+      <ul className="flex flex-col gap-3 text-sm font-medium text-white/75">
+        {links.map(({ label, href }) => (
+          <li key={href}>
+            <Link
+              href={href}
+              onClick={onNavigate?.(href)}
+              className="transition hover:text-white"
+            >
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 };
 

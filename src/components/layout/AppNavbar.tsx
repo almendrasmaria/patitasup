@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiFileText, FiHome, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
 
+import BrandLogo from "@/components/BrandLogo";
 import { signOutFromBrowser } from "@/features/auth/lib/signOutApp";
 
 import {
@@ -25,12 +25,6 @@ const publicNav = [
   { label: "Mascotas", href: "/pets" },
   { label: "Contacto", href: "/contact" },
 ] as const;
-
-const LOGO_DARK_SRC = "/logo-dark.webp";
-const LOGO_LIGHT_SRC = "/logo-light.webp";
-
-const NAV_LOGO_ASPECT_CLASS = "aspect-[320/84]";
-const NAV_LOGO_COMPACT_ASPECT_CLASS = "aspect-[280/74]";
 
 function getInitials(profileName: string) {
   const initials = profileName
@@ -54,39 +48,19 @@ type Props = {
 
 function NavbarBrand({
   onNavigate,
-  imagePriority = false,
   mode = "full",
   tone = "dark",
 }: {
   onNavigate?: () => void;
-  imagePriority?: boolean;
   mode?: "full" | "compact";
   tone?: "dark" | "light";
 }) {
-  const src = tone === "light" ? LOGO_LIGHT_SRC : LOGO_DARK_SRC;
-  const aspectClass = mode === "compact" ? NAV_LOGO_COMPACT_ASPECT_CLASS : NAV_LOGO_ASPECT_CLASS;
-  const sizeClass =
-    mode === "compact"
-      ? "h-9 w-auto max-h-9 max-w-[180px] object-contain object-left sm:h-10 sm:max-h-10 sm:max-w-[200px]"
-      : "h-11 w-auto max-h-11 max-w-[200px] object-contain object-left sm:h-12 sm:max-h-12 sm:max-w-[240px] md:max-w-[280px]";
-
   return (
-    <Link
-      href="/"
+    <BrandLogo
+      tone={tone}
+      size={mode === "compact" ? "sm" : "md"}
       onClick={onNavigate}
-      className="inline-flex shrink-0 items-center"
-      aria-label="PatitasUp, ir al inicio"
-    >
-      <Image
-        src={src}
-        alt="PatitasUp Logo"
-        width={mode === "compact" ? 280 : 320}
-        height={mode === "compact" ? 74 : 84}
-        sizes={mode === "compact" ? "200px" : "(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"}
-        className={`${aspectClass} ${sizeClass}`}
-        priority={imagePriority}
-      />
-    </Link>
+    />
   );
 }
 
@@ -152,7 +126,7 @@ export default function AppNavbar({ navUser }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
               <div className="relative z-20 flex min-w-0 items-center justify-self-start">
-                <NavbarBrand onNavigate={closeMobile} imagePriority />
+                <NavbarBrand onNavigate={closeMobile} />
               </div>
 
               <div className="relative hidden justify-self-center md:block">
