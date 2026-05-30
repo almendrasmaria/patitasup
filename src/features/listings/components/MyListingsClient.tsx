@@ -193,6 +193,7 @@ export default function MyListingsClient({
         }
         confirmLabel="Eliminar"
         cancelLabel="Cancelar"
+        loadingLabel="Eliminando..."
         loading={deletingId !== null}
         tone="danger"
         onConfirm={confirmDelete}

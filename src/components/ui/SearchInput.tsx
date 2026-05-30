@@ -29,7 +29,7 @@ export default function SearchInput({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         aria-label={ariaLabel ?? placeholder}
-        className="h-10 w-full rounded-xl border border-[var(--border-input)] bg-white pr-4 pl-10 text-sm text-[var(--foreground-inverse)] outline-none transition placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring-15)]"
+        className="h-11 w-full rounded-xl border border-[var(--border-input)] bg-white pr-4 pl-10 text-sm text-[var(--foreground-inverse)] outline-none transition placeholder:text-[var(--placeholder)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-ring-15)]"
       />
     </div>
   );

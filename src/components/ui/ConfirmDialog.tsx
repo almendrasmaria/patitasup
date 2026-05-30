@@ -11,6 +11,7 @@ type ConfirmDialogProps = {
   description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  loadingLabel?: string;
   loading?: boolean;
   tone?: "danger" | "default";
   onConfirm: () => void;
@@ -23,6 +24,7 @@ export default function ConfirmDialog({
   description,
   confirmLabel = "Aceptar",
   cancelLabel = "Cancelar",
+  loadingLabel,
   loading = false,
   tone = "danger",
   onConfirm,
@@ -144,7 +146,7 @@ export default function ConfirmDialog({
                 {loading ? (
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                 ) : null}
-                {loading ? "Eliminando..." : confirmLabel}
+                {loading ? loadingLabel ?? confirmLabel : confirmLabel}
               </button>
             </div>
           </motion.div>

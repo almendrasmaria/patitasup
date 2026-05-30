@@ -16,7 +16,7 @@ type FilterTabsProps<T extends string> = {
 };
 
 const baseClass =
-  "inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 const selectedClass = `${baseClass} bg-[var(--accent)] text-white shadow-sm hover:bg-[var(--accent-hover)]`;
 
