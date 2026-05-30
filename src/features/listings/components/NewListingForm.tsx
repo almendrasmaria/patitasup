@@ -1,22 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
-import { FiCheck, FiSave } from "react-icons/fi";
+import { AnimatePresence, motion } from "motion/react";
+import { FiArrowLeft, FiArrowRight, FiSave } from "react-icons/fi";
 
+import MinimalSelect from "@/components/ui/MinimalSelect";
 import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/geo/lib/georefClient";
 
-import {
-  formControlClass,
-  formErrorClass,
-  formLabelClass,
-  primaryCtaClass,
-} from "../lib/listingStyles";
+import { formControlClass, formErrorClass, formLabelClass } from "../lib/listingStyles";
 import type {
   PublicationFormSpecies,
   PublicationFormStatus,
   PublicationFormValues,
 } from "../types";
+import FormStepper, { type FormStep } from "./FormStepper";
+import OptionToggleGroup from "./OptionToggleGroup";
 
 type ListingFormState = {
   petName: string;
@@ -57,11 +57,63 @@ const initialForm: ListingFormState = {
   status: "active",
 };
 
-const statusOptions: { value: PublicationFormStatus; label: string }[] = [
-  { value: "active", label: "Activa" },
-  { value: "adopted", label: "Adoptada" },
-  { value: "draft", label: "Borrador" },
+const sexOptions: { value: ListingFormState["sex"]; label: string }[] = [
+  { value: "female", label: "Hembra" },
+  { value: "male", label: "Macho" },
 ];
+
+const statusOptions: { value: PublicationFormStatus; label: string; selectedClassName: string }[] = [
+  {
+    value: "active",
+    label: "Activa",
+    selectedClassName: "bg-[var(--status-active-solid)] hover:bg-[var(--status-active-solid-hover)]",
+  },
+  {
+    value: "adopted",
+    label: "Adoptada",
+    selectedClassName: "bg-[var(--status-adopted-solid)] hover:bg-[var(--status-adopted-solid-hover)]",
+  },
+  {
+    value: "draft",
+    label: "Borrador",
+    selectedClassName: "bg-[var(--status-draft-solid)] hover:bg-[var(--status-draft-solid-hover)]",
+  },
+];
+
+const ageUnitOptions: { value: ListingFormState["ageUnit"]; label: string }[] = [
+  { value: "days", label: "Días" },
+  { value: "months", label: "Meses" },
+  { value: "years", label: "Años" },
+];
+
+const speciesOptions: { value: PublicationFormSpecies; label: string }[] = [
+  { value: "cat", label: "Gato" },
+  { value: "dog", label: "Perro" },
+];
+
+const STEP_ONE_FIELDS: ListingFieldName[] = [
+  "petName",
+  "ageValue",
+  "ageUnit",
+  "sex",
+  "species",
+  "location",
+  "imageUrl",
+];
+
+const primaryButtonClass =
+  "inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-65";
+
+const outlineButtonClass =
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--border-input)] bg-white px-6 py-3 text-sm font-semibold text-[var(--neutral-700)] transition hover:border-[var(--accent-border-55)] hover:bg-[var(--accent-overlay-5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+
+const cardClass = "rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 sm:p-6";
+
+const stepVariants = {
+  enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 30 : -30 }),
+  center: { opacity: 1, x: 0 },
+  exit: (direction: number) => ({ opacity: 0, x: direction > 0 ? -30 : 30 }),
+};
 
 function buildFormState(initialValues?: PublicationFormValues): ListingFormState {
   if (!initialValues) {
@@ -82,11 +134,17 @@ function buildFormState(initialValues?: PublicationFormValues): ListingFormState
   };
 }
 
-function getFieldError(
-  fieldErrors: ApiResponse["fieldErrors"],
-  fieldName: ListingFieldName,
-) {
+function getFieldError(fieldErrors: ApiResponse["fieldErrors"], fieldName: ListingFieldName) {
   return fieldErrors?.[fieldName]?.[0];
+}
+
+function CardHeader({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div className="border-b border-[var(--border-hairline)] pb-4">
+      <h2 className="text-base font-semibold text-[var(--foreground-inverse)]">{title}</h2>
+      <p className="mt-0.5 text-sm text-[var(--neutral-500)]">{subtitle}</p>
+    </div>
+  );
 }
 
 export default function NewListingForm({
@@ -96,6 +154,8 @@ export default function NewListingForm({
 }: NewListingFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<ListingFormState>(() => buildFormState(initialValues));
+  const [step, setStep] = useState<1 | 2>(1);
+  const [direction, setDirection] = useState(1);
   const [fieldErrors, setFieldErrors] = useState<ApiResponse["fieldErrors"]>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -167,6 +227,11 @@ export default function NewListingForm({
     return locationOptions;
   }, [form.location, locationOptions]);
 
+  const locationSelectOptions = useMemo(
+    () => selectableLocations.map((locationName) => ({ value: locationName, label: locationName })),
+    [selectableLocations],
+  );
+
   const updateField =
     (fieldName: ListingFieldName) =>
     (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -174,9 +239,14 @@ export default function NewListingForm({
       setFieldErrors((currentErrors) => ({ ...currentErrors, [fieldName]: undefined }));
     };
 
-  const handleStatusChange = (status: ListingFormState["status"]) => {
-    setForm((currentForm) => ({ ...currentForm, status }));
-    setFieldErrors((currentErrors) => ({ ...currentErrors, status: undefined }));
+  const setFieldValue = (fieldName: ListingFieldName, value: string) => {
+    setForm((currentForm) => ({ ...currentForm, [fieldName]: value }));
+    setFieldErrors((currentErrors) => ({ ...currentErrors, [fieldName]: undefined }));
+  };
+
+  const goToStep = (next: 1 | 2) => {
+    setDirection(next > step ? 1 : -1);
+    setStep(next);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -208,6 +278,12 @@ export default function NewListingForm({
     if (!response.ok) {
       setMessage(payload.message ?? "No pudimos guardar la publicación.");
       setFieldErrors(payload.fieldErrors ?? {});
+
+      const hasStepOneError = STEP_ONE_FIELDS.some((fieldName) => payload.fieldErrors?.[fieldName]);
+      if (hasStepOneError) {
+        goToStep(1);
+      }
+
       setSubmitting(false);
       return;
     }
@@ -216,231 +292,273 @@ export default function NewListingForm({
     router.refresh();
   };
 
+  const title = isEditing ? "Editar publicación" : "Nueva publicación";
+  const steps: FormStep[] = [
+    { id: 1, title: "Información", subtitle: "Datos y foto" },
+    { id: 2, title: "Descripción", subtitle: "Detalles y estado" },
+  ];
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <header className="flex items-center gap-3">
+        <Link
+          href="/my-listings"
+          aria-label="Volver a mis publicaciones"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-hairline)] bg-white text-[var(--neutral-700)] shadow-sm transition hover:border-[var(--accent-border-30)] hover:text-[var(--accent)]"
+        >
+          <FiArrowLeft className="h-5 w-5" aria-hidden />
+        </Link>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-[var(--foreground-inverse)]">
+            {title}
+          </h1>
+        </div>
+      </header>
+
+      <FormStepper steps={steps} current={step} />
+
       {message ? (
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {message}
         </div>
       ) : null}
 
-      <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <label htmlFor="petName" className={formLabelClass}>
-            Nombre
-          </label>
-          <input
-            id="petName"
-            name="petName"
-            type="text"
-            value={form.petName}
-            onChange={updateField("petName")}
-            placeholder="Ej: Luna"
-            className={formControlClass}
-            autoComplete="off"
-            required
-          />
-          {getFieldError(fieldErrors, "petName") ? (
-            <p className={formErrorClass}>{getFieldError(fieldErrors, "petName")}</p>
-          ) : null}
-        </div>
-
-        <div className="grid grid-cols-[minmax(0,1fr)_minmax(8rem,0.75fr)] gap-3">
-          <div>
-            <label htmlFor="ageValue" className={formLabelClass}>
-              Edad
-            </label>
-            <input
-              id="ageValue"
-              name="ageValue"
-              type="number"
-              min="1"
-              value={form.ageValue}
-              onChange={updateField("ageValue")}
-              placeholder="Ej: 8"
-              className={formControlClass}
-              required
-            />
-            {getFieldError(fieldErrors, "ageValue") ? (
-              <p className={formErrorClass}>{getFieldError(fieldErrors, "ageValue")}</p>
-            ) : null}
-          </div>
-
-          <div>
-            <label htmlFor="ageUnit" className={formLabelClass}>
-              Unidad
-            </label>
-            <select
-              id="ageUnit"
-              name="ageUnit"
-              value={form.ageUnit}
-              onChange={updateField("ageUnit")}
-              className={formControlClass}
-            >
-              <option value="days">Días</option>
-              <option value="months">Meses</option>
-              <option value="years">Años</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="sex" className={formLabelClass}>
-            Sexo
-          </label>
-          <select
-            id="sex"
-            name="sex"
-            value={form.sex}
-            onChange={updateField("sex")}
-            className={formControlClass}
-          >
-            <option value="female">Hembra</option>
-            <option value="male">Macho</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="species" className={formLabelClass}>
-            Tipo de mascota
-          </label>
-          <select
-            id="species"
-            name="species"
-            value={form.species}
-            onChange={updateField("species")}
-            className={formControlClass}
-          >
-            <option value="cat">Gato</option>
-            <option value="dog">Perro</option>
-          </select>
-          {getFieldError(fieldErrors, "species") ? (
-            <p className={formErrorClass}>{getFieldError(fieldErrors, "species")}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="location" className={formLabelClass}>
-            Ubicación
-          </label>
-          <select
-            id="location"
-            name="location"
-            value={form.location}
-            onChange={updateField("location")}
-            className={formControlClass}
-            required
-            disabled={locationsLoading}
-          >
-            <option value="">
-              {locationsLoading ? "Cargando ubicaciones..." : "Seleccioná una ubicación real"}
-            </option>
-            {selectableLocations.map((locationName) => (
-              <option key={locationName} value={locationName}>
-                {locationName}
-              </option>
-            ))}
-          </select>
-          {locationsError ? <p className={formErrorClass}>No pudimos cargar las ubicaciones: {locationsError}</p> : null}
-          {getFieldError(fieldErrors, "location") ? (
-            <p className={formErrorClass}>{getFieldError(fieldErrors, "location")}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="rescueInstagram" className={formLabelClass}>
-            Instagram
-          </label>
-          <input
-            id="rescueInstagram"
-            name="rescueInstagram"
-            type="text"
-            value={form.rescueInstagram}
-            onChange={updateField("rescueInstagram")}
-            placeholder="@patitasup"
-            className={formControlClass}
-            autoComplete="off"
-          />
-          {getFieldError(fieldErrors, "rescueInstagram") ? (
-            <p className={formErrorClass}>{getFieldError(fieldErrors, "rescueInstagram")}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="imageUrl" className={formLabelClass}>
-            Imagen
-          </label>
-          <input
-            id="imageUrl"
-            name="imageUrl"
-            type="url"
-            value={form.imageUrl}
-            onChange={updateField("imageUrl")}
-            placeholder="https://..."
-            className={formControlClass}
-            required
-          />
-          {getFieldError(fieldErrors, "imageUrl") ? (
-            <p className={formErrorClass}>{getFieldError(fieldErrors, "imageUrl")}</p>
-          ) : null}
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="description" className={formLabelClass}>
-          Descripción
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          value={form.description}
-          onChange={updateField("description")}
-          placeholder="Contá cómo es, qué necesita y qué tipo de familia buscás."
-          className={`${formControlClass} min-h-36 resize-y py-3 leading-6`}
-          required
-        />
-        {getFieldError(fieldErrors, "description") ? (
-          <p className={formErrorClass}>{getFieldError(fieldErrors, "description")}</p>
-        ) : null}
-      </div>
-
-      <div className="border-t border-[var(--border-hairline)] pt-6">
-        <span className={formLabelClass}>Estado</span>
-        <div role="radiogroup" aria-label="Estado de publicación" className="flex flex-wrap gap-2">
-          {statusOptions.map((option) => {
-            const selected = form.status === option.value;
-
-            return (
-              <button
-                key={option.value}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => handleStatusChange(option.value)}
-                className={
-                  selected
-                    ? "inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white shadow-sm"
-                    : "inline-flex items-center gap-2 rounded-full border border-[var(--accent-border-35)] bg-white px-5 py-2 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent-overlay-5)]"
-                }
-              >
-                {selected ? <FiCheck className="h-4 w-4" aria-hidden /> : null}
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex flex-col-reverse gap-3 border-t border-[var(--border-hairline)] pt-6 sm:flex-row sm:items-center sm:justify-end">
-        <button
-          type="submit"
-          className={`${primaryCtaClass} justify-center disabled:cursor-not-allowed disabled:opacity-65`}
-          disabled={submitting || !isDirty}
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={step}
+          custom={direction}
+          variants={stepVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          className="space-y-6"
         >
-          <FiSave className="h-5 w-5" aria-hidden />
-          {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}
-        </button>
-      </div>
+          {step === 1 ? (
+            <>
+          <section className={cardClass}>
+            <CardHeader title="Información básica" subtitle="Datos principales de la mascota" />
+
+            <div className="space-y-5 pt-5">
+              <div>
+                <label htmlFor="petName" className={formLabelClass}>
+                  Nombre
+                </label>
+                <input
+                  id="petName"
+                  name="petName"
+                  type="text"
+                  value={form.petName}
+                  onChange={updateField("petName")}
+                  placeholder="Ej: Luna"
+                  className={formControlClass}
+                  autoComplete="off"
+                  required
+                />
+                {getFieldError(fieldErrors, "petName") ? (
+                  <p className={formErrorClass}>{getFieldError(fieldErrors, "petName")}</p>
+                ) : null}
+              </div>
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <span className={formLabelClass}>Edad</span>
+                  <div className="grid grid-cols-[minmax(0,1fr)_minmax(7rem,0.7fr)] gap-3">
+                    <input
+                      id="ageValue"
+                      name="ageValue"
+                      type="number"
+                      min="1"
+                      value={form.ageValue}
+                      onChange={updateField("ageValue")}
+                      placeholder="Ej: 8"
+                      className={formControlClass}
+                      aria-label="Edad"
+                      required
+                    />
+                    <MinimalSelect
+                      ariaLabel="Unidad de edad"
+                      value={form.ageUnit}
+                      onChange={(value) => setFieldValue("ageUnit", value)}
+                      options={ageUnitOptions}
+                    />
+                  </div>
+                  {getFieldError(fieldErrors, "ageValue") ? (
+                    <p className={formErrorClass}>{getFieldError(fieldErrors, "ageValue")}</p>
+                  ) : null}
+                </div>
+
+                <div>
+                  <span className={formLabelClass}>Sexo</span>
+                  <OptionToggleGroup
+                    ariaLabel="Sexo de la mascota"
+                    options={sexOptions}
+                    value={form.sex}
+                    onChange={(value) => setFieldValue("sex", value)}
+                  />
+                </div>
+
+                <div>
+                  <span className={formLabelClass}>Tipo de mascota</span>
+                  <MinimalSelect
+                    ariaLabel="Tipo de mascota"
+                    value={form.species}
+                    onChange={(value) => setFieldValue("species", value)}
+                    options={speciesOptions}
+                  />
+                  {getFieldError(fieldErrors, "species") ? (
+                    <p className={formErrorClass}>{getFieldError(fieldErrors, "species")}</p>
+                  ) : null}
+                </div>
+
+                <div>
+                  <span className={formLabelClass}>Ubicación</span>
+                  <MinimalSelect
+                    ariaLabel="Ubicación"
+                    value={form.location}
+                    onChange={(value) => setFieldValue("location", value)}
+                    options={locationSelectOptions}
+                    placeholder={locationsLoading ? "Cargando ubicaciones..." : "Seleccioná una ubicación real"}
+                    disabled={locationsLoading}
+                  />
+                  {locationsError ? (
+                    <p className={formErrorClass}>No pudimos cargar las ubicaciones: {locationsError}</p>
+                  ) : null}
+                  {getFieldError(fieldErrors, "location") ? (
+                    <p className={formErrorClass}>{getFieldError(fieldErrors, "location")}</p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className={cardClass}>
+            <CardHeader title="Foto" subtitle="Pegá el enlace de la foto principal" />
+
+            <div className="pt-5">
+              <label htmlFor="imageUrl" className={formLabelClass}>
+                URL de la foto
+              </label>
+              <input
+                id="imageUrl"
+                name="imageUrl"
+                type="url"
+                value={form.imageUrl}
+                onChange={updateField("imageUrl")}
+                placeholder="https://..."
+                className={formControlClass}
+                required
+              />
+              {getFieldError(fieldErrors, "imageUrl") ? (
+                <p className={formErrorClass}>{getFieldError(fieldErrors, "imageUrl")}</p>
+              ) : null}
+            </div>
+          </section>
+
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              href="/my-listings"
+              className="text-sm font-medium text-[var(--neutral-500)] transition hover:text-[var(--neutral-700)]"
+            >
+              Cancelar
+            </Link>
+            <motion.button
+              type="button"
+              onClick={() => goToStep(2)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={primaryButtonClass}
+            >
+              Siguiente
+              <FiArrowRight className="h-5 w-5" aria-hidden />
+            </motion.button>
+          </div>
+        </>
+      ) : (
+        <>
+          <section className={cardClass}>
+            <CardHeader title="Descripción" subtitle="Contá su historia y personalidad" />
+
+            <div className="space-y-5 pt-5">
+              <div>
+                <label htmlFor="description" className={formLabelClass}>
+                  Sobre la mascota
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={form.description}
+                  onChange={updateField("description")}
+                  placeholder="Contá cómo es, qué necesita y qué tipo de familia buscás..."
+                  className={`${formControlClass} min-h-36 resize-y py-3 leading-6`}
+                  required
+                />
+                {getFieldError(fieldErrors, "description") ? (
+                  <p className={formErrorClass}>{getFieldError(fieldErrors, "description")}</p>
+                ) : null}
+              </div>
+
+              <div>
+                <label htmlFor="rescueInstagram" className={formLabelClass}>
+                  Instagram <span className="font-normal text-[var(--neutral-400)]">(opcional)</span>
+                </label>
+                <input
+                  id="rescueInstagram"
+                  name="rescueInstagram"
+                  type="text"
+                  value={form.rescueInstagram}
+                  onChange={updateField("rescueInstagram")}
+                  placeholder="@patitasup"
+                  className={formControlClass}
+                  autoComplete="off"
+                />
+                {getFieldError(fieldErrors, "rescueInstagram") ? (
+                  <p className={formErrorClass}>{getFieldError(fieldErrors, "rescueInstagram")}</p>
+                ) : null}
+              </div>
+            </div>
+          </section>
+
+          <section className={cardClass}>
+            <CardHeader title="Estado de la publicación" subtitle="Definí cómo se mostrará" />
+
+            <div className="pt-5">
+              <OptionToggleGroup
+                ariaLabel="Estado de la publicación"
+                options={statusOptions}
+                value={form.status}
+                onChange={(value) => setFieldValue("status", value)}
+                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
+                showCheck
+              />
+            </div>
+          </section>
+
+          <div className="flex items-center justify-between gap-3">
+            <motion.button
+              type="button"
+              onClick={() => goToStep(1)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={outlineButtonClass}
+            >
+              <FiArrowLeft className="h-5 w-5" aria-hidden />
+              Atrás
+            </motion.button>
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={primaryButtonClass}
+              disabled={submitting || !isDirty}
+            >
+              <FiSave className="h-5 w-5" aria-hidden />
+              {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}
+            </motion.button>
+          </div>
+        </>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </form>
   );
 }
