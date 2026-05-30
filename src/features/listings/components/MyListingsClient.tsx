@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import SearchInput from "@/components/ui/SearchInput";
 
 import type { Publication, PublicationFilter } from "../types";
@@ -28,6 +29,7 @@ export default function MyListingsClient({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [deletedIds, setDeletedIds] = useState<Partial<Record<string, true>>>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Publication | null>(null);
 
   const hydratedListings = useMemo(
     () => listings.filter((listing) => !deletedIds[listing.id]),
@@ -81,13 +83,14 @@ export default function MyListingsClient({
     router.push(`/my-listings/${listing.id}/edit`);
   };
 
-  const handleDelete = async (listing: Publication) => {
-    const confirmed = window.confirm(`¿Querés eliminar la publicación de ${listing.petName}?`);
+  const handleDelete = (listing: Publication) => {
+    setPendingDelete(listing);
+  };
 
-    if (!confirmed) {
-      return;
-    }
+  const confirmDelete = async () => {
+    if (!pendingDelete) return;
 
+    const listing = pendingDelete;
     setDeletingId(listing.id);
     setFeedback(null);
 
@@ -104,6 +107,7 @@ export default function MyListingsClient({
       }
 
       setDeletingId(null);
+      setPendingDelete(null);
       return;
     }
 
@@ -112,6 +116,7 @@ export default function MyListingsClient({
       [listing.id]: true,
     }));
     setDeletingId(null);
+    setPendingDelete(null);
     router.refresh();
   };
 
@@ -177,6 +182,24 @@ export default function MyListingsClient({
 
         {statusActivityMessage ? <p className="text-right text-sm text-[var(--neutral-500)]">{statusActivityMessage}</p> : null}
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Eliminar publicación"
+        description={
+          pendingDelete
+            ? `¿Querés eliminar la publicación de ${pendingDelete.petName}? Esta acción no se puede deshacer.`
+            : undefined
+        }
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        loading={deletingId !== null}
+        tone="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          if (deletingId === null) setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }
