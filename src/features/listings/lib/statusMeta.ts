@@ -12,8 +12,6 @@ export const STATUS_DOT_COLORS: Record<PublicationStatus, string> = {
   borrador: "var(--amber-500)",
 };
 
-export const STATUS_OPTIONS: PublicationStatus[] = ["activo", "adoptado", "borrador"];
-
 export const STATUS_FILTERS: { id: PublicationFilter; label: string }[] = [
   { id: "todas", label: "Todas" },
   { id: "activo", label: "Activo" },
