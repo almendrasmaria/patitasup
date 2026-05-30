@@ -17,6 +17,8 @@ type Props<T extends string> = {
   label?: string;
   leadingIcon?: ReactNode;
   className?: string;
+  placeholder?: string;
+  disabled?: boolean;
 };
 
 export default function MinimalSelect<T extends string>({
@@ -27,11 +29,13 @@ export default function MinimalSelect<T extends string>({
   label,
   leadingIcon,
   className = "",
+  placeholder,
+  disabled = false,
 }: Props<T>) {
   const triggerLabel = options.find((o) => o.value === value)?.label ?? "";
 
   const control = (
-    <Select.Root value={value} onValueChange={(v) => onChange(v as T)}>
+    <Select.Root value={value} onValueChange={(v) => onChange(v as T)} disabled={disabled}>
       <Select.Trigger
         aria-label={ariaLabel}
         className={[
@@ -41,6 +45,7 @@ export default function MinimalSelect<T extends string>({
           "hover:border-[var(--border-neutral-strong)] hover:bg-[var(--warm-sand)]",
           "focus-visible:border-[var(--warm-orange)]/70 focus-visible:ring-1 focus-visible:ring-[var(--warm-orange)]/25",
           "data-[state=open]:border-[var(--warm-orange)]/85 data-[state=open]:bg-[var(--background)] data-[state=open]:shadow-[var(--shadow-select-trigger)]",
+          "disabled:cursor-not-allowed disabled:opacity-60",
           className,
         ].join(" ")}
       >
@@ -50,7 +55,15 @@ export default function MinimalSelect<T extends string>({
               {leadingIcon}
             </span>
           ) : null}
-          <Select.Value>{triggerLabel}</Select.Value>
+          <Select.Value
+            placeholder={
+              placeholder ? (
+                <span className="text-[var(--placeholder)]">{placeholder}</span>
+              ) : undefined
+            }
+          >
+            {triggerLabel}
+          </Select.Value>
         </span>
 
         <Select.Icon className="shrink-0 text-[var(--soft-gray)] opacity-80">
