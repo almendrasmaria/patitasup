@@ -54,13 +54,14 @@ export default function BrandLogo({
         aria-hidden
         className="mx-[0.02em] shrink-0 text-[var(--warm-orange)]"
       />
-      <span>titas.up</span>
+      <span>titas</span>
+      <span className="text-[var(--warm-orange)]">up</span>
     </span>
   );
 
   if (!href) {
     return (
-      <span className={className} aria-label="patitas.up">
+      <span className={className} aria-label="patitasup">
         {content}
       </span>
     );
@@ -70,7 +71,7 @@ export default function BrandLogo({
     <Link
       href={href}
       onClick={onClick}
-      aria-label="patitas.up, ir al inicio"
+      aria-label="patitasup, ir al inicio"
       className={`inline-flex shrink-0 items-center outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--warm-orange)] ${className ?? ""}`}
     >
       {content}

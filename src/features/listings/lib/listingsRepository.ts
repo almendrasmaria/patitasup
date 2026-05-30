@@ -162,6 +162,8 @@ export function mapListingRow(row: PrismaPublication): Publication {
     age: formatAge(row.ageValue, row.ageUnit),
     sex: sexByPrismaSex[row.sex],
     species: speciesByPrismaSpecies[row.species],
+    location: row.location,
+    imageUrl: row.imageUrl ?? getFallbackImage(row.id, row.species),
     status: statusByPrismaStatus[row.status],
     date: formatDashboardDate(row.publishedAt ?? row.createdAt),
   };

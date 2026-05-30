@@ -1,25 +1,27 @@
 "use client";
 
-import FilterTabs from "@/components/FilterTabs";
+import FilterTabs, { type FilterTabItem } from "@/components/FilterTabs";
 
 import type { PublicationFilter } from "../types";
-
-const FILTERS: { id: PublicationFilter; label: string }[] = [
-  { id: "todas", label: "Todas" },
-  { id: "activo", label: "Activo" },
-  { id: "adoptado", label: "Adoptado" },
-  { id: "borrador", label: "Borrador" },
-];
+import { STATUS_FILTERS, getFilterDotColor } from "../lib/statusMeta";
 
 type StatusTabsProps = {
   value: PublicationFilter;
   onChange: (next: PublicationFilter) => void;
+  counts?: Record<PublicationFilter, number>;
 };
 
-export default function StatusTabs({ value, onChange }: StatusTabsProps) {
+export default function StatusTabs({ value, onChange, counts }: StatusTabsProps) {
+  const items: FilterTabItem<PublicationFilter>[] = STATUS_FILTERS.map(({ id, label }) => ({
+    id,
+    label,
+    count: counts?.[id],
+    dotColor: getFilterDotColor(id),
+  }));
+
   return (
     <FilterTabs<PublicationFilter>
-      items={FILTERS}
+      items={items}
       value={value}
       onChange={onChange}
       ariaLabel="Filtrar publicaciones por estado"

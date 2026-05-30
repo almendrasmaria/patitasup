@@ -14,6 +14,8 @@ export type Publication = {
   age: string;
   sex: string;
   species: string;
+  location: string;
+  imageUrl: string;
   status: PublicationStatus;
   date: string;
 };

@@ -130,6 +130,13 @@
   --status-info-bg: var(--warm-sand);
   --status-info-fg: var(--primary);
 
+  --status-active-solid: var(--accent);
+  --status-active-solid-hover: var(--accent-hover);
+  --status-adopted-solid: #22c55e;
+  --status-adopted-solid-hover: #16a34a;
+  --status-draft-solid: #eab308;
+  --status-draft-solid-hover: #ca8a04;
+
   --neutral-hover: #dfe3e8;
 
   --shadow-dropdown: 0 18px 50px rgb(15 23 42 / 0.12);
