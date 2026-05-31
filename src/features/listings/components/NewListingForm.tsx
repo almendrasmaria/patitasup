@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { FiArrowLeft, FiArrowRight, FiSave } from "react-icons/fi";
 
@@ -16,6 +16,7 @@ import type {
   PublicationFormValues,
 } from "../types";
 import FormStepper, { type FormStep } from "./FormStepper";
+import ListingImageUploader from "./ListingImageUploader";
 import OptionToggleGroup from "./OptionToggleGroup";
 
 type ListingFormState = {
@@ -163,6 +164,10 @@ export default function NewListingForm({
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [locationsError, setLocationsError] = useState<string | null>(null);
 
+  // True once the listing was saved, so the image uploader keeps the photo it
+  // uploaded instead of cleaning it up when the form unmounts.
+  const imageCommittedRef = useRef(false);
+
   const isEditing = mode === "edit";
   const initialFormState = useMemo(() => buildFormState(initialValues), [initialValues]);
 
@@ -288,6 +293,7 @@ export default function NewListingForm({
       return;
     }
 
+    imageCommittedRef.current = true;
     router.push("/my-listings");
     router.refresh();
   };
@@ -432,25 +438,16 @@ export default function NewListingForm({
           </section>
 
           <section className={cardClass}>
-            <CardHeader title="Foto" subtitle="Pegá el enlace de la foto principal" />
+            <CardHeader title="Foto" subtitle="Subí la foto principal de la mascota" />
 
             <div className="pt-5">
-              <label htmlFor="imageUrl" className={formLabelClass}>
-                URL de la foto
-              </label>
-              <input
-                id="imageUrl"
-                name="imageUrl"
-                type="url"
+              <ListingImageUploader
                 value={form.imageUrl}
-                onChange={updateField("imageUrl")}
-                placeholder="https://..."
-                className={formControlClass}
-                required
+                initialValue={initialFormState.imageUrl}
+                committedRef={imageCommittedRef}
+                onChange={(url) => setFieldValue("imageUrl", url)}
+                error={getFieldError(fieldErrors, "imageUrl")}
               />
-              {getFieldError(fieldErrors, "imageUrl") ? (
-                <p className={formErrorClass}>{getFieldError(fieldErrors, "imageUrl")}</p>
-              ) : null}
             </div>
           </section>
 

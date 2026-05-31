@@ -15,6 +15,7 @@ import type { Pet } from "@/features/pets/types";
 import { formatDashboardDate } from "@/lib/formatDashboardDate";
 import { prisma } from "@/lib/prisma";
 
+import { deleteListingImageByUrl } from "./server/listingImageServer";
 import type {
   Publication,
   PublicationFormAgeUnit,
@@ -297,6 +298,7 @@ export async function updateListingForProfile(
     select: {
       id: true,
       publishedAt: true,
+      imageUrl: true,
     },
   });
 
@@ -325,16 +327,35 @@ export async function updateListingForProfile(
     },
   });
 
+  // Drop the previous bucket image when it was replaced by a different one.
+  if (existingRow.imageUrl && existingRow.imageUrl !== row.imageUrl) {
+    await deleteListingImageByUrl(existingRow.imageUrl);
+  }
+
   return mapListingRow(row);
 }
 
 export async function deleteListingForProfile(profileId: string, listingId: string) {
+  const existingRow = await prisma.publication.findFirst({
+    where: {
+      id: listingId,
+      authorProfileId: profileId,
+    },
+    select: {
+      imageUrl: true,
+    },
+  });
+
   const result = await prisma.publication.deleteMany({
     where: {
       id: listingId,
       authorProfileId: profileId,
     },
   });
+
+  if (result.count > 0) {
+    await deleteListingImageByUrl(existingRow?.imageUrl);
+  }
 
   return result.count > 0;
 }
