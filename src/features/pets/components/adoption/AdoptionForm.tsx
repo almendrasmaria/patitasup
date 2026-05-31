@@ -42,6 +42,8 @@ const AdoptionForm = ({ pet }: Props) => {
   const [step, setStep] = useState<AdoptionFormStep>(1);
   const [direction, setDirection] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [validationStep, setValidationStep] = useState<AdoptionFormStep | null>(null);
 
   const showErrors = validationStep === step;
@@ -94,13 +96,35 @@ const AdoptionForm = ({ pet }: Props) => {
     setStep((prev) => (prev - 1) as AdoptionFormStep);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setValidationStep(3);
     if (!isAdoptionStepComplete(3, form) || !formComplete) return;
+    if (isSubmitting) return;
 
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/adoption-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, publicationSlug: pet.slug }),
+      });
+
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as { message?: string } | null;
+        setSubmitError(data?.message ?? "No pudimos enviar la solicitud. Intentá nuevamente.");
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setSubmitError("No pudimos enviar la solicitud. Revisá tu conexión e intentá nuevamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -201,19 +225,29 @@ const AdoptionForm = ({ pet }: Props) => {
               ) : (
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-opacity"
+                  disabled={isSubmitting}
+                  whileHover={isSubmitting ? undefined : { scale: 1.02 }}
+                  whileTap={isSubmitting ? undefined : { scale: 0.98 }}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
                     background: "linear-gradient(135deg, var(--warm-orange-light) 0%, var(--accent) 100%)",
                     boxShadow: "0 4px 15px color-mix(in srgb, var(--accent) 35%, transparent)",
                   }}
                 >
-                  Enviar solicitud
+                  {isSubmitting ? "Enviando..." : "Enviar solicitud"}
                   <FaPaw size={16} aria-hidden />
                 </motion.button>
               )}
             </footer>
+
+            {submitError ? (
+              <p
+                role="alert"
+                className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+              >
+                {submitError}
+              </p>
+            ) : null}
           </form>
         </div>
       </article>

@@ -56,17 +56,34 @@ export default function RequestsManagementClient({
     setPage(1);
   };
 
-  const handleStatusChange = (row: AdoptionRequestRow, status: AdoptionRequestStatus) => {
-    const original = requests.find((r) => r.id === row.id)?.status;
-    if (original === status) {
+  const handleStatusChange = async (row: AdoptionRequestRow, status: AdoptionRequestStatus) => {
+    if (row.status === status) return;
+
+    const previousOverride = statusOverrides[row.id];
+
+    // Optimistic update: reflejamos el nuevo estado de inmediato.
+    setStatusOverrides((prev) => ({ ...prev, [row.id]: status }));
+
+    try {
+      const response = await fetch(`/api/adoption-requests/${row.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) throw new Error("Request failed");
+    } catch {
+      // Revertimos al estado previo si el guardado falla.
       setStatusOverrides((prev) => {
         const next = { ...prev };
-        delete next[row.id];
+        if (previousOverride) {
+          next[row.id] = previousOverride;
+        } else {
+          delete next[row.id];
+        }
         return next;
       });
-      return;
     }
-    setStatusOverrides((prev) => ({ ...prev, [row.id]: status }));
   };
 
   const showingCount = pageRows.length;
