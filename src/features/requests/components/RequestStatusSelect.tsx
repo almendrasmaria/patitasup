@@ -4,21 +4,7 @@ import * as Select from "@radix-ui/react-select";
 import { FiCheck, FiChevronDown } from "react-icons/fi";
 
 import type { AdoptionRequestStatus } from "../types";
-
-const LABEL: Record<AdoptionRequestStatus, string> = {
-  pendiente: "Pendiente",
-  en_revision: "En revisión",
-  aprobada: "Aprobada",
-};
-
-const STYLES: Record<AdoptionRequestStatus, string> = {
-  pendiente:
-    "border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100/90 data-[state=open]:bg-amber-50",
-  en_revision:
-    "border-[var(--accent-border-20)] bg-[var(--accent-overlay-12)] text-[var(--accent-contrast)] hover:bg-[var(--accent-overlay-18)] data-[state=open]:bg-[var(--accent-overlay-12)]",
-  aprobada:
-    "border-emerald-200 bg-emerald-50 text-emerald-900 hover:bg-emerald-100/90 data-[state=open]:bg-emerald-50",
-};
+import { REQUEST_STATUS_META, REQUEST_STATUS_ORDER } from "../lib/requestStatus";
 
 type RequestStatusSelectProps = {
   status: AdoptionRequestStatus;
@@ -27,7 +13,7 @@ type RequestStatusSelectProps = {
   dirty?: boolean;
 };
 
-const STATUS_OPTIONS: AdoptionRequestStatus[] = ["pendiente", "en_revision", "aprobada"];
+const STATUS_OPTIONS = REQUEST_STATUS_ORDER;
 
 export default function RequestStatusSelect({
   status,
@@ -42,10 +28,10 @@ export default function RequestStatusSelect({
       disabled={disabled}
     >
       <Select.Trigger
-        className={`inline-flex min-w-[10.5rem] items-center justify-between gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold shadow-sm transition duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] data-[state=open]:translate-y-0 data-[state=open]:shadow-md ${dirty ? "ring-2 ring-[var(--accent-ring-25)]" : "ring-0"} ${disabled ? "cursor-not-allowed opacity-60 hover:shadow-sm" : "cursor-pointer hover:-translate-y-px hover:shadow-md"} ${STYLES[status]}`}
-        aria-label={`Estado: ${LABEL[status]}`}
+        className={`inline-flex min-w-[10.5rem] items-center justify-between gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold shadow-sm transition duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] data-[state=open]:translate-y-0 data-[state=open]:shadow-md ${dirty ? "ring-2 ring-[var(--accent-ring-25)]" : "ring-0"} ${disabled ? "cursor-not-allowed opacity-60 hover:shadow-sm" : "cursor-pointer hover:-translate-y-px hover:shadow-md"} ${REQUEST_STATUS_META[status].selectClass}`}
+        aria-label={`Estado: ${REQUEST_STATUS_META[status].label}`}
       >
-        <Select.Value>{LABEL[status]}</Select.Value>
+        <Select.Value>{REQUEST_STATUS_META[status].label}</Select.Value>
         <Select.Icon>
           <FiChevronDown className="h-4 w-4 shrink-0 opacity-70" aria-hidden />
         </Select.Icon>
@@ -64,7 +50,7 @@ export default function RequestStatusSelect({
                 value={option}
                 className="relative flex cursor-pointer select-none items-center rounded-xl px-3 py-2 text-sm font-medium text-slate-700 outline-none transition data-highlighted:bg-[var(--surface-highlight)] data-[state=checked]:bg-[var(--accent-select)]"
               >
-                <Select.ItemText>{LABEL[option]}</Select.ItemText>
+                <Select.ItemText>{REQUEST_STATUS_META[option].label}</Select.ItemText>
                 <Select.ItemIndicator className="absolute right-3 inline-flex items-center text-[var(--accent-contrast)]">
                   <FiCheck className="h-4 w-4" />
                 </Select.ItemIndicator>

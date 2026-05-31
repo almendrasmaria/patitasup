@@ -3,9 +3,10 @@
 import { useMemo, useState } from "react";
 
 import type { AdoptionRequestFilter, AdoptionRequestRow, AdoptionRequestStatus } from "../types";
+import { REQUEST_STATUS_ORDER } from "../lib/requestStatus";
 import PaginationControls from "@/features/listings/components/PaginationControls";
-import SectionTitle from "@/features/listings/components/SectionTitle";
-import RequestsTable from "./RequestsTable";
+import RequestsList from "./RequestsList";
+import RequestsStats from "./RequestsStats";
 import RequestStatusTabs from "./RequestStatusTabs";
 import ViewFormModal from "./ViewFormModal";
 
@@ -21,7 +22,7 @@ export default function RequestsManagementClient({
   const [filter, setFilter] = useState<AdoptionRequestFilter>("todas");
   const [page, setPage] = useState(1);
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
-  const [modalRow, setModalRow] = useState<AdoptionRequestRow | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const hydrated = useMemo(
     () =>
@@ -30,6 +31,14 @@ export default function RequestsManagementClient({
       ),
     [requests, statusOverrides],
   );
+
+  const counts = useMemo<Partial<Record<AdoptionRequestFilter, number>>>(() => {
+    const next: Partial<Record<AdoptionRequestFilter, number>> = { todas: hydrated.length };
+    for (const status of REQUEST_STATUS_ORDER) {
+      next[status] = hydrated.filter((r) => r.status === status).length;
+    }
+    return next;
+  }, [hydrated]);
 
   const filtered = useMemo(() => {
     if (filter === "todas") return hydrated;
@@ -64,17 +73,31 @@ export default function RequestsManagementClient({
 
   const dirtyStatusIds = useMemo(() => new Set(Object.keys(statusOverrides)), [statusOverrides]);
 
+  const detailRow = useMemo(
+    () => (detailId ? hydrated.find((r) => r.id === detailId) ?? null : null),
+    [detailId, hydrated],
+  );
+
   return (
-    <div className="mx-auto w-full max-w-6xl xl:max-w-340 2xl:max-w-376">
-      <div className="space-y-5">
-        <SectionTitle title="Gestión de Solicitudes" />
+    <div className="w-full">
+      <div className="space-y-6">
+        <header className="space-y-1">
+          <h1 className="text-[26px] font-semibold tracking-tight text-[var(--foreground-inverse)] md:text-[28px]">
+            Solicitudes de adopción
+          </h1>
+          <p className="text-sm text-[var(--neutral-500)]">
+            Revisá y gestioná las solicitudes de adoptantes interesados.
+          </p>
+        </header>
+
+        <RequestsStats total={hydrated.length} counts={counts} />
 
         <RequestStatusTabs value={filter} onChange={handleFilterChange} />
 
-        <RequestsTable
+        <RequestsList
           rows={pageRows}
           dirtyStatusIds={dirtyStatusIds}
-          onViewForm={setModalRow}
+          onViewDetail={(row) => setDetailId(row.id)}
           onStatusChange={handleStatusChange}
         />
 
@@ -92,7 +115,12 @@ export default function RequestsManagementClient({
         </div>
       </div>
 
-      <ViewFormModal row={modalRow} onClose={() => setModalRow(null)} />
+      <ViewFormModal
+        row={detailRow}
+        dirty={detailRow ? dirtyStatusIds.has(detailRow.id) : false}
+        onClose={() => setDetailId(null)}
+        onStatusChange={handleStatusChange}
+      />
     </div>
   );
 }
