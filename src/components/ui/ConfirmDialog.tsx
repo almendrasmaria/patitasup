@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { FiAlertTriangle } from "react-icons/fi";
 
@@ -30,14 +30,9 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const [mounted, setMounted] = useState(false);
   const titleId = useId();
   const descriptionId = useId();
   const confirmRef = useRef<HTMLButtonElement | null>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -61,7 +56,7 @@ export default function ConfirmDialog({
     };
   }, [open, loading, onCancel]);
 
-  if (!mounted) return null;
+  if (typeof document === "undefined") return null;
 
   const isDanger = tone === "danger";
 
