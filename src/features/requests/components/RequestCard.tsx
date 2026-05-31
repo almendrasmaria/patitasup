@@ -13,7 +13,6 @@ type RequestCardProps = {
   dirty?: boolean;
   onViewDetail: (row: AdoptionRequestRow) => void;
   onStatusChange: (row: AdoptionRequestRow, status: AdoptionRequestStatus) => void;
-  busy?: boolean;
 };
 
 export default function RequestCard({
@@ -21,7 +20,6 @@ export default function RequestCard({
   dirty = false,
   onViewDetail,
   onStatusChange,
-  busy = false,
 }: RequestCardProps) {
   const petLine = [row.petSpecies, row.petAgeLabel].filter(Boolean).join(" · ");
   const isApproved = row.status === "aprobada";
@@ -72,7 +70,7 @@ export default function RequestCard({
           <ActionIconButton
             label={isApproved ? "Solicitud ya aprobada" : `Aprobar solicitud de ${row.adoptanteName}`}
             onClick={() => onStatusChange(row, "aprobada")}
-            disabled={busy || isApproved}
+            disabled={isApproved}
             className="hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
           >
             <FiCheck className="h-4 w-4" aria-hidden />
@@ -81,7 +79,7 @@ export default function RequestCard({
           <ActionIconButton
             label={isRejected ? "Solicitud ya rechazada" : `Rechazar solicitud de ${row.adoptanteName}`}
             onClick={() => onStatusChange(row, "rechazada")}
-            disabled={busy || isRejected}
+            disabled={isRejected}
             className="hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
           >
             <FiX className="h-4 w-4" aria-hidden />
@@ -90,7 +88,6 @@ export default function RequestCard({
           <ActionIconButton
             label={`Ver detalle de la solicitud de ${row.adoptanteName}`}
             onClick={() => onViewDetail(row)}
-            disabled={busy}
             className="hover:border-[var(--accent-border-20)] hover:bg-[var(--accent-overlay-8)] hover:text-[var(--accent-contrast)]"
           >
             <FiChevronRight className="h-5 w-5" aria-hidden />

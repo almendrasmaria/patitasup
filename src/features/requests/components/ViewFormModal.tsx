@@ -8,11 +8,9 @@ import { SiWhatsapp } from "react-icons/si";
 
 import type { AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 import RequestStatusBadge from "./RequestStatusBadge";
-import RequestStatusSelect from "./RequestStatusSelect";
 
 type ViewFormModalProps = {
   row: AdoptionRequestRow | null;
-  dirty?: boolean;
   onClose: () => void;
   onStatusChange: (row: AdoptionRequestRow, status: AdoptionRequestStatus) => void;
 };
@@ -22,7 +20,7 @@ function whatsappDigits(phone?: string) {
   return phone.replace(/\D/g, "");
 }
 
-export default function ViewFormModal({ row, dirty = false, onClose, onStatusChange }: ViewFormModalProps) {
+export default function ViewFormModal({ row, onClose, onStatusChange }: ViewFormModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -90,15 +88,6 @@ export default function ViewFormModal({ row, dirty = false, onClose, onStatusCha
                 <p className="font-semibold text-[var(--foreground-inverse)]">{row.petName}</p>
                 {petLine ? <p className="mt-0.5 text-sm text-[var(--neutral-500)]">{petLine}</p> : null}
               </div>
-            </section>
-
-            <section>
-              <p className="mb-2 text-[13px] font-semibold text-[var(--neutral-500)]">Estado de la solicitud</p>
-              <RequestStatusSelect
-                status={row.status}
-                onChange={(status) => onStatusChange(row, status)}
-                dirty={dirty}
-              />
             </section>
 
             <section>

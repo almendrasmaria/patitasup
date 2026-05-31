@@ -10,7 +10,6 @@ type RequestsListProps = {
   dirtyStatusIds: Set<string>;
   onViewDetail: (row: AdoptionRequestRow) => void;
   onStatusChange: (row: AdoptionRequestRow, status: AdoptionRequestStatus) => void;
-  busy?: boolean;
 };
 
 export default function RequestsList({
@@ -18,7 +17,6 @@ export default function RequestsList({
   dirtyStatusIds,
   onViewDetail,
   onStatusChange,
-  busy = false,
 }: RequestsListProps) {
   if (rows.length === 0) {
     return (
@@ -43,7 +41,6 @@ export default function RequestsList({
           dirty={dirtyStatusIds.has(row.id)}
           onViewDetail={onViewDetail}
           onStatusChange={onStatusChange}
-          busy={busy}
         />
       ))}
     </div>

@@ -117,7 +117,6 @@ export default function RequestsManagementClient({
 
       <ViewFormModal
         row={detailRow}
-        dirty={detailRow ? dirtyStatusIds.has(detailRow.id) : false}
         onClose={() => setDetailId(null)}
         onStatusChange={handleStatusChange}
       />
