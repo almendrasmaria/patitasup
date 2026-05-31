@@ -25,7 +25,7 @@ export const createAdoptionRequestSchema = z.object({
   phone: phoneSchema,
   domicilio: z.string().trim().min(2).max(160),
   barrio: z.string().trim().min(2).max(120),
-  preferredContact: z.enum(["whatsapp", "email", "telefono"]),
+  preferredContact: z.enum(["whatsapp", "email"]),
   housingType: z.enum(["departamento", "casa", "ph"]),
   protection: z.enum(["si", "puedo"]),
   otherPets: optionalText,

@@ -4,8 +4,14 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { FiMail, FiX } from "react-icons/fi";
-import { FaPaw } from "react-icons/fa";
-import { HiOutlineClock, HiOutlineLocationMarker } from "react-icons/hi";
+import { FaPaw, FaStar } from "react-icons/fa";
+import {
+  HiOutlineChatAlt2,
+  HiOutlineClock,
+  HiOutlineHome,
+  HiOutlineLocationMarker,
+  HiOutlineShieldCheck,
+} from "react-icons/hi";
 import { SiWhatsapp } from "react-icons/si";
 
 import type { AdoptionRequestRow, AdoptionRequestStatus } from "../types";
@@ -30,14 +36,9 @@ function whatsappDigits(phone?: string) {
 export default function ViewFormModal({ row, onClose, onStatusChange }: ViewFormModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // onClose llega inline desde el padre (nueva identidad por render), así que lo
-  // guardamos en un ref para que el efecto dependa solo de `row` y no se re-arme
-  // (lo que robaría el foco) en cada render del padre.
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
-  // Reimplementamos lo que daba <dialog> nativo: bloqueo de scroll, Escape,
-  // foco inicial + restauración y focus-trap con Tab. Solo mientras hay solicitud.
   useEffect(() => {
     if (!row) return;
 
@@ -46,7 +47,6 @@ export default function ViewFormModal({ row, onClose, onStatusChange }: ViewForm
     const originalOverflow = body.style.overflow;
     body.style.overflow = "hidden";
 
-    // Foco inicial dentro del panel.
     const focusTimer = window.setTimeout(() => {
       const focusables = panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
       focusables?.[0]?.focus();
@@ -85,13 +85,14 @@ export default function ViewFormModal({ row, onClose, onStatusChange }: ViewForm
     };
   }, [row]);
 
-  // En el servidor no renderizamos el overlay (row siempre es null en SSR).
   if (typeof document === "undefined") return null;
 
   const wa = whatsappDigits(row?.adoptantePhone);
   const canWhatsapp = wa.length > 0;
   const email = row?.adoptanteEmail?.trim();
   const canEmail = Boolean(email);
+  const isWhatsappPreferred = row?.details?.preferredContact === "whatsapp";
+  const isEmailPreferred = row?.details?.preferredContact === "email";
   const subject = row ? encodeURIComponent(`Solicitud de adopción — ${row.petName}`) : "";
   const petLine = row ? [row.petSpecies, row.petAgeLabel].filter(Boolean).join(" · ") : "";
 
@@ -163,6 +164,58 @@ export default function ViewFormModal({ row, onClose, onStatusChange }: ViewForm
                 </div>
               </section>
 
+              {row.details ? (
+                <>
+                  <section>
+                    <p className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--neutral-500)]">
+                      <HiOutlineChatAlt2 className="h-4 w-4 text-[var(--accent)]" aria-hidden />
+                      Mensaje
+                    </p>
+                    <p className="rounded-2xl border border-[var(--border-hairline)] bg-[var(--surface-card-elevated)] px-4 py-3 text-sm italic leading-relaxed text-[var(--neutral-700)]">
+                      “{row.details.reason}”
+                    </p>
+                  </section>
+
+                  <section>
+                    <p className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--neutral-500)]">
+                      <HiOutlineHome className="h-4 w-4 text-[var(--accent)]" aria-hidden />
+                      Información del hogar
+                    </p>
+                    <dl className="space-y-2">
+                      {[
+                        { icon: HiOutlineHome, label: "Tipo de hogar", value: row.details.housingType },
+                        {
+                          icon: HiOutlineShieldCheck,
+                          label: "Protección en balcones y ventanas",
+                          value: row.details.protection,
+                        },
+                        {
+                          icon: HiOutlineClock,
+                          label: "Horas por día que estaría solo/a",
+                          value: row.details.aloneHoursPerDay,
+                        },
+                        {
+                          icon: FaPaw,
+                          label: "Tiene mascotas",
+                          value: row.details.otherPets ?? "No",
+                        },
+                      ].map(({ icon: Icon, label, value }) => (
+                        <div
+                          key={label}
+                          className="flex items-start gap-3 rounded-xl bg-[var(--surface-card-elevated)] px-4 py-3"
+                        >
+                          <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--neutral-400)]" aria-hidden />
+                          <div className="min-w-0">
+                            <dt className="text-xs font-medium text-[var(--neutral-400)]">{label}</dt>
+                            <dd className="whitespace-pre-line text-sm text-[var(--neutral-700)]">{value}</dd>
+                          </div>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
+                </>
+              ) : null}
+
               <section>
                 <p className="mb-2 text-[13px] font-semibold text-[var(--neutral-500)]">Contacto</p>
                 <div className="space-y-2">
@@ -178,7 +231,16 @@ export default function ViewFormModal({ row, onClose, onStatusChange }: ViewForm
                     }`}
                   >
                     <SiWhatsapp className="h-5 w-5 shrink-0 text-[var(--whatsapp)]" aria-hidden />
-                    <span className="truncate">{row.adoptantePhone?.trim() || "Sin número de teléfono"}</span>
+                    <span className="min-w-0 flex-1 truncate">
+                      {row.adoptantePhone?.trim() || "Sin número de teléfono"}
+                    </span>
+                    {isWhatsappPreferred ? (
+                      <FaStar
+                        className="h-4 w-4 shrink-0 text-amber-400"
+                        title="Medio de contacto preferido"
+                        aria-label="Medio de contacto preferido"
+                      />
+                    ) : null}
                   </a>
 
                   <a
@@ -191,48 +253,17 @@ export default function ViewFormModal({ row, onClose, onStatusChange }: ViewForm
                     }`}
                   >
                     <FiMail className="h-5 w-5 shrink-0 text-[var(--accent-contrast)]" aria-hidden />
-                    <span className="truncate">{email || "Sin correo electrónico"}</span>
+                    <span className="min-w-0 flex-1 truncate">{email || "Sin correo electrónico"}</span>
+                    {isEmailPreferred ? (
+                      <FaStar
+                        className="h-4 w-4 shrink-0 text-amber-400"
+                        title="Medio de contacto preferido"
+                        aria-label="Medio de contacto preferido"
+                      />
+                    ) : null}
                   </a>
                 </div>
               </section>
-
-              {row.details ? (
-                <section>
-                  <p className="mb-2 text-[13px] font-semibold text-[var(--neutral-500)]">Formulario de pre-adopción</p>
-                  <dl className="space-y-3 rounded-2xl border border-[var(--border-hairline)] bg-[var(--surface-card-elevated)] px-4 py-3 text-sm">
-                    <div>
-                      <dt className="text-xs font-medium text-[var(--neutral-400)]">Medio de contacto preferido</dt>
-                      <dd className="text-[var(--neutral-700)]">{row.details.preferredContact}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-medium text-[var(--neutral-400)]">Tipo de vivienda</dt>
-                      <dd className="text-[var(--neutral-700)]">{row.details.housingType}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-medium text-[var(--neutral-400)]">
-                        Protección en balcones y ventanas
-                      </dt>
-                      <dd className="text-[var(--neutral-700)]">{row.details.protection}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-medium text-[var(--neutral-400)]">
-                        Horas por día que estaría solo/a
-                      </dt>
-                      <dd className="text-[var(--neutral-700)]">{row.details.aloneHoursPerDay}</dd>
-                    </div>
-                    {row.details.otherPets ? (
-                      <div>
-                        <dt className="text-xs font-medium text-[var(--neutral-400)]">Otras mascotas en casa</dt>
-                        <dd className="whitespace-pre-line text-[var(--neutral-700)]">{row.details.otherPets}</dd>
-                      </div>
-                    ) : null}
-                    <div>
-                      <dt className="text-xs font-medium text-[var(--neutral-400)]">Motivación para adoptar</dt>
-                      <dd className="whitespace-pre-line text-[var(--neutral-700)]">{row.details.reason}</dd>
-                    </div>
-                  </dl>
-                </section>
-              ) : null}
             </div>
 
             <footer className="grid grid-cols-2 gap-3 border-t border-[var(--border-hairline)] px-5 py-4">

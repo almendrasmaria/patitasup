@@ -12,7 +12,6 @@ import {
 import {
   ALONE_HOURS_OPTIONS,
   HOUSING_TYPE_OPTIONS,
-  PREFERRED_CONTACT_OPTIONS,
   PROTECTION_OPTIONS,
 } from "@/features/pets/components/adoption/adoptionFormConfig";
 import { formatPetSpeciesLabel } from "@/features/pets/lib/formatPetSpeciesLabel";
@@ -44,7 +43,6 @@ function buildLabelLookup(options: ReadonlyArray<{ label: string; value: string 
   return (value: string) => lookup.get(value) ?? value;
 }
 
-const preferredContactLabel = buildLabelLookup(PREFERRED_CONTACT_OPTIONS);
 const housingTypeLabel = buildLabelLookup(HOUSING_TYPE_OPTIONS);
 const protectionLabel = buildLabelLookup(PROTECTION_OPTIONS);
 const aloneHoursLabel = buildLabelLookup(ALONE_HOURS_OPTIONS);
@@ -78,7 +76,7 @@ function mapRequestRow(row: RequestWithPublication): AdoptionRequestRow {
     status: statusByPrismaStatus[row.status],
     dateLabel: formatDashboardDate(row.createdAt),
     details: {
-      preferredContact: preferredContactLabel(row.preferredContact),
+      preferredContact: row.preferredContact,
       housingType: housingTypeLabel(row.housingType),
       protection: protectionLabel(row.protection),
       otherPets: row.otherPets?.trim() || undefined,

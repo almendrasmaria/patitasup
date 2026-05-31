@@ -61,7 +61,6 @@ export default function RequestsManagementClient({
 
     const previousOverride = statusOverrides[row.id];
 
-    // Optimistic update: reflejamos el nuevo estado de inmediato.
     setStatusOverrides((prev) => ({ ...prev, [row.id]: status }));
 
     try {
@@ -73,7 +72,6 @@ export default function RequestsManagementClient({
 
       if (!response.ok) throw new Error("Request failed");
     } catch {
-      // Revertimos al estado previo si el guardado falla.
       setStatusOverrides((prev) => {
         const next = { ...prev };
         if (previousOverride) {
