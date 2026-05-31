@@ -8,7 +8,7 @@ import {
   type ChangeEvent,
   type DragEvent,
 } from "react";
-import { FiImage, FiLoader, FiTrash2, FiUploadCloud } from "react-icons/fi";
+import { FiCheckCircle, FiImage, FiLoader, FiTrash2, FiUploadCloud } from "react-icons/fi";
 
 import { formErrorClass, formLabelClass } from "../lib/listingStyles";
 import {
@@ -148,43 +148,50 @@ export default function ListingImageUploader({
       <span className={formLabelClass}>Foto principal</span>
 
       {value ? (
-        <div className="relative overflow-hidden rounded-2xl border border-[var(--border-input)] bg-[var(--warm-sand)]">
-          <div className="relative aspect-[4/3] w-full">
+        <div className="flex items-center gap-4 rounded-2xl border border-[var(--border-input)] bg-white p-3 sm:p-4">
+          <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-xl bg-[var(--warm-sand)] ring-1 ring-black/5">
             <Image
               src={value}
               alt="Vista previa de la foto"
               fill
               unoptimized={isRemoteImage(value)}
-              sizes="(max-width: 640px) 100vw, 480px"
+              sizes="112px"
               className="object-cover"
             />
 
             {uploading ? (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                <FiLoader className="h-7 w-7 animate-spin text-white" aria-hidden />
+                <FiLoader className="h-6 w-6 animate-spin text-white" aria-hidden />
               </div>
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-3 border-t border-[var(--border-hairline)] bg-white px-4 py-3">
-            <button
-              type="button"
-              onClick={() => inputRef.current?.click()}
-              disabled={uploading}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)] transition hover:text-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <FiUploadCloud className="h-4 w-4" aria-hidden />
-              Cambiar
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleRemove()}
-              disabled={uploading}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 transition hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <FiTrash2 className="h-4 w-4" aria-hidden />
-              Quitar
-            </button>
+          <div className="flex min-w-0 flex-1 flex-col gap-3">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-[var(--neutral-700)]">
+              <FiCheckCircle className="h-4 w-4 shrink-0 text-emerald-500" aria-hidden />
+              Foto cargada
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                disabled={uploading}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--accent-border-35)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--accent)] transition hover:bg-[var(--accent-overlay-8)] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <FiUploadCloud className="h-3.5 w-3.5" aria-hidden />
+                Cambiar
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleRemove()}
+                disabled={uploading}
+                className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <FiTrash2 className="h-3.5 w-3.5" aria-hidden />
+                Quitar
+              </button>
+            </div>
           </div>
         </div>
       ) : (
