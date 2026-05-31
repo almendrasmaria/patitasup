@@ -2,13 +2,11 @@
 
 import Image from "next/image";
 import {
-  useEffect,
   useId,
   useRef,
   useState,
   type ChangeEvent,
   type DragEvent,
-  type RefObject,
 } from "react";
 import { FiImage, FiLoader, FiTrash2, FiUploadCloud } from "react-icons/fi";
 
@@ -23,12 +21,6 @@ type ListingImageUploaderProps = {
   value: string;
   /** URL present when the form was first loaded (used to avoid deleting it on cancel). */
   initialValue?: string;
-  /**
-   * Set to true by the parent once the listing was saved. While false, an image
-   * uploaded in this session is removed from storage when the form unmounts so
-   * cancelling the form doesn't leave orphaned files in the bucket.
-   */
-  committedRef?: RefObject<boolean>;
   onChange: (url: string) => void;
   error?: string;
 };
@@ -69,7 +61,6 @@ function isRemoteImage(url: string) {
 export default function ListingImageUploader({
   value,
   initialValue = "",
-  committedRef,
   onChange,
   error,
 }: ListingImageUploaderProps) {
@@ -78,32 +69,6 @@ export default function ListingImageUploader({
   const [uploading, setUploading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
-
-  // Keep the latest value/initialValue in refs so the unmount cleanup below can
-  // read them without re-running and without capturing stale values.
-  const latestValueRef = useRef(value);
-  const initialValueRef = useRef(initialValue);
-
-  useEffect(() => {
-    latestValueRef.current = value;
-  }, [value]);
-
-  useEffect(() => {
-    initialValueRef.current = initialValue;
-  }, [initialValue]);
-
-  useEffect(() => {
-    return () => {
-      const current = latestValueRef.current;
-      const saved = committedRef?.current ?? false;
-
-      // If the form is abandoned with an image that was uploaded this session
-      // (i.e. not the original one), drop it so it doesn't orphan in storage.
-      if (!saved && current && current !== initialValueRef.current) {
-        void deleteListingImageByUrl(current);
-      }
-    };
-  }, [committedRef]);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) {

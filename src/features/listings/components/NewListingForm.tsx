@@ -15,6 +15,7 @@ import type {
   PublicationFormStatus,
   PublicationFormValues,
 } from "../types";
+import { deleteListingImageByUrl } from "../lib/listingImageUpload";
 import FormStepper, { type FormStep } from "./FormStepper";
 import ListingImageUploader from "./ListingImageUploader";
 import OptionToggleGroup from "./OptionToggleGroup";
@@ -164,12 +165,39 @@ export default function NewListingForm({
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [locationsError, setLocationsError] = useState<string | null>(null);
 
-  // True once the listing was saved, so the image uploader keeps the photo it
-  // uploaded instead of cleaning it up when the form unmounts.
+  // True once the listing was saved, so we keep the uploaded photo instead of
+  // cleaning it up when the form unmounts.
   const imageCommittedRef = useRef(false);
 
   const isEditing = mode === "edit";
   const initialFormState = useMemo(() => buildFormState(initialValues), [initialValues]);
+
+  // Keep the latest/initial image URLs in refs so the unmount cleanup below can
+  // drop a session-uploaded image that was never committed (form abandoned)
+  // without deleting an image that belongs to a saved listing.
+  const latestImageUrlRef = useRef(form.imageUrl);
+  const initialImageUrlRef = useRef(initialFormState.imageUrl);
+
+  useEffect(() => {
+    latestImageUrlRef.current = form.imageUrl;
+  }, [form.imageUrl]);
+
+  useEffect(() => {
+    initialImageUrlRef.current = initialFormState.imageUrl;
+  }, [initialFormState.imageUrl]);
+
+  useEffect(() => {
+    return () => {
+      const current = latestImageUrlRef.current;
+      const saved = imageCommittedRef.current;
+
+      // If the form is abandoned with an image uploaded during this session
+      // (i.e. not the original one), drop it so it doesn't orphan in storage.
+      if (!saved && current && current !== initialImageUrlRef.current) {
+        void deleteListingImageByUrl(current);
+      }
+    };
+  }, []);
 
   const isDirty = useMemo(
     () =>
@@ -444,7 +472,6 @@ export default function NewListingForm({
               <ListingImageUploader
                 value={form.imageUrl}
                 initialValue={initialFormState.imageUrl}
-                committedRef={imageCommittedRef}
                 onChange={(url) => setFieldValue("imageUrl", url)}
                 error={getFieldError(fieldErrors, "imageUrl")}
               />
