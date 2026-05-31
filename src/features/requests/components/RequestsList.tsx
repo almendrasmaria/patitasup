@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import { FiInbox } from "react-icons/fi";
 
 import type { AdoptionRequestRow, AdoptionRequestStatus } from "../types";
@@ -20,7 +21,12 @@ export default function RequestsList({
 }: RequestsListProps) {
   if (rows.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-[var(--border-input)] bg-white/60 px-6 py-16 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-[var(--border-input)] bg-white/60 px-6 py-16 text-center"
+      >
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-overlay-10)] text-[var(--accent)]">
           <FiInbox className="h-6 w-6" aria-hidden />
         </span>
@@ -28,21 +34,32 @@ export default function RequestsList({
         <p className="text-[13px] text-[var(--neutral-400)]">
           Las solicitudes aparecerán aquí cuando alguien complete el formulario de adopción.
         </p>
-      </div>
+      </motion.div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-      {rows.map((row) => (
-        <RequestCard
-          key={row.id}
-          row={row}
-          dirty={dirtyStatusIds.has(row.id)}
-          onViewDetail={onViewDetail}
-          onStatusChange={onStatusChange}
-        />
-      ))}
+      <AnimatePresence mode="popLayout">
+        {rows.map((row) => (
+          <motion.div
+            key={row.id}
+            layout
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="h-full"
+          >
+            <RequestCard
+              row={row}
+              dirty={dirtyStatusIds.has(row.id)}
+              onViewDetail={onViewDetail}
+              onStatusChange={onStatusChange}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
