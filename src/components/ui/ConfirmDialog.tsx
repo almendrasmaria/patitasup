@@ -33,7 +33,7 @@ export default function ConfirmDialog({
   const titleId = useId();
   const descriptionId = useId();
   const confirmRef = useRef<HTMLButtonElement | null>(null);
-  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const mounted = useSyncExternalStore(() => () => { }, () => true, () => false);
 
   useEffect(() => {
     if (!open) return;
@@ -86,7 +86,7 @@ export default function ConfirmDialog({
             aria-modal="true"
             aria-labelledby={titleId}
             aria-describedby={description ? descriptionId : undefined}
-            className="relative w-full max-w-md overflow-hidden rounded-2xl bg-(--background) shadow-(--shadow-card-elevated) ring-1 ring-black/5"
+            className="relative w-full max-w-md overflow-hidden rounded-2xl bg-background shadow-(--shadow-card-elevated) ring-1 ring-black/5"
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 6 }}
@@ -122,7 +122,7 @@ export default function ConfirmDialog({
                 type="button"
                 onClick={onCancel}
                 disabled={loading}
-                className="inline-flex items-center justify-center rounded-xl border border-(--border-input) bg-(--background) px-4 py-2.5 text-sm font-semibold text-(--foreground-inverse) transition hover:bg-(--warm-sand) focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-xl border border-(--border-input) bg-background px-4 py-2.5 text-sm font-semibold text-(--foreground-inverse) transition hover:bg-warm-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {cancelLabel}
               </button>
@@ -133,10 +133,10 @@ export default function ConfirmDialog({
                 onClick={onConfirm}
                 disabled={loading}
                 className={[
-                  "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
+                  "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
                   isDanger
                     ? "bg-red-600 hover:bg-red-700 focus-visible:outline-red-600"
-                    : "bg-(--accent) hover:bg-(--accent-hover) focus-visible:outline-(--accent)",
+                    : "bg-accent hover:bg-accent-hover focus-visible:outline-accent",
                 ].join(" ")}
               >
                 {loading ? (
