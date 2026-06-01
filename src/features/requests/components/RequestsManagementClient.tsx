@@ -22,7 +22,11 @@ export default function RequestsManagementClient({
 }: RequestsManagementClientProps) {
   const [filter, setFilter] = useState<AdoptionRequestFilter>("todas");
   const [page, setPage] = useState(1);
+  // Confirmed/optimistic status per row. Persists after a successful PATCH so the
+  // UI keeps showing the new status even though the server `requests` prop is stale.
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
+  // Rows with an in-flight PATCH — drives the "saving" ring, cleared once settled.
+  const [pendingIds, setPendingIds] = useState<Set<string>>(() => new Set());
   const [detailId, setDetailId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -75,6 +79,11 @@ export default function RequestsManagementClient({
       rollbackStatus = cur[row.id];
       return { ...cur, [row.id]: status };
     });
+    setPendingIds((cur) => {
+      const next = new Set(cur);
+      next.add(row.id);
+      return next;
+    });
 
     try {
       const response = await fetch(`/api/adoption-requests/${row.id}`, {
@@ -86,9 +95,13 @@ export default function RequestsManagementClient({
 
       if (!response.ok) throw new Error("Request failed");
 
-      setStatusOverrides((cur) => {
-        const next = { ...cur };
-        delete next[row.id];
+      // Success: keep the optimistic status as the confirmed value (the server
+      // `requests` prop is stale and never refetched here) and just clear the
+      // in-flight marker so the row stops showing the "saving" state.
+      setPendingIds((cur) => {
+        if (!cur.has(row.id)) return cur;
+        const next = new Set(cur);
+        next.delete(row.id);
         return next;
       });
     } catch (err: unknown) {
@@ -101,6 +114,12 @@ export default function RequestsManagementClient({
         } else {
           delete next[row.id];
         }
+        return next;
+      });
+      setPendingIds((cur) => {
+        if (!cur.has(row.id)) return cur;
+        const next = new Set(cur);
+        next.delete(row.id);
         return next;
       });
 
@@ -122,7 +141,7 @@ export default function RequestsManagementClient({
 
   const showingCount = pageRows.length;
 
-  const dirtyStatusIds = useMemo(() => new Set(Object.keys(statusOverrides)), [statusOverrides]);
+  const dirtyStatusIds = pendingIds;
 
   const detailRow = useMemo(
     () => (detailId ? hydrated.find((r) => r.id === detailId) ?? null : null),
