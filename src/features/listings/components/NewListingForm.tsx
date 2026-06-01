@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { FiArrowLeft, FiArrowRight, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight, FiSave, FiUploadCloud } from "react-icons/fi";
 
 import MinimalSelect from "@/components/ui/MinimalSelect";
 import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/geo/lib/georefClient";
@@ -19,6 +19,7 @@ import { deleteListingImageByUrl } from "../lib/listingImageUpload";
 import FormStepper, { type FormStep } from "./FormStepper";
 import ListingImageUploader from "./ListingImageUploader";
 import OptionToggleGroup from "./OptionToggleGroup";
+import PublishConfirmDialog from "./PublishConfirmDialog";
 
 type ListingFormState = {
   petName: string;
@@ -62,24 +63,6 @@ const initialForm: ListingFormState = {
 const sexOptions: { value: ListingFormState["sex"]; label: string }[] = [
   { value: "female", label: "Hembra" },
   { value: "male", label: "Macho" },
-];
-
-const statusOptions: { value: PublicationFormStatus; label: string; selectedClassName: string }[] = [
-  {
-    value: "active",
-    label: "Activa",
-    selectedClassName: "bg-[var(--status-active-solid)] hover:bg-[var(--status-active-solid-hover)]",
-  },
-  {
-    value: "adopted",
-    label: "Adoptada",
-    selectedClassName: "bg-[var(--status-adopted-solid)] hover:bg-[var(--status-adopted-solid-hover)]",
-  },
-  {
-    value: "draft",
-    label: "Borrador",
-    selectedClassName: "bg-[var(--status-draft-solid)] hover:bg-[var(--status-draft-solid-hover)]",
-  },
 ];
 
 const ageUnitOptions: { value: ListingFormState["ageUnit"]; label: string }[] = [
@@ -161,6 +144,7 @@ export default function NewListingForm({
   const [fieldErrors, setFieldErrors] = useState<ApiResponse["fieldErrors"]>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [locationOptions, setLocationOptions] = useState<string[]>([]);
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [locationsError, setLocationsError] = useState<string | null>(null);
@@ -282,8 +266,19 @@ export default function NewListingForm({
     setStep(next);
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // On create, publishing vs. saving as draft is chosen in the dialog. On
+    // edit, the publication's status is managed elsewhere, so just save.
+    if (isEditing) {
+      void doSubmit();
+    } else {
+      setShowPublishDialog(true);
+    }
+  };
+
+  const doSubmit = async (statusOverride?: PublicationFormStatus) => {
     setSubmitting(true);
     setMessage(null);
     setFieldErrors({});
@@ -298,6 +293,7 @@ export default function NewListingForm({
       },
       body: JSON.stringify({
         ...form,
+        status: statusOverride ?? form.status,
         ageValue: Number(form.ageValue),
       }),
     });
@@ -309,6 +305,7 @@ export default function NewListingForm({
     } catch {}
 
     if (!response.ok) {
+      setShowPublishDialog(false);
       setMessage(payload.message ?? "No pudimos guardar la publicación.");
       setFieldErrors(payload.fieldErrors ?? {});
 
@@ -329,10 +326,10 @@ export default function NewListingForm({
   const title = isEditing ? "Editar publicación" : "Nueva publicación";
   const steps: FormStep[] = [
     { id: 1, title: "Información", subtitle: "Datos y foto" },
-    { id: 2, title: "Descripción", subtitle: "Detalles y estado" },
+    { id: 2, title: "Descripción", subtitle: "Su historia" },
   ];
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleFormSubmit} className="space-y-6">
       <header className="flex items-center gap-3">
         <Link
           href="/my-listings"
@@ -542,21 +539,6 @@ export default function NewListingForm({
             </div>
           </section>
 
-          <section className={cardClass}>
-            <CardHeader title="Estado de la publicación" subtitle="Definí cómo se mostrará" />
-
-            <div className="pt-5">
-              <OptionToggleGroup
-                ariaLabel="Estado de la publicación"
-                options={statusOptions}
-                value={form.status}
-                onChange={(value) => setFieldValue("status", value)}
-                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
-                showCheck
-              />
-            </div>
-          </section>
-
           <div className="flex items-center justify-between gap-3">
             <motion.button
               type="button"
@@ -575,14 +557,29 @@ export default function NewListingForm({
               className={primaryButtonClass}
               disabled={submitting || !isDirty}
             >
-              <FiSave className="h-5 w-5" aria-hidden />
-              {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}
+              {isEditing ? <FiSave className="h-5 w-5" aria-hidden /> : <FiUploadCloud className="h-5 w-5" aria-hidden />}
+              {submitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Guardar cambios"
+                  : "Subir publicación"}
             </motion.button>
           </div>
         </>
           )}
         </motion.div>
       </AnimatePresence>
+
+      {!isEditing ? (
+        <PublishConfirmDialog
+          open={showPublishDialog}
+          petName={form.petName}
+          loading={submitting}
+          onPublish={() => void doSubmit("active")}
+          onSaveDraft={() => void doSubmit("draft")}
+          onCancel={() => setShowPublishDialog(false)}
+        />
+      ) : null}
     </form>
   );
 }
