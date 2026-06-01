@@ -23,12 +23,14 @@ import type { AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 
 const statusByPrismaStatus: Record<PrismaStatus, AdoptionRequestStatus> = {
   [PrismaStatus.PENDING]: "pendiente",
+  [PrismaStatus.SCHEDULED]: "agendada",
   [PrismaStatus.APPROVED]: "aprobada",
   [PrismaStatus.REJECTED]: "rechazada",
 };
 
 const prismaStatusByStatus: Record<AdoptionRequestStatus, PrismaStatus> = {
   pendiente: PrismaStatus.PENDING,
+  agendada: PrismaStatus.SCHEDULED,
   aprobada: PrismaStatus.APPROVED,
   rechazada: PrismaStatus.REJECTED,
 };
@@ -75,6 +77,9 @@ function mapRequestRow(row: RequestWithPublication): AdoptionRequestRow {
     adoptantePhone: row.phone,
     status: statusByPrismaStatus[row.status],
     dateLabel: formatDashboardDate(row.createdAt),
+    visitScheduledAt: row.visitScheduledAt
+      ? row.visitScheduledAt.toISOString().slice(0, 10)
+      : undefined,
     details: {
       preferredContact: row.preferredContact,
       housingType: housingTypeLabel(row.housingType),
@@ -151,10 +156,23 @@ export async function updateAdoptionRequestStatusForProfile(
   profileId: string,
   requestId: string,
   status: AdoptionRequestStatus,
+  visitScheduledAt?: string | null,
 ): Promise<AdoptionRequestRow | null> {
+  const data: { status: PrismaStatus; visitScheduledAt?: Date | null } = {
+    status: prismaStatusByStatus[status],
+  };
+
+  // Only touch the visit date when the caller sends it. A yyyy-mm-dd string is
+  // stored as UTC midnight so it round-trips back to the same calendar day.
+  if (visitScheduledAt !== undefined) {
+    data.visitScheduledAt = visitScheduledAt
+      ? new Date(`${visitScheduledAt}T00:00:00.000Z`)
+      : null;
+  }
+
   const result = await prisma.adoptionRequest.updateMany({
     where: { id: requestId, ownerProfileId: profileId },
-    data: { status: prismaStatusByStatus[status] },
+    data,
   });
 
   if (result.count === 0) {

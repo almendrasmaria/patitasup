@@ -46,6 +46,7 @@ export async function PATCH(request: Request, { params }: Context) {
       profile.id,
       id,
       parsed.data.status,
+      parsed.data.visitScheduledAt,
     );
 
     if (!adoptionRequest) {

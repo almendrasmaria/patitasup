@@ -6,7 +6,6 @@ import type { AdoptionRequestFilter, AdoptionRequestRow, AdoptionRequestStatus }
 import { REQUEST_STATUS_ORDER } from "../lib/requestStatus";
 import PaginationControls from "@/features/listings/components/PaginationControls";
 import RequestsList from "./RequestsList";
-import RequestsStats from "./RequestsStats";
 import RequestStatusTabs from "./RequestStatusTabs";
 import ViewFormModal from "./ViewFormModal";
 
@@ -15,16 +14,21 @@ const ERROR_DISMISS_MS = 5000;
 
 type RequestsManagementClientProps = {
   requests?: AdoptionRequestRow[];
+  shelterName?: string | null;
 };
 
 export default function RequestsManagementClient({
   requests = [],
+  shelterName,
 }: RequestsManagementClientProps) {
   const [filter, setFilter] = useState<AdoptionRequestFilter>("todas");
   const [page, setPage] = useState(1);
   // Confirmed/optimistic status per row. Persists after a successful PATCH so the
   // UI keeps showing the new status even though the server `requests` prop is stale.
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
+  // Optimistic visit date per row (yyyy-mm-dd, or null when cleared). Same staleness
+  // reasoning as statusOverrides — keyed presence distinguishes "no change" from "cleared".
+  const [visitOverrides, setVisitOverrides] = useState<Record<string, string | null>>({});
   // Rows with an in-flight PATCH — drives the "saving" ring, cleared once settled.
   const [pendingIds, setPendingIds] = useState<Set<string>>(() => new Set());
   const [detailId, setDetailId] = useState<string | null>(null);
@@ -34,10 +38,19 @@ export default function RequestsManagementClient({
 
   const hydrated = useMemo(
     () =>
-      requests.map((r) =>
-        statusOverrides[r.id] ? { ...r, status: statusOverrides[r.id]! } : r,
-      ),
-    [requests, statusOverrides],
+      requests.map((r) => {
+        const status = statusOverrides[r.id] ?? r.status;
+        const hasVisitOverride = Object.prototype.hasOwnProperty.call(visitOverrides, r.id);
+        if (status === r.status && !hasVisitOverride) return r;
+        return {
+          ...r,
+          status,
+          visitScheduledAt: hasVisitOverride
+            ? visitOverrides[r.id] ?? undefined
+            : r.visitScheduledAt,
+        };
+      }),
+    [requests, statusOverrides, visitOverrides],
   );
 
   const counts = useMemo<Partial<Record<AdoptionRequestFilter, number>>>(() => {
@@ -64,8 +77,12 @@ export default function RequestsManagementClient({
     setPage(1);
   };
 
-  const handleStatusChange = async (row: AdoptionRequestRow, status: AdoptionRequestStatus) => {
-    if (row.status === status) return;
+  const handleStatusChange = async (
+    row: AdoptionRequestRow,
+    status: AdoptionRequestStatus,
+    visitDate?: string | null,
+  ) => {
+    if (row.status === status && visitDate === undefined) return;
 
     const prev = inflightRef.current.get(row.id);
     if (prev) prev.abort();
@@ -74,11 +91,20 @@ export default function RequestsManagementClient({
     inflightRef.current.set(row.id, controller);
 
     let rollbackStatus: AdoptionRequestStatus | undefined;
+    let hadVisitOverride = false;
+    let rollbackVisit: string | null | undefined;
 
     setStatusOverrides((cur) => {
       rollbackStatus = cur[row.id];
       return { ...cur, [row.id]: status };
     });
+    if (visitDate !== undefined) {
+      setVisitOverrides((cur) => {
+        hadVisitOverride = Object.prototype.hasOwnProperty.call(cur, row.id);
+        rollbackVisit = cur[row.id];
+        return { ...cur, [row.id]: visitDate };
+      });
+    }
     setPendingIds((cur) => {
       const next = new Set(cur);
       next.add(row.id);
@@ -89,7 +115,9 @@ export default function RequestsManagementClient({
       const response = await fetch(`/api/adoption-requests/${row.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(
+          visitDate !== undefined ? { status, visitScheduledAt: visitDate } : { status },
+        ),
         signal: controller.signal,
       });
 
@@ -116,6 +144,17 @@ export default function RequestsManagementClient({
         }
         return next;
       });
+      if (visitDate !== undefined) {
+        setVisitOverrides((cur) => {
+          const next = { ...cur };
+          if (hadVisitOverride) {
+            next[row.id] = rollbackVisit ?? null;
+          } else {
+            delete next[row.id];
+          }
+          return next;
+        });
+      }
       setPendingIds((cur) => {
         if (!cur.has(row.id)) return cur;
         const next = new Set(cur);
@@ -160,9 +199,7 @@ export default function RequestsManagementClient({
           </p>
         </header>
 
-        <RequestsStats total={hydrated.length} counts={counts} />
-
-        <RequestStatusTabs value={filter} onChange={handleFilterChange} />
+        <RequestStatusTabs value={filter} onChange={handleFilterChange} counts={counts} />
 
         <RequestsList
           rows={pageRows}
@@ -203,6 +240,7 @@ export default function RequestsManagementClient({
 
       <ViewFormModal
         row={detailRow}
+        shelterName={shelterName}
         onClose={() => setDetailId(null)}
         onStatusChange={handleStatusChange}
       />

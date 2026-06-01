@@ -9,6 +9,7 @@ type RequestStatusMeta = {
 
 export const REQUEST_STATUS_ORDER: AdoptionRequestStatus[] = [
   "pendiente",
+  "agendada",
   "aprobada",
   "rechazada",
 ];
@@ -19,6 +20,12 @@ export const REQUEST_STATUS_META: Record<AdoptionRequestStatus, RequestStatusMet
     badgeClass: "border-amber-200 bg-amber-50 text-amber-700",
     dotClass: "bg-amber-500",
     tabDotColor: "#f59e0b",
+  },
+  agendada: {
+    label: "Visita agendada",
+    badgeClass: "border-blue-200 bg-blue-50 text-blue-700",
+    dotClass: "bg-blue-500",
+    tabDotColor: "#3b82f6",
   },
   aprobada: {
     label: "Aprobada",

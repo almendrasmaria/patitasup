@@ -1,4 +1,8 @@
-export type AdoptionRequestStatus = "pendiente" | "aprobada" | "rechazada";
+export type AdoptionRequestStatus =
+  | "pendiente"
+  | "agendada"
+  | "aprobada"
+  | "rechazada";
 
 export type AdoptionRequestFilter = "todas" | AdoptionRequestStatus;
 
@@ -22,5 +26,7 @@ export type AdoptionRequestRow = {
   adoptantePhone?: string;
   status: AdoptionRequestStatus;
   dateLabel: string;
+  /** ISO date (yyyy-mm-dd) of the scheduled visit, when status is "agendada". */
+  visitScheduledAt?: string;
   details?: AdoptionRequestDetails;
 };

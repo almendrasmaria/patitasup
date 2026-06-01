@@ -9,7 +9,10 @@ export default async function Page() {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[var(--warm-sand)]">
       <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-        <RequestsManagementClient requests={requests} />
+        <RequestsManagementClient
+        requests={requests}
+        shelterName={profile?.displayName ?? null}
+      />
       </section>
     </div>
   );

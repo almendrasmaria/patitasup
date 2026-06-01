@@ -19,7 +19,7 @@ type FilterTabsProps<T extends string> = {
 };
 
 const baseClass =
-  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 const selectedClass = `${baseClass} bg-[var(--accent)] text-white shadow-sm hover:bg-[var(--accent-hover)]`;
 
@@ -56,7 +56,7 @@ export default function FilterTabs<T extends string>({
         <Select.Root value={value} onValueChange={(next) => onChange(next as T)}>
           <Select.Trigger
             aria-label={ariaLabel}
-            className="flex w-full items-center gap-2 rounded-full border border-[var(--accent-border-35)] bg-white px-5 py-2.5 text-sm font-semibold text-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+            className="flex w-full items-center gap-2 rounded-xl border border-[var(--accent-border-35)] bg-white px-5 py-2.5 text-sm font-semibold text-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
           >
             {current?.dotColor ? <Dot color={current.dotColor} /> : null}
             <span className="min-w-0 flex-1 text-left">{current?.label}</span>

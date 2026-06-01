@@ -56,10 +56,16 @@ export function parseCreateAdoptionRequest(value: unknown) {
 }
 
 export const updateAdoptionRequestStatusSchema = z.object({
-  status: z.enum(["pendiente", "aprobada", "rechazada"] satisfies [
+  status: z.enum(["pendiente", "agendada", "aprobada", "rechazada"] satisfies [
     AdoptionRequestStatus,
     ...AdoptionRequestStatus[],
   ]),
+  // Optional visit date (yyyy-mm-dd). `null` explicitly clears a previous value.
+  visitScheduledAt: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Ingresá una fecha válida.")
+    .nullable()
+    .optional(),
 });
 
 export type UpdateAdoptionRequestStatusInput = z.infer<
