@@ -90,7 +90,7 @@ const primaryButtonClass =
   "inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-65";
 
 const outlineButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--border-input)] bg-white px-6 py-3 text-sm font-semibold text-[var(--neutral-700)] transition hover:border-[var(--accent-border-55)] hover:bg-[var(--accent-overlay-5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--border-input)] bg-white px-6 py-3 text-sm font-semibold text-neutral-700 transition hover:border-[var(--accent-border-55)] hover:bg-[var(--accent-overlay-5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 const cardClass = "rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 sm:p-6";
 
@@ -125,9 +125,9 @@ function getFieldError(fieldErrors: ApiResponse["fieldErrors"], fieldName: Listi
 
 function CardHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="border-b border-[var(--border-hairline)] pb-4">
-      <h2 className="text-base font-semibold text-[var(--foreground-inverse)]">{title}</h2>
-      <p className="mt-0.5 text-sm text-[var(--neutral-500)]">{subtitle}</p>
+    <div className="border-b border-(--border-hairline) pb-4">
+      <h2 className="text-base font-semibold text-(--foreground-inverse)">{title}</h2>
+      <p className="mt-0.5 text-sm text-neutral-500">{subtitle}</p>
     </div>
   );
 }
@@ -334,12 +334,12 @@ export default function NewListingForm({
         <Link
           href="/my-listings"
           aria-label="Volver a mis publicaciones"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-hairline)] bg-white text-[var(--neutral-700)] shadow-sm transition hover:border-[var(--accent-border-30)] hover:text-[var(--accent)]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-(--border-hairline) bg-white text-neutral-700 shadow-sm transition hover:border-(--accent-border-30) hover:text-accent"
         >
           <FiArrowLeft className="h-5 w-5" aria-hidden />
         </Link>
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--foreground-inverse)]">
+          <h1 className="text-2xl font-semibold tracking-tight text-(--foreground-inverse)">
             {title}
           </h1>
         </div>
@@ -478,7 +478,7 @@ export default function NewListingForm({
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/my-listings"
-              className="text-sm font-medium text-[var(--neutral-500)] transition hover:text-[var(--neutral-700)]"
+              className="text-sm font-medium text-neutral-500 transition hover:text-neutral-700"
             >
               Cancelar
             </Link>
@@ -520,7 +520,7 @@ export default function NewListingForm({
 
               <div>
                 <label htmlFor="rescueInstagram" className={formLabelClass}>
-                  Instagram <span className="font-normal text-[var(--neutral-400)]">(opcional)</span>
+                  Instagram <span className="font-normal text-neutral-400">(opcional)</span>
                 </label>
                 <input
                   id="rescueInstagram"
