@@ -12,6 +12,7 @@ export function sanitizePhoneInput(value: string): string {
 function getEmailError(value: string): string | undefined {
   const trimmed = value.trim();
   if (!trimmed) return undefined;
+  if (trimmed.length > 160) return "El correo es demasiado largo (máximo 160 caracteres).";
   const parsed = emailSchema.safeParse(trimmed);
   return parsed.success ? undefined : parsed.error.issues[0]?.message;
 }
@@ -25,13 +26,34 @@ function getPhoneError(value: string): string | undefined {
   return undefined;
 }
 
+type TextLengthRule = { min?: number; max?: number; minMsg?: string; maxMsg?: string };
+
+const TEXT_LENGTH_RULES: Partial<Record<AdoptionFieldKey, TextLengthRule>> = {
+  firstName: { min: 2, max: 80, minMsg: "Debe tener al menos 2 caracteres.", maxMsg: "Máximo 80 caracteres." },
+  lastName: { min: 2, max: 80, minMsg: "Debe tener al menos 2 caracteres.", maxMsg: "Máximo 80 caracteres." },
+  domicilio: { min: 2, max: 160, minMsg: "Debe tener al menos 2 caracteres.", maxMsg: "Máximo 160 caracteres." },
+  barrio: { min: 2, max: 120, minMsg: "Debe tener al menos 2 caracteres.", maxMsg: "Máximo 120 caracteres." },
+  reason: { max: 1200, maxMsg: "Máximo 1200 caracteres." },
+  otherPets: { max: 600, maxMsg: "Máximo 600 caracteres." },
+};
+
+function getTextLengthError(key: AdoptionFieldKey, value: string): string | undefined {
+  const rule = TEXT_LENGTH_RULES[key];
+  if (!rule) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if (rule.min && trimmed.length < rule.min) return rule.minMsg;
+  if (rule.max && trimmed.length > rule.max) return rule.maxMsg;
+  return undefined;
+}
+
 function getFormatError(
   key: AdoptionFieldKey,
   value: AdoptionFormData[AdoptionFieldKey],
 ): string | undefined {
   if (key === "email") return getEmailError(String(value));
   if (key === "phone") return getPhoneError(String(value));
-  return undefined;
+  return getTextLengthError(key, String(value));
 }
 
 export function getAdoptionStepErrors(
