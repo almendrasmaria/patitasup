@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import type { AdoptionRequestFilter, AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 import { REQUEST_STATUS_ORDER } from "../lib/requestStatus";
@@ -23,6 +23,8 @@ export default function RequestsManagementClient({
   const [page, setPage] = useState(1);
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
   const [detailId, setDetailId] = useState<string | null>(null);
+
+  const inflightRef = useRef<Map<string, AbortController>>(new Map());
 
   const hydrated = useMemo(
     () =>
@@ -59,28 +61,44 @@ export default function RequestsManagementClient({
   const handleStatusChange = async (row: AdoptionRequestRow, status: AdoptionRequestStatus) => {
     if (row.status === status) return;
 
-    const previousOverride = statusOverrides[row.id];
+    const prev = inflightRef.current.get(row.id);
+    if (prev) prev.abort();
 
-    setStatusOverrides((prev) => ({ ...prev, [row.id]: status }));
+    const controller = new AbortController();
+    inflightRef.current.set(row.id, controller);
+
+    let rollbackStatus: AdoptionRequestStatus | undefined;
+
+    setStatusOverrides((cur) => {
+      rollbackStatus = cur[row.id];
+      return { ...cur, [row.id]: status };
+    });
 
     try {
       const response = await fetch(`/api/adoption-requests/${row.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
+        signal: controller.signal,
       });
 
       if (!response.ok) throw new Error("Request failed");
-    } catch {
-      setStatusOverrides((prev) => {
-        const next = { ...prev };
-        if (previousOverride) {
-          next[row.id] = previousOverride;
+    } catch (err: unknown) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+
+      setStatusOverrides((cur) => {
+        const next = { ...cur };
+        if (rollbackStatus) {
+          next[row.id] = rollbackStatus;
         } else {
           delete next[row.id];
         }
         return next;
       });
+    } finally {
+      if (inflightRef.current.get(row.id) === controller) {
+        inflightRef.current.delete(row.id);
+      }
     }
   };
 
@@ -97,10 +115,10 @@ export default function RequestsManagementClient({
     <div className="w-full">
       <div className="space-y-6">
         <header className="space-y-1">
-          <h1 className="text-[26px] font-semibold tracking-tight text-[var(--foreground-inverse)] md:text-[28px]">
+          <h1 className="text-[26px] font-semibold tracking-tight text-(--foreground-inverse) md:text-[28px]">
             Solicitudes de adopción
           </h1>
-          <p className="text-sm text-[var(--neutral-500)]">
+          <p className="text-sm text-neutral-500">
             Revisá y gestioná las solicitudes de adoptantes interesados.
           </p>
         </header>
@@ -116,8 +134,8 @@ export default function RequestsManagementClient({
           onStatusChange={handleStatusChange}
         />
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border-hairline)] pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[var(--neutral-500)]">
+        <div className="mt-8 flex flex-col gap-3 border-t border-(--border-hairline) pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-neutral-500">
             Mostrando {showingCount} de {totalResults} resultados
           </p>
 
