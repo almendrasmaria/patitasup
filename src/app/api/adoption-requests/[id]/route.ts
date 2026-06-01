@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 
 import { getCurrentListingProfile } from "@/features/listings/lib/ensureListingProfile";
 import { updateAdoptionRequestStatusSchema } from "@/features/requests/lib/adoptionRequestValidation";
-import { updateAdoptionRequestStatusForProfile } from "@/features/requests/lib/requestsRepository";
+import {
+  PublicationUnavailableError,
+  updateAdoptionRequestStatusForProfile,
+} from "@/features/requests/lib/requestsRepository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -55,6 +58,13 @@ export async function PATCH(request: Request, { params }: Context) {
 
     return NextResponse.json({ adoptionRequest });
   } catch (error) {
+    if (error instanceof PublicationUnavailableError) {
+      return NextResponse.json(
+        { message: "Esta mascota ya fue adoptada o no está disponible." },
+        { status: 409 },
+      );
+    }
+
     console.error("Failed to update adoption request status", error);
 
     return NextResponse.json(

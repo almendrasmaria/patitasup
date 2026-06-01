@@ -12,6 +12,15 @@ import ViewFormModal from "./ViewFormModal";
 const PAGE_SIZE = 10;
 const ERROR_DISMISS_MS = 5000;
 
+// Carries the server-provided message (e.g. the 409 "already adopted") so the
+// error banner can show it instead of the generic fallback.
+class StatusUpdateError extends Error {
+  constructor(public readonly userMessage?: string) {
+    super(userMessage ?? "Request failed");
+    this.name = "StatusUpdateError";
+  }
+}
+
 type RequestsManagementClientProps = {
   requests?: AdoptionRequestRow[];
   shelterName?: string | null;
@@ -121,7 +130,16 @@ export default function RequestsManagementClient({
         signal: controller.signal,
       });
 
-      if (!response.ok) throw new Error("Request failed");
+      if (!response.ok) {
+        let serverMessage: string | undefined;
+        try {
+          const data = await response.json();
+          if (data && typeof data.message === "string") serverMessage = data.message;
+        } catch {
+          // Non-JSON error body — fall back to the generic message below.
+        }
+        throw new StatusUpdateError(serverMessage);
+      }
 
       // Success: keep the optimistic status as the confirmed value (the server
       // `requests` prop is stale and never refetched here) and just clear the
@@ -162,7 +180,11 @@ export default function RequestsManagementClient({
         return next;
       });
 
-      setErrorMessage("No se pudo actualizar el estado. Intentá de nuevo.");
+      setErrorMessage(
+        err instanceof StatusUpdateError && err.userMessage
+          ? err.userMessage
+          : "No se pudo actualizar el estado. Intentá de nuevo.",
+      );
     } finally {
       if (inflightRef.current.get(row.id) === controller) {
         inflightRef.current.delete(row.id);
@@ -177,6 +199,15 @@ export default function RequestsManagementClient({
     const timer = window.setTimeout(dismissError, ERROR_DISMISS_MS);
     return () => window.clearTimeout(timer);
   }, [errorMessage, dismissError]);
+
+  // Cancel any in-flight PATCH on unmount so its settle handlers don't call
+  // setState on an unmounted component.
+  useEffect(() => {
+    const inflight = inflightRef.current;
+    return () => {
+      for (const controller of inflight.values()) controller.abort();
+    };
+  }, []);
 
   const showingCount = pageRows.length;
 

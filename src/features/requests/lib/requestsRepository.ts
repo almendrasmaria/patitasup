@@ -21,6 +21,18 @@ import { prisma } from "@/lib/prisma";
 import type { CreateAdoptionRequestInput } from "./adoptionRequestValidation";
 import type { AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 
+/**
+ * Thrown when an operation can't proceed because the linked publication is no
+ * longer ACTIVE (already adopted, draft, etc.). Used to roll back a transaction
+ * and let callers map it to the right HTTP status.
+ */
+export class PublicationUnavailableError extends Error {
+  constructor() {
+    super("La publicación ya no está disponible.");
+    this.name = "PublicationUnavailableError";
+  }
+}
+
 const statusByPrismaStatus: Record<PrismaStatus, AdoptionRequestStatus> = {
   [PrismaStatus.PENDING]: "pendiente",
   [PrismaStatus.SCHEDULED]: "agendada",
@@ -117,39 +129,59 @@ export async function listAdoptionRequestsForProfile(
 export async function createAdoptionRequest(
   input: CreateAdoptionRequestInput,
 ): Promise<AdoptionRequestRow | null> {
-  const publication = await prisma.publication.findFirst({
-    where: {
-      slug: input.publicationSlug,
-      status: PrismaPublicationStatus.ACTIVE,
-    },
-    select: { id: true, authorProfileId: true },
-  });
+  // Look up + insert atomically and re-confirm the pet is still ACTIVE before
+  // committing, so a publication that gets adopted mid-flight can't receive a
+  // brand-new request (TOCTOU between the lookup and the insert).
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const publication = await tx.publication.findFirst({
+        where: {
+          slug: input.publicationSlug,
+          status: PrismaPublicationStatus.ACTIVE,
+        },
+        select: { id: true, authorProfileId: true },
+      });
 
-  if (!publication) {
-    return null;
+      if (!publication) {
+        throw new PublicationUnavailableError();
+      }
+
+      const row = await tx.adoptionRequest.create({
+        data: {
+          publicationId: publication.id,
+          ownerProfileId: publication.authorProfileId,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          phone: input.phone,
+          domicilio: input.domicilio,
+          barrio: input.barrio,
+          preferredContact: input.preferredContact,
+          housingType: input.housingType,
+          protection: input.protection,
+          otherPets: input.otherPets ?? null,
+          reason: input.reason,
+          aloneHoursPerDay: input.aloneHoursPerDay,
+        },
+        include: { publication: { select: publicationSelect } },
+      });
+
+      const stillActive = await tx.publication.count({
+        where: { id: publication.id, status: PrismaPublicationStatus.ACTIVE },
+      });
+
+      if (stillActive === 0) {
+        throw new PublicationUnavailableError();
+      }
+
+      return mapRequestRow(row);
+    });
+  } catch (error) {
+    if (error instanceof PublicationUnavailableError) {
+      return null;
+    }
+    throw error;
   }
-
-  const row = await prisma.adoptionRequest.create({
-    data: {
-      publicationId: publication.id,
-      ownerProfileId: publication.authorProfileId,
-      firstName: input.firstName,
-      lastName: input.lastName,
-      email: input.email,
-      phone: input.phone,
-      domicilio: input.domicilio,
-      barrio: input.barrio,
-      preferredContact: input.preferredContact,
-      housingType: input.housingType,
-      protection: input.protection,
-      otherPets: input.otherPets ?? null,
-      reason: input.reason,
-      aloneHoursPerDay: input.aloneHoursPerDay,
-    },
-    include: { publication: { select: publicationSelect } },
-  });
-
-  return mapRequestRow(row);
 }
 
 export async function updateAdoptionRequestStatusForProfile(
@@ -195,7 +227,10 @@ export async function updateAdoptionRequestStatusForProfile(
     if (becomesApproved) {
       // Retire the publication from the public listing / detail page and block
       // new requests. Guarded by status: ACTIVE so we never resurrect a draft.
-      await tx.publication.updateMany({
+      // If nothing flips, the pet wasn't available (already adopted, draft, …),
+      // so this approval isn't allowed — roll back and signal a conflict. This
+      // is also what prevents two approved requests for the same publication.
+      const flipped = await tx.publication.updateMany({
         where: {
           id: existing.publicationId,
           authorProfileId: profileId,
@@ -204,16 +239,9 @@ export async function updateAdoptionRequestStatusForProfile(
         data: { status: PrismaPublicationStatus.ADOPTED },
       });
 
-      // The pet now has a home: any still-open request for it is moot.
-      await tx.adoptionRequest.updateMany({
-        where: {
-          publicationId: existing.publicationId,
-          ownerProfileId: profileId,
-          id: { not: existing.id },
-          status: { in: [PrismaStatus.PENDING, PrismaStatus.SCHEDULED] },
-        },
-        data: { status: PrismaStatus.REJECTED },
-      });
+      if (flipped.count === 0) {
+        throw new PublicationUnavailableError();
+      }
     } else if (leavesApproved) {
       // Undoing the approval reactivates the pet, but only if no other approved
       // request remains and only if it is still marked ADOPTED.
