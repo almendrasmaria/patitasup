@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { FiAlertTriangle } from "react-icons/fi";
 
@@ -33,6 +33,7 @@ export default function ConfirmDialog({
   const titleId = useId();
   const descriptionId = useId();
   const confirmRef = useRef<HTMLButtonElement | null>(null);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   useEffect(() => {
     if (!open) return;
@@ -56,7 +57,7 @@ export default function ConfirmDialog({
     };
   }, [open, loading, onCancel]);
 
-  if (typeof document === "undefined") return null;
+  if (!mounted) return null;
 
   const isDanger = tone === "danger";
 
@@ -64,7 +65,7 @@ export default function ConfirmDialog({
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-[1200] flex items-center justify-center p-4"
+          className="fixed inset-0 z-1200 flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -85,7 +86,7 @@ export default function ConfirmDialog({
             aria-modal="true"
             aria-labelledby={titleId}
             aria-describedby={description ? descriptionId : undefined}
-            className="relative w-full max-w-md overflow-hidden rounded-2xl bg-[var(--background)] shadow-[var(--shadow-card-elevated)] ring-1 ring-black/5"
+            className="relative w-full max-w-md overflow-hidden rounded-2xl bg-(--background) shadow-(--shadow-card-elevated) ring-1 ring-black/5"
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 6 }}
@@ -101,14 +102,14 @@ export default function ConfirmDialog({
               <div className="min-w-0 flex-1">
                 <h2
                   id={titleId}
-                  className="text-base font-semibold text-[var(--foreground-inverse)]"
+                  className="text-base font-semibold text-(--foreground-inverse)"
                 >
                   {title}
                 </h2>
                 {description ? (
                   <p
                     id={descriptionId}
-                    className="mt-1.5 text-sm leading-relaxed text-[var(--neutral-500)]"
+                    className="mt-1.5 text-sm leading-relaxed text-neutral-500"
                   >
                     {description}
                   </p>
@@ -116,12 +117,12 @@ export default function ConfirmDialog({
               </div>
             </div>
 
-            <div className="flex flex-col-reverse gap-3 border-t border-[var(--border-hairline)] bg-[var(--warm-sand)]/40 px-6 py-4 sm:flex-row sm:justify-end">
+            <div className="flex flex-col-reverse gap-3 border-t border-(--border-hairline) bg-(--warm-sand)/40 px-6 py-4 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={onCancel}
                 disabled={loading}
-                className="inline-flex items-center justify-center rounded-xl border border-[var(--border-input)] bg-[var(--background)] px-4 py-2.5 text-sm font-semibold text-[var(--foreground-inverse)] transition hover:bg-[var(--warm-sand)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--neutral-400)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-xl border border-(--border-input) bg-(--background) px-4 py-2.5 text-sm font-semibold text-(--foreground-inverse) transition hover:bg-(--warm-sand) focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {cancelLabel}
               </button>
@@ -135,7 +136,7 @@ export default function ConfirmDialog({
                   "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
                   isDanger
                     ? "bg-red-600 hover:bg-red-700 focus-visible:outline-red-600"
-                    : "bg-[var(--accent)] hover:bg-[var(--accent-hover)] focus-visible:outline-[var(--accent)]",
+                    : "bg-(--accent) hover:bg-(--accent-hover) focus-visible:outline-(--accent)",
                 ].join(" ")}
               >
                 {loading ? (
