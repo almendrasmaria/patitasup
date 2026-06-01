@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { AdoptionRequestFilter, AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 import { REQUEST_STATUS_ORDER } from "../lib/requestStatus";
@@ -11,6 +11,7 @@ import RequestStatusTabs from "./RequestStatusTabs";
 import ViewFormModal from "./ViewFormModal";
 
 const PAGE_SIZE = 10;
+const ERROR_DISMISS_MS = 5000;
 
 type RequestsManagementClientProps = {
   requests?: AdoptionRequestRow[];
@@ -23,6 +24,7 @@ export default function RequestsManagementClient({
   const [page, setPage] = useState(1);
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const inflightRef = useRef<Map<string, AbortController>>(new Map());
 
@@ -101,12 +103,22 @@ export default function RequestsManagementClient({
         }
         return next;
       });
+
+      setErrorMessage("No se pudo actualizar el estado. Intentá de nuevo.");
     } finally {
       if (inflightRef.current.get(row.id) === controller) {
         inflightRef.current.delete(row.id);
       }
     }
   };
+
+  const dismissError = useCallback(() => setErrorMessage(null), []);
+
+  useEffect(() => {
+    if (!errorMessage) return;
+    const timer = window.setTimeout(dismissError, ERROR_DISMISS_MS);
+    return () => window.clearTimeout(timer);
+  }, [errorMessage, dismissError]);
 
   const showingCount = pageRows.length;
 
@@ -139,6 +151,22 @@ export default function RequestsManagementClient({
           onViewDetail={(row) => setDetailId(row.id)}
           onStatusChange={handleStatusChange}
         />
+
+        {errorMessage ? (
+          <div
+            role="alert"
+            className="flex items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+          >
+            <p>{errorMessage}</p>
+            <button
+              type="button"
+              onClick={dismissError}
+              className="shrink-0 font-semibold underline underline-offset-2 transition hover:text-rose-900"
+            >
+              Cerrar
+            </button>
+          </div>
+        ) : null}
 
         <div className="mt-8 flex flex-col gap-3 border-t border-(--border-hairline) pt-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-neutral-500">
