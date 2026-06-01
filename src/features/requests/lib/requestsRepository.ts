@@ -21,11 +21,6 @@ import { prisma } from "@/lib/prisma";
 import type { CreateAdoptionRequestInput } from "./adoptionRequestValidation";
 import type { AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 
-/**
- * Thrown when an operation can't proceed because the linked publication is no
- * longer ACTIVE (already adopted, draft, etc.). Used to roll back a transaction
- * and let callers map it to the right HTTP status.
- */
 export class PublicationUnavailableError extends Error {
   constructor() {
     super("La publicación ya no está disponible.");
@@ -129,9 +124,6 @@ export async function listAdoptionRequestsForProfile(
 export async function createAdoptionRequest(
   input: CreateAdoptionRequestInput,
 ): Promise<AdoptionRequestRow | null> {
-  // Look up + insert atomically and re-confirm the pet is still ACTIVE before
-  // committing, so a publication that gets adopted mid-flight can't receive a
-  // brand-new request (TOCTOU between the lookup and the insert).
   try {
     return await prisma.$transaction(async (tx) => {
       const publication = await tx.publication.findFirst({
@@ -196,17 +188,12 @@ export async function updateAdoptionRequestStatusForProfile(
     status: nextStatus,
   };
 
-  // Only touch the visit date when the caller sends it. A yyyy-mm-dd string is
-  // stored as UTC midnight so it round-trips back to the same calendar day.
   if (visitScheduledAt !== undefined) {
     data.visitScheduledAt = visitScheduledAt
       ? new Date(`${visitScheduledAt}T00:00:00.000Z`)
       : null;
   }
 
-  // Keep the request and its linked publication in sync atomically: approving a
-  // request (= "Adoptada") must retire the pet from the public flow, and undoing
-  // an approval must bring it back. Done in one transaction so they never diverge.
   return prisma.$transaction(async (tx) => {
     const existing = await tx.adoptionRequest.findFirst({
       where: { id: requestId, ownerProfileId: profileId },
@@ -225,11 +212,6 @@ export async function updateAdoptionRequestStatusForProfile(
       existing.status === PrismaStatus.APPROVED && nextStatus !== PrismaStatus.APPROVED;
 
     if (becomesApproved) {
-      // Retire the publication from the public listing / detail page and block
-      // new requests. Guarded by status: ACTIVE so we never resurrect a draft.
-      // If nothing flips, the pet wasn't available (already adopted, draft, …),
-      // so this approval isn't allowed — roll back and signal a conflict. This
-      // is also what prevents two approved requests for the same publication.
       const flipped = await tx.publication.updateMany({
         where: {
           id: existing.publicationId,
@@ -243,8 +225,6 @@ export async function updateAdoptionRequestStatusForProfile(
         throw new PublicationUnavailableError();
       }
     } else if (leavesApproved) {
-      // Undoing the approval reactivates the pet, but only if no other approved
-      // request remains and only if it is still marked ADOPTED.
       const stillApproved = await tx.adoptionRequest.count({
         where: {
           publicationId: existing.publicationId,

@@ -26,7 +26,6 @@ export type AdoptionRequestRow = {
   adoptantePhone?: string;
   status: AdoptionRequestStatus;
   dateLabel: string;
-  /** ISO date (yyyy-mm-dd) of the scheduled visit, when status is "agendada". */
   visitScheduledAt?: string;
   details?: AdoptionRequestDetails;
 };

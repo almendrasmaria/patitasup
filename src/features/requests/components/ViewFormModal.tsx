@@ -33,8 +33,6 @@ const FOCUSABLE_SELECTOR =
 
 const slideTransition = { duration: 0.42, ease: "easeInOut" } as const;
 
-// TODO(producción): reemplazar por la URL real de Google Calendar Appointment
-// Scheduling o Calendly del refugio.
 const CALENDAR_LINK = "https://calendar.google.com/calendar/appointments";
 
 const COPIED_RESET_MS = 2000;
@@ -48,7 +46,6 @@ function firstNameOf(fullName: string) {
   return fullName.trim().split(/\s+/)[0] || fullName;
 }
 
-// Auto-formats free typing as dd/mm/aaaa so the field works without a date picker.
 function formatDateInput(raw: string) {
   const digits = raw.replace(/\D/g, "").slice(0, 8);
   const parts: string[] = [];
@@ -58,15 +55,21 @@ function formatDateInput(raw: string) {
   return parts.join("/");
 }
 
-// Converts a complete, valid dd/mm/aaaa string to the yyyy-mm-dd the API expects.
-// Returns null for empty or incomplete/invalid input (the date is optional).
 function toIsoDate(value: string): string | null {
   const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if (!match) return null;
   const [, dd, mm, yyyy] = match;
   const day = Number(dd);
   const month = Number(mm);
-  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  const year = Number(yyyy);
+  const date = new Date(year, month - 1, day);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
   return `${yyyy}-${mm}-${dd}`;
 }
 
@@ -76,8 +79,6 @@ const visitDateFormatter = new Intl.DateTimeFormat("es-AR", {
   month: "long",
 });
 
-// Formats an ISO date-only string (yyyy-mm-dd) as "jueves, 4 de junio".
-// Builds the Date in local time so the day doesn't shift across time zones.
 function formatVisitDateLong(iso: string): string {
   const [year, month, day] = iso.split("-").map(Number);
   if (!year || !month || !day) return iso;
@@ -120,9 +121,6 @@ export default function ViewFormModal({
 
   const rowId = row?.id;
 
-  // Reset the per-request panel state whenever a different request is opened.
-  // Done during render (React's "adjust state on prop change" pattern) rather
-  // than in an effect to avoid a cascading render.
   const [trackedRowId, setTrackedRowId] = useState(rowId);
   if (rowId !== trackedRowId) {
     setTrackedRowId(rowId);
@@ -130,7 +128,6 @@ export default function ViewFormModal({
     setCopied(false);
   }
 
-  // Clear any pending "Copiado" reset timer on unmount.
   useEffect(
     () => () => {
       if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
@@ -222,9 +219,13 @@ export default function ViewFormModal({
       if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
       copyTimerRef.current = window.setTimeout(() => setCopied(false), COPIED_RESET_MS);
     } catch {
-      // El navegador puede bloquear el portapapeles; el texto sigue visible para copiar a mano.
+      // noop
     }
   };
+
+  const visitIso = toIsoDate(visitDate);
+  const visitDateInvalid = visitDate.trim().length > 0 && !visitIso;
+  const showVisitDateError = visitDate.length === 10 && !visitIso;
 
   return createPortal(
     <AnimatePresence>
@@ -495,8 +496,19 @@ export default function ViewFormModal({
                     placeholder="dd/mm/aaaa"
                     value={visitDate}
                     onChange={(event) => setVisitDate(formatDateInput(event.target.value))}
-                    className="w-full rounded-xl border border-(--border-input) bg-white px-3 py-2.5 text-sm text-neutral-700 transition placeholder:text-neutral-400 focus:border-(--accent-border-20) focus:outline-none focus:ring-2 focus:ring-(--accent-ring-25)"
+                    aria-invalid={showVisitDateError}
+                    aria-describedby={showVisitDateError ? "visit-date-error" : undefined}
+                    className={`w-full rounded-xl border bg-white px-3 py-2.5 text-sm text-neutral-700 transition placeholder:text-neutral-400 focus:outline-none focus:ring-2 ${
+                      showVisitDateError
+                        ? "border-rose-300 focus:border-rose-300 focus:ring-rose-200"
+                        : "border-(--border-input) focus:border-(--accent-border-20) focus:ring-(--accent-ring-25)"
+                    }`}
                   />
+                  {showVisitDateError ? (
+                    <p id="visit-date-error" className="mt-1.5 text-xs text-rose-600">
+                      Esa fecha no existe. Revisá el día y el mes.
+                    </p>
+                  ) : null}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -508,8 +520,9 @@ export default function ViewFormModal({
                   </button>
                   <button
                     type="button"
-                    onClick={() => onStatusChange(row, "agendada", toIsoDate(visitDate))}
-                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+                    disabled={visitDateInvalid}
+                    onClick={() => onStatusChange(row, "agendada", visitIso)}
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Agendar visita
                   </button>

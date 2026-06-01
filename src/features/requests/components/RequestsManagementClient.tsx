@@ -12,8 +12,6 @@ import ViewFormModal from "./ViewFormModal";
 const PAGE_SIZE = 10;
 const ERROR_DISMISS_MS = 5000;
 
-// Carries the server-provided message (e.g. the 409 "already adopted") so the
-// error banner can show it instead of the generic fallback.
 class StatusUpdateError extends Error {
   constructor(public readonly userMessage?: string) {
     super(userMessage ?? "Request failed");
@@ -32,13 +30,8 @@ export default function RequestsManagementClient({
 }: RequestsManagementClientProps) {
   const [filter, setFilter] = useState<AdoptionRequestFilter>("todas");
   const [page, setPage] = useState(1);
-  // Confirmed/optimistic status per row. Persists after a successful PATCH so the
-  // UI keeps showing the new status even though the server `requests` prop is stale.
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
-  // Optimistic visit date per row (yyyy-mm-dd, or null when cleared). Same staleness
-  // reasoning as statusOverrides — keyed presence distinguishes "no change" from "cleared".
   const [visitOverrides, setVisitOverrides] = useState<Record<string, string | null>>({});
-  // Rows with an in-flight PATCH — drives the "saving" ring, cleared once settled.
   const [pendingIds, setPendingIds] = useState<Set<string>>(() => new Set());
   const [detailId, setDetailId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -136,14 +129,11 @@ export default function RequestsManagementClient({
           const data = await response.json();
           if (data && typeof data.message === "string") serverMessage = data.message;
         } catch {
-          // Non-JSON error body — fall back to the generic message below.
+          // noop
         }
         throw new StatusUpdateError(serverMessage);
       }
 
-      // Success: keep the optimistic status as the confirmed value (the server
-      // `requests` prop is stale and never refetched here) and just clear the
-      // in-flight marker so the row stops showing the "saving" state.
       setPendingIds((cur) => {
         if (!cur.has(row.id)) return cur;
         const next = new Set(cur);
@@ -200,8 +190,6 @@ export default function RequestsManagementClient({
     return () => window.clearTimeout(timer);
   }, [errorMessage, dismissError]);
 
-  // Cancel any in-flight PATCH on unmount so its settle handlers don't call
-  // setState on an unmounted component.
   useEffect(() => {
     const inflight = inflightRef.current;
     return () => {
