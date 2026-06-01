@@ -9,6 +9,7 @@ export type Pet = {
   species?: PetSpecies;
   ageLabel: string;
   locationLabel: string;
+  characteristics: string[];
   description: string;
   rescueInstagram: string;
 };

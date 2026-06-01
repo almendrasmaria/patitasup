@@ -12,6 +12,7 @@ type Props = {
   onPageChange: (page: number) => void;
   entityLabel?: string;
   petFavorite?: (pet: Pet) => { active: boolean; onToggle: () => void } | undefined;
+  onOpenDetail?: (pet: Pet) => void;
   contained?: boolean;
 };
 
@@ -23,6 +24,7 @@ export default function PetsSection({
   onPageChange,
   entityLabel = "mascotas",
   petFavorite,
+  onOpenDetail,
   contained = false,
 }: Props) {
   return (
@@ -41,7 +43,7 @@ export default function PetsSection({
         </div>
 
         <div className="mt-6">
-          <PetsGrid pets={pets} petFavorite={petFavorite} />
+          <PetsGrid pets={pets} petFavorite={petFavorite} onOpenDetail={onOpenDetail} />
         </div>
 
         <PetsPagination currentPage={page} totalPages={totalPages} onChange={onPageChange} />

@@ -29,6 +29,7 @@ export type PublicationFormValues = {
   location: string;
   rescueInstagram: string;
   imageUrl: string;
+  characteristics: string[];
   description: string;
   status: PublicationFormStatus;
 };

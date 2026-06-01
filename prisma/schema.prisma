@@ -50,6 +50,7 @@ model Publication {
   sex             PublicationSex
   species         PublicationSpecies @default(CAT)
   location        String
+  characteristics String[]           @default([])
   description     String             @db.Text
   rescueInstagram String?
   imageUrl        String?

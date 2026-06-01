@@ -180,6 +180,7 @@ export function mapListingRowToFormValues(row: PrismaPublication): PublicationFo
     location: row.location,
     rescueInstagram: row.rescueInstagram ?? "",
     imageUrl: row.imageUrl ?? "",
+    characteristics: row.characteristics,
     description: row.description,
     status: inputStatusByPrismaStatus[row.status],
   };
@@ -195,6 +196,7 @@ export function mapListingRowToPet(row: ListingWithAuthor): Pet {
     species: petSpeciesByPrismaSpecies[row.species],
     ageLabel: formatAge(row.ageValue, row.ageUnit),
     locationLabel: row.location,
+    characteristics: row.characteristics,
     description: row.description,
     rescueInstagram: row.rescueInstagram ?? row.authorProfile.displayName,
   };
@@ -263,6 +265,7 @@ export async function createListingForProfile(
       sex: prismaSexByInput[input.sex],
       species: prismaSpeciesByInput[input.species],
       location: input.location,
+      characteristics: input.characteristics,
       description: input.description,
       rescueInstagram: normalizeInstagram(input.rescueInstagram),
       imageUrl: input.imageUrl ?? null,
@@ -319,6 +322,7 @@ export async function updateListingForProfile(
       sex: prismaSexByInput[input.sex],
       species: prismaSpeciesByInput[input.species],
       location: input.location,
+      characteristics: input.characteristics,
       description: input.description,
       rescueInstagram: normalizeInstagram(input.rescueInstagram),
       imageUrl: input.imageUrl ?? null,

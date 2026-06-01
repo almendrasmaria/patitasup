@@ -16,6 +16,7 @@ import type {
   PublicationFormValues,
 } from "../types";
 import { deleteListingImageByUrl } from "../lib/listingImageUpload";
+import CharacteristicsField from "./CharacteristicsField";
 import FormStepper, { type FormStep } from "./FormStepper";
 import ListingImageUploader from "./ListingImageUploader";
 import OptionToggleGroup from "./OptionToggleGroup";
@@ -30,6 +31,7 @@ type ListingFormState = {
   location: string;
   rescueInstagram: string;
   imageUrl: string;
+  characteristics: string[];
   description: string;
   status: PublicationFormStatus;
 };
@@ -56,6 +58,7 @@ const initialForm: ListingFormState = {
   location: "",
   rescueInstagram: "",
   imageUrl: "",
+  characteristics: [],
   description: "",
   status: "active",
 };
@@ -114,6 +117,7 @@ function buildFormState(initialValues?: PublicationFormValues): ListingFormState
     location: initialValues.location,
     rescueInstagram: initialValues.rescueInstagram,
     imageUrl: initialValues.imageUrl,
+    characteristics: initialValues.characteristics,
     description: initialValues.description,
     status: initialValues.status,
   };
@@ -193,6 +197,7 @@ export default function NewListingForm({
       form.location !== initialFormState.location ||
       form.rescueInstagram !== initialFormState.rescueInstagram ||
       form.imageUrl !== initialFormState.imageUrl ||
+      JSON.stringify(form.characteristics) !== JSON.stringify(initialFormState.characteristics) ||
       form.description !== initialFormState.description ||
       form.status !== initialFormState.status,
     [form, initialFormState],
@@ -500,6 +505,13 @@ export default function NewListingForm({
             <CardHeader title="Descripción" subtitle="Contá su historia y personalidad" />
 
             <div className="space-y-5 pt-5">
+              <CharacteristicsField
+                value={form.characteristics}
+                onChange={(next) => setForm((prev) => ({ ...prev, characteristics: next }))}
+                sex={form.sex}
+                error={getFieldError(fieldErrors, "characteristics")}
+              />
+
               <div>
                 <label htmlFor="description" className={formLabelClass}>
                   Sobre la mascota

@@ -2,6 +2,11 @@ import { z } from "zod";
 
 import { findLocalidadCabaByName } from "@/features/geo/lib/georefClient";
 
+import {
+  MAX_CHARACTERISTICS,
+  MAX_CHARACTERISTIC_LENGTH,
+  normalizeCharacteristics,
+} from "./characteristicsOptions";
 import type { PublicationFormStatus } from "../types";
 
 const emptyToUndefined = (value: unknown) => {
@@ -21,6 +26,11 @@ export const saveListingSchema = z
     sex: z.enum(["male", "female"]),
     species: z.enum(["cat", "dog"]),
     location: z.string().trim().min(2).max(120),
+    characteristics: z
+      .array(z.string().trim().min(1).max(MAX_CHARACTERISTIC_LENGTH))
+      .max(MAX_CHARACTERISTICS)
+      .default([])
+      .transform(normalizeCharacteristics),
     description: z.string().trim().min(30).max(1200),
     rescueInstagram: z.preprocess(
       emptyToUndefined,
