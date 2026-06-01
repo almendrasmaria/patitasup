@@ -83,6 +83,12 @@ export default function RequestsManagementClient({
       });
 
       if (!response.ok) throw new Error("Request failed");
+
+      setStatusOverrides((cur) => {
+        const next = { ...cur };
+        delete next[row.id];
+        return next;
+      });
     } catch (err: unknown) {
       if (err instanceof DOMException && err.name === "AbortError") return;
 
