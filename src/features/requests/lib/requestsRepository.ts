@@ -158,8 +158,10 @@ export async function updateAdoptionRequestStatusForProfile(
   status: AdoptionRequestStatus,
   visitScheduledAt?: string | null,
 ): Promise<AdoptionRequestRow | null> {
+  const nextStatus = prismaStatusByStatus[status];
+
   const data: { status: PrismaStatus; visitScheduledAt?: Date | null } = {
-    status: prismaStatusByStatus[status],
+    status: nextStatus,
   };
 
   // Only touch the visit date when the caller sends it. A yyyy-mm-dd string is
@@ -170,19 +172,76 @@ export async function updateAdoptionRequestStatusForProfile(
       : null;
   }
 
-  const result = await prisma.adoptionRequest.updateMany({
-    where: { id: requestId, ownerProfileId: profileId },
-    data,
+  // Keep the request and its linked publication in sync atomically: approving a
+  // request (= "Adoptada") must retire the pet from the public flow, and undoing
+  // an approval must bring it back. Done in one transaction so they never diverge.
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.adoptionRequest.findFirst({
+      where: { id: requestId, ownerProfileId: profileId },
+      select: { id: true, status: true, publicationId: true },
+    });
+
+    if (!existing) {
+      return null;
+    }
+
+    await tx.adoptionRequest.update({ where: { id: existing.id }, data });
+
+    const becomesApproved =
+      nextStatus === PrismaStatus.APPROVED && existing.status !== PrismaStatus.APPROVED;
+    const leavesApproved =
+      existing.status === PrismaStatus.APPROVED && nextStatus !== PrismaStatus.APPROVED;
+
+    if (becomesApproved) {
+      // Retire the publication from the public listing / detail page and block
+      // new requests. Guarded by status: ACTIVE so we never resurrect a draft.
+      await tx.publication.updateMany({
+        where: {
+          id: existing.publicationId,
+          authorProfileId: profileId,
+          status: PrismaPublicationStatus.ACTIVE,
+        },
+        data: { status: PrismaPublicationStatus.ADOPTED },
+      });
+
+      // The pet now has a home: any still-open request for it is moot.
+      await tx.adoptionRequest.updateMany({
+        where: {
+          publicationId: existing.publicationId,
+          ownerProfileId: profileId,
+          id: { not: existing.id },
+          status: { in: [PrismaStatus.PENDING, PrismaStatus.SCHEDULED] },
+        },
+        data: { status: PrismaStatus.REJECTED },
+      });
+    } else if (leavesApproved) {
+      // Undoing the approval reactivates the pet, but only if no other approved
+      // request remains and only if it is still marked ADOPTED.
+      const stillApproved = await tx.adoptionRequest.count({
+        where: {
+          publicationId: existing.publicationId,
+          status: PrismaStatus.APPROVED,
+          id: { not: existing.id },
+        },
+      });
+
+      if (stillApproved === 0) {
+        await tx.publication.updateMany({
+          where: {
+            id: existing.publicationId,
+            authorProfileId: profileId,
+            status: PrismaPublicationStatus.ADOPTED,
+          },
+          data: { status: PrismaPublicationStatus.ACTIVE },
+        });
+      }
+    }
+
+    const row = await tx.adoptionRequest.findFirst({
+      where: { id: existing.id },
+      include: { publication: { select: publicationSelect } },
+    });
+
+    return row ? mapRequestRow(row) : null;
   });
-
-  if (result.count === 0) {
-    return null;
-  }
-
-  const row = await prisma.adoptionRequest.findFirst({
-    where: { id: requestId, ownerProfileId: profileId },
-    include: { publication: { select: publicationSelect } },
-  });
-
-  return row ? mapRequestRow(row) : null;
 }
