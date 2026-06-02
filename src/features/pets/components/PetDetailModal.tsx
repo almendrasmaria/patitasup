@@ -58,7 +58,6 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
   if (!mounted) return null;
 
   const isRemoteImage = pet ? /^https?:\/\//.test(pet.image) : false;
-  // Flatten into a single list but keep category order so same-colored chips group together.
   const orderedCharacteristics = pet
     ? groupCharacteristics(pet.characteristics).flatMap((group) => group.items)
     : [];
@@ -81,7 +80,7 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
     <AnimatePresence>
       {pet ? (
         <motion.div
-          className="fixed inset-0 z-100 flex items-center justify-center p-4"
+          className="fixed inset-0 z-100 flex items-center justify-center md:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -99,13 +98,13 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label={`Detalle de ${pet.name}`}
-            className="relative grid max-h-[90vh] w-full max-w-4xl grid-cols-1 overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/10 md:grid-cols-2 2xl:max-w-6xl 2xl:min-h-[40rem]"
+            className="relative grid h-full max-h-none w-full grid-cols-1 grid-rows-[auto_1fr] overflow-hidden bg-white shadow-2xl ring-1 ring-black/10 md:h-auto md:max-h-[90vh] md:max-w-4xl md:grid-cols-2 md:grid-rows-1 md:rounded-3xl 2xl:max-w-6xl 2xl:min-h-160"
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 6 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative aspect-[4/3] w-full bg-[var(--warm-sand)] md:aspect-auto md:h-full">
+            <div className="relative aspect-4/3 w-full bg-warm-sand md:aspect-auto md:h-full">
               <Image
                 src={pet.image}
                 alt={pet.name}
@@ -116,7 +115,7 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
               />
             </div>
 
-            <div className="flex max-h-[90vh] flex-col overflow-y-auto">
+            <div className="flex min-h-0 flex-col overflow-y-auto md:max-h-[90vh]">
               <div className="flex items-center justify-between gap-2 px-6 pt-5">
                 <button
                   type="button"
@@ -141,7 +140,7 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
                 </button>
               </div>
 
-              <div className="flex flex-1 flex-col gap-5 px-6 py-5 2xl:justify-center">
+              <div className="flex flex-1 flex-col justify-center gap-5 px-6 py-5 md:justify-start 2xl:justify-center">
                 <div>
                   <h2 className="text-3xl font-semibold tracking-tight text-(--foreground-inverse)">
                     {pet.name}
