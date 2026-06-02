@@ -28,6 +28,24 @@ export class PublicationUnavailableError extends Error {
   }
 }
 
+export class InvalidStatusTransitionError extends Error {
+  constructor() {
+    super("No se puede aplicar ese cambio de estado.");
+    this.name = "InvalidStatusTransitionError";
+  }
+}
+
+// Explicit state machine for adoption requests. Same-status updates are always
+// allowed (e.g. re-saving a visit date); any other transition must be listed.
+// Notably APPROVED can only move to REJECTED, so a stale/concurrent SCHEDULED
+// or PENDING PATCH can't silently undo a completed adoption.
+const ALLOWED_STATUS_TRANSITIONS: Record<PrismaStatus, PrismaStatus[]> = {
+  [PrismaStatus.PENDING]: [PrismaStatus.SCHEDULED, PrismaStatus.APPROVED, PrismaStatus.REJECTED],
+  [PrismaStatus.SCHEDULED]: [PrismaStatus.PENDING, PrismaStatus.APPROVED, PrismaStatus.REJECTED],
+  [PrismaStatus.APPROVED]: [PrismaStatus.REJECTED],
+  [PrismaStatus.REJECTED]: [PrismaStatus.PENDING, PrismaStatus.SCHEDULED, PrismaStatus.APPROVED],
+};
+
 const statusByPrismaStatus: Record<PrismaStatus, AdoptionRequestStatus> = {
   [PrismaStatus.PENDING]: "pendiente",
   [PrismaStatus.SCHEDULED]: "agendada",
@@ -202,6 +220,13 @@ export async function updateAdoptionRequestStatusForProfile(
 
     if (!existing) {
       return null;
+    }
+
+    if (
+      existing.status !== nextStatus &&
+      !ALLOWED_STATUS_TRANSITIONS[existing.status].includes(nextStatus)
+    ) {
+      throw new InvalidStatusTransitionError();
     }
 
     await tx.adoptionRequest.update({ where: { id: existing.id }, data });
