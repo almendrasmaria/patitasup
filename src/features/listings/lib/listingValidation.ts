@@ -7,6 +7,7 @@ import {
   MAX_CHARACTERISTIC_LENGTH,
   normalizeCharacteristics,
 } from "./characteristicsOptions";
+import { isListingImagePublicUrl } from "./listingImageConstants";
 import type { PublicationFormStatus } from "../types";
 
 const emptyToUndefined = (value: unknown) => {
@@ -44,7 +45,13 @@ export const saveListingSchema = z
           "Ingresá un Instagram válido.",
         ),
     ),
-    imageUrl: z.string().trim().min(1, "La imagen es obligatoria.").url("Ingresá una URL válida.").max(500),
+    imageUrl: z
+      .string()
+      .trim()
+      .min(1, "La imagen es obligatoria.")
+      .url("Ingresá una URL válida.")
+      .max(500)
+      .refine(isListingImagePublicUrl, "La imagen debe haber sido subida desde Patitas Up."),
     status: publicationStatusSchema.default("active"),
   })
   .superRefine((value, ctx) => {

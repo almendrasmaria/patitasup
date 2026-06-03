@@ -4,17 +4,36 @@ import { getCurrentListingProfile } from "@/features/listings/lib/ensureListingP
 import {
   LISTING_IMAGE_ALLOWED_TYPES,
   LISTING_IMAGE_MAX_BYTES,
+  LISTING_IMAGE_UPLOAD_MAX_REQUEST_BYTES,
 } from "@/features/listings/lib/listingImageConstants";
 import { compressAndUploadListingImage } from "@/features/listings/lib/server/listingImageServer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function isRequestBodyTooLarge(request: Request) {
+  const contentLength = request.headers.get("content-length");
+
+  if (!contentLength) {
+    return false;
+  }
+
+  const bytes = Number(contentLength);
+  return Number.isFinite(bytes) && bytes > LISTING_IMAGE_UPLOAD_MAX_REQUEST_BYTES;
+}
+
 export async function POST(request: Request) {
   const profile = await getCurrentListingProfile();
 
   if (!profile) {
     return NextResponse.json({ message: "Necesitás iniciar sesión." }, { status: 401 });
+  }
+
+  if (isRequestBodyTooLarge(request)) {
+    return NextResponse.json(
+      { message: "La imagen es demasiado grande." },
+      { status: 413 },
+    );
   }
 
   let formData: FormData;
