@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { FiArrowLeft, FiArrowRight, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight, FiSave, FiUploadCloud } from "react-icons/fi";
 
 import MinimalSelect from "@/components/ui/MinimalSelect";
 import { getLocalidadesCaba, type GeorefLocalidad } from "@/features/geo/lib/georefClient";
@@ -16,9 +16,11 @@ import type {
   PublicationFormValues,
 } from "../types";
 import { deleteListingImageByUrl } from "../lib/listingImageUpload";
+import CharacteristicsField from "./CharacteristicsField";
 import FormStepper, { type FormStep } from "./FormStepper";
 import ListingImageUploader from "./ListingImageUploader";
 import OptionToggleGroup from "./OptionToggleGroup";
+import PublishConfirmDialog from "./PublishConfirmDialog";
 
 type ListingFormState = {
   petName: string;
@@ -29,6 +31,7 @@ type ListingFormState = {
   location: string;
   rescueInstagram: string;
   imageUrl: string;
+  characteristics: string[];
   description: string;
   status: PublicationFormStatus;
 };
@@ -55,6 +58,7 @@ const initialForm: ListingFormState = {
   location: "",
   rescueInstagram: "",
   imageUrl: "",
+  characteristics: [],
   description: "",
   status: "active",
 };
@@ -62,24 +66,6 @@ const initialForm: ListingFormState = {
 const sexOptions: { value: ListingFormState["sex"]; label: string }[] = [
   { value: "female", label: "Hembra" },
   { value: "male", label: "Macho" },
-];
-
-const statusOptions: { value: PublicationFormStatus; label: string; selectedClassName: string }[] = [
-  {
-    value: "active",
-    label: "Activa",
-    selectedClassName: "bg-[var(--status-active-solid)] hover:bg-[var(--status-active-solid-hover)]",
-  },
-  {
-    value: "adopted",
-    label: "Adoptada",
-    selectedClassName: "bg-[var(--status-adopted-solid)] hover:bg-[var(--status-adopted-solid-hover)]",
-  },
-  {
-    value: "draft",
-    label: "Borrador",
-    selectedClassName: "bg-[var(--status-draft-solid)] hover:bg-[var(--status-draft-solid-hover)]",
-  },
 ];
 
 const ageUnitOptions: { value: ListingFormState["ageUnit"]; label: string }[] = [
@@ -107,7 +93,7 @@ const primaryButtonClass =
   "inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--accent-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-65";
 
 const outlineButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--border-input)] bg-white px-6 py-3 text-sm font-semibold text-[var(--neutral-700)] transition hover:border-[var(--accent-border-55)] hover:bg-[var(--accent-overlay-5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--border-input)] bg-white px-6 py-3 text-sm font-semibold text-neutral-700 transition hover:border-[var(--accent-border-55)] hover:bg-[var(--accent-overlay-5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]";
 
 const cardClass = "rounded-3xl bg-white p-5 shadow-sm ring-1 ring-black/5 sm:p-6";
 
@@ -131,6 +117,7 @@ function buildFormState(initialValues?: PublicationFormValues): ListingFormState
     location: initialValues.location,
     rescueInstagram: initialValues.rescueInstagram,
     imageUrl: initialValues.imageUrl,
+    characteristics: initialValues.characteristics,
     description: initialValues.description,
     status: initialValues.status,
   };
@@ -142,9 +129,9 @@ function getFieldError(fieldErrors: ApiResponse["fieldErrors"], fieldName: Listi
 
 function CardHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="border-b border-[var(--border-hairline)] pb-4">
-      <h2 className="text-base font-semibold text-[var(--foreground-inverse)]">{title}</h2>
-      <p className="mt-0.5 text-sm text-[var(--neutral-500)]">{subtitle}</p>
+    <div className="border-b border-(--border-hairline) pb-4">
+      <h2 className="text-base font-semibold text-(--foreground-inverse)">{title}</h2>
+      <p className="mt-0.5 text-sm text-neutral-500">{subtitle}</p>
     </div>
   );
 }
@@ -161,6 +148,7 @@ export default function NewListingForm({
   const [fieldErrors, setFieldErrors] = useState<ApiResponse["fieldErrors"]>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
   const [locationOptions, setLocationOptions] = useState<string[]>([]);
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [locationsError, setLocationsError] = useState<string | null>(null);
@@ -209,6 +197,7 @@ export default function NewListingForm({
       form.location !== initialFormState.location ||
       form.rescueInstagram !== initialFormState.rescueInstagram ||
       form.imageUrl !== initialFormState.imageUrl ||
+      JSON.stringify(form.characteristics) !== JSON.stringify(initialFormState.characteristics) ||
       form.description !== initialFormState.description ||
       form.status !== initialFormState.status,
     [form, initialFormState],
@@ -282,8 +271,19 @@ export default function NewListingForm({
     setStep(next);
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // On create, publishing vs. saving as draft is chosen in the dialog. On
+    // edit, the publication's status is managed elsewhere, so just save.
+    if (isEditing) {
+      void doSubmit();
+    } else {
+      setShowPublishDialog(true);
+    }
+  };
+
+  const doSubmit = async (statusOverride?: PublicationFormStatus) => {
     setSubmitting(true);
     setMessage(null);
     setFieldErrors({});
@@ -298,6 +298,7 @@ export default function NewListingForm({
       },
       body: JSON.stringify({
         ...form,
+        status: statusOverride ?? form.status,
         ageValue: Number(form.ageValue),
       }),
     });
@@ -309,6 +310,7 @@ export default function NewListingForm({
     } catch {}
 
     if (!response.ok) {
+      setShowPublishDialog(false);
       setMessage(payload.message ?? "No pudimos guardar la publicación.");
       setFieldErrors(payload.fieldErrors ?? {});
 
@@ -329,20 +331,20 @@ export default function NewListingForm({
   const title = isEditing ? "Editar publicación" : "Nueva publicación";
   const steps: FormStep[] = [
     { id: 1, title: "Información", subtitle: "Datos y foto" },
-    { id: 2, title: "Descripción", subtitle: "Detalles y estado" },
+    { id: 2, title: "Descripción", subtitle: "Su historia" },
   ];
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleFormSubmit} className="space-y-6">
       <header className="flex items-center gap-3">
         <Link
           href="/my-listings"
           aria-label="Volver a mis publicaciones"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border-hairline)] bg-white text-[var(--neutral-700)] shadow-sm transition hover:border-[var(--accent-border-30)] hover:text-[var(--accent)]"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-(--border-hairline) bg-white text-neutral-700 shadow-sm transition hover:border-(--accent-border-30) hover:text-accent"
         >
           <FiArrowLeft className="h-5 w-5" aria-hidden />
         </Link>
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--foreground-inverse)]">
+          <h1 className="text-2xl font-semibold tracking-tight text-(--foreground-inverse)">
             {title}
           </h1>
         </div>
@@ -481,7 +483,7 @@ export default function NewListingForm({
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/my-listings"
-              className="text-sm font-medium text-[var(--neutral-500)] transition hover:text-[var(--neutral-700)]"
+              className="text-sm font-medium text-neutral-500 transition hover:text-neutral-700"
             >
               Cancelar
             </Link>
@@ -503,6 +505,13 @@ export default function NewListingForm({
             <CardHeader title="Descripción" subtitle="Contá su historia y personalidad" />
 
             <div className="space-y-5 pt-5">
+              <CharacteristicsField
+                value={form.characteristics}
+                onChange={(next) => setForm((prev) => ({ ...prev, characteristics: next }))}
+                sex={form.sex}
+                error={getFieldError(fieldErrors, "characteristics")}
+              />
+
               <div>
                 <label htmlFor="description" className={formLabelClass}>
                   Sobre la mascota
@@ -523,7 +532,7 @@ export default function NewListingForm({
 
               <div>
                 <label htmlFor="rescueInstagram" className={formLabelClass}>
-                  Instagram <span className="font-normal text-[var(--neutral-400)]">(opcional)</span>
+                  Instagram <span className="font-normal text-neutral-400">(opcional)</span>
                 </label>
                 <input
                   id="rescueInstagram"
@@ -539,21 +548,6 @@ export default function NewListingForm({
                   <p className={formErrorClass}>{getFieldError(fieldErrors, "rescueInstagram")}</p>
                 ) : null}
               </div>
-            </div>
-          </section>
-
-          <section className={cardClass}>
-            <CardHeader title="Estado de la publicación" subtitle="Definí cómo se mostrará" />
-
-            <div className="pt-5">
-              <OptionToggleGroup
-                ariaLabel="Estado de la publicación"
-                options={statusOptions}
-                value={form.status}
-                onChange={(value) => setFieldValue("status", value)}
-                className="grid grid-cols-1 gap-3 sm:grid-cols-3"
-                showCheck
-              />
             </div>
           </section>
 
@@ -575,14 +569,29 @@ export default function NewListingForm({
               className={primaryButtonClass}
               disabled={submitting || !isDirty}
             >
-              <FiSave className="h-5 w-5" aria-hidden />
-              {submitting ? "Guardando..." : isEditing ? "Guardar cambios" : "Guardar publicación"}
+              {isEditing ? <FiSave className="h-5 w-5" aria-hidden /> : <FiUploadCloud className="h-5 w-5" aria-hidden />}
+              {submitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Guardar cambios"
+                  : "Subir publicación"}
             </motion.button>
           </div>
         </>
           )}
         </motion.div>
       </AnimatePresence>
+
+      {!isEditing ? (
+        <PublishConfirmDialog
+          open={showPublishDialog}
+          petName={form.petName}
+          loading={submitting}
+          onPublish={() => void doSubmit("active")}
+          onSaveDraft={() => void doSubmit("draft")}
+          onCancel={() => setShowPublishDialog(false)}
+        />
+      ) : null}
     </form>
   );
 }

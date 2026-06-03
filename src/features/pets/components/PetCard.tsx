@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FaMars, FaVenus } from "react-icons/fa";
 import { FiHeart } from "react-icons/fi";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 
 import type { Pet } from "@/features/pets/types";
-
-import PetInfoChip from "./PetInfoChip";
+import { CharacteristicChip } from "@/features/listings/lib/characteristicsMeta";
 
 type Props = {
   pet: Pet;
@@ -13,26 +13,26 @@ type Props = {
     active: boolean;
     onToggle: () => void;
   };
+  onOpenDetail?: (pet: Pet) => void;
 };
 
-export default function PetCard({ pet, favorite }: Props) {
+export default function PetCard({ pet, favorite, onOpenDetail }: Props) {
   const isRemoteImage = /^https?:\/\//.test(pet.image);
   const rescueName = pet.rescueInstagram || "Refugio";
-  const rescueInitial = rescueName.replace(/^@/, "").charAt(0).toUpperCase() || "A";
+  const isMale = pet.sex === "male";
+  const SexIcon = isMale ? FaMars : FaVenus;
 
   return (
-    <article className="flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-md ring-1 ring-black/5">
-      <div className="group relative w-full">
-        <div className="relative aspect-[4/5] overflow-hidden bg-[var(--warm-sand)]">
-          <Image
-            src={pet.image}
-            alt={pet.name}
-            fill
-            unoptimized={isRemoteImage}
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover transition-all duration-700 group-hover:scale-105"
-          />
-        </div>
+    <article className="flex h-full w-full flex-col overflow-hidden rounded-3xl bg-white shadow-md ring-1 ring-black/5">
+      <div className="group relative aspect-[4/5] w-full overflow-hidden bg-[var(--warm-sand)]">
+        <Image
+          src={pet.image}
+          alt={pet.name}
+          fill
+          unoptimized={isRemoteImage}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
 
         {favorite ? (
           <button
@@ -49,51 +49,75 @@ export default function PetCard({ pet, favorite }: Props) {
             <FiHeart className={`h-5 w-5 ${favorite.active ? "fill-current" : ""}`} />
           </button>
         ) : null}
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 via-black/30 to-transparent px-5 py-4">
-          <div className="text-3xl font-semibold text-white">{pet.name}</div>
-
-          <div className="mt-1 flex items-center gap-1.5 text-sm text-white/80">
-            <HiOutlineLocationMarker className="h-4 w-4 shrink-0" />
-            <span>{pet.locationLabel}</span>
-          </div>
-        </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-5 px-6 pt-5 pb-6">
-        <div className="grid grid-cols-2 gap-4">
-          <PetInfoChip label="Edad" value={pet.ageLabel} />
-          <PetInfoChip label="Sexo" value={pet.sex === "male" ? "Macho" : "Hembra"} />
+      <div className="flex flex-1 flex-col gap-3 px-5 pt-4 pb-5">
+        <div className="flex items-start justify-between gap-3">
+          <h3
+            className="min-w-0 truncate text-xl font-semibold text-slate-900"
+            title={pet.name}
+          >
+            {pet.name}
+          </h3>
+          <span className="flex shrink-0 items-center gap-1.5 text-sm text-slate-500">
+            <SexIcon
+              className={`h-4 w-4 ${isMale ? "text-sky-500" : "text-pink-500"}`}
+              aria-hidden
+            />
+            {pet.ageLabel}
+          </span>
         </div>
 
-        <p className="text-sm leading-relaxed text-slate-600">{pet.description}</p>
+        <p className="flex items-center gap-1.5 text-sm text-slate-500">
+          <HiOutlineLocationMarker className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+          <span className="truncate">{pet.locationLabel}</span>
+        </p>
 
-        <div className="mt-auto flex flex-col gap-5">
+        {pet.characteristics.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {pet.characteristics.slice(0, 3).map((characteristic) => (
+              <CharacteristicChip key={characteristic} label={characteristic} sex={pet.sex} />
+            ))}
+            {pet.characteristics.length > 3 ? (
+              <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+                +{pet.characteristics.length - 3} más
+              </span>
+            ) : null}
+          </div>
+        ) : (
+          <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{pet.description}</p>
+        )}
+
+        <div className="mt-auto flex flex-col gap-4 pt-1">
           <div className="h-px w-full bg-slate-200" />
 
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-bg-chip)] text-[var(--accent)] text-lg font-semibold">
-                {rescueInitial}
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                Rescatista
               </div>
-
-              <div>
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                  Rescatado por
-                </div>
-                <div className="text-sm font-semibold text-slate-800">{rescueName}</div>
-              </div>
+              <div className="truncate text-sm font-medium text-slate-800">{rescueName}</div>
             </div>
 
-            <Link
-              href={`/pets/adoption/${pet.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              prefetch={false}
-              className="rounded-full bg-[var(--slate-button)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
-            >
-              Adoptar
-            </Link>
+            {onOpenDetail ? (
+              <button
+                type="button"
+                onClick={() => onOpenDetail(pet)}
+                className="shrink-0 rounded-full bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"
+              >
+                Ver más
+              </button>
+            ) : (
+              <Link
+                href={`/pets/adoption/${pet.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                prefetch={false}
+                className="shrink-0 rounded-full bg-[var(--accent)] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-hover)]"
+              >
+                Ver más
+              </Link>
+            )}
           </div>
         </div>
       </div>

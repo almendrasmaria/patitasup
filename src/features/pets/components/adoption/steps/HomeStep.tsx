@@ -6,6 +6,7 @@ import { HiOutlineHome } from "react-icons/hi";
 import AdoptionFormField from "../AdoptionFormField";
 import AdoptionFormTextarea from "../AdoptionFormTextarea";
 import AdoptionSelectField from "../AdoptionSelectField";
+import { HOUSING_TYPE_OPTIONS, PROTECTION_OPTIONS } from "../adoptionFormConfig";
 import type { AdoptionFieldKey } from "../adoptionFormConfig";
 import type { AdoptionFormData } from "../adoptionFormTypes";
 import { adoptionRadioCardClass, adoptionStepStackClassName } from "../adoptionFormStyles";
@@ -34,11 +35,7 @@ export default function HomeStep({
         placeholder="Seleccioná una opción"
         value={form.housingType}
         onValueChange={(value) => onField("housingType", value)}
-        options={[
-          { label: "Departamento", value: "departamento" },
-          { label: "Casa", value: "casa" },
-          { label: "PH", value: "ph" },
-        ]}
+        options={[...HOUSING_TYPE_OPTIONS]}
         error={fieldErrors.housingType}
         invalid={emptyRequired.housingType}
       />
@@ -55,29 +52,19 @@ export default function HomeStep({
         <fieldset>
           <legend className="sr-only">Protección en balcones y ventanas</legend>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <label className={adoptionRadioCardClass(form.protection === "si")}>
-              <input
-                type="radio"
-                name="protection"
-                value="si"
-                checked={form.protection === "si"}
-                onChange={(e) => onField("protection", e.target.value)}
-                className="h-4 w-4 shrink-0 accent-[var(--accent)]"
-              />
-              <span>Sí, ya las tengo</span>
-            </label>
-
-            <label className={adoptionRadioCardClass(form.protection === "puedo")}>
-              <input
-                type="radio"
-                name="protection"
-                value="puedo"
-                checked={form.protection === "puedo"}
-                onChange={(e) => onField("protection", e.target.value)}
-                className="h-4 w-4 shrink-0 accent-[var(--accent)]"
-              />
-              <span>No, pero puedo colocarlas</span>
-            </label>
+            {PROTECTION_OPTIONS.map((option) => (
+              <label key={option.value} className={adoptionRadioCardClass(form.protection === option.value)}>
+                <input
+                  type="radio"
+                  name="protection"
+                  value={option.value}
+                  checked={form.protection === option.value}
+                  onChange={(e) => onField("protection", e.target.value)}
+                  className="h-4 w-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span>{option.label}</span>
+              </label>
+            ))}
           </div>
         </fieldset>
       </AdoptionFormField>

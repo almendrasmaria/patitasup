@@ -3,36 +3,28 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { FiAlertTriangle } from "react-icons/fi";
+import { FiArrowUpCircle } from "react-icons/fi";
 
-type ConfirmDialogProps = {
+type PublishConfirmDialogProps = {
   open: boolean;
-  title: string;
-  description?: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  loadingLabel?: string;
+  petName?: string;
   loading?: boolean;
-  tone?: "danger" | "default";
-  onConfirm: () => void;
+  onPublish: () => void;
+  onSaveDraft: () => void;
   onCancel: () => void;
 };
 
-export default function ConfirmDialog({
+export default function PublishConfirmDialog({
   open,
-  title,
-  description,
-  confirmLabel = "Aceptar",
-  cancelLabel = "Cancelar",
-  loadingLabel,
+  petName,
   loading = false,
-  tone = "danger",
-  onConfirm,
+  onPublish,
+  onSaveDraft,
   onCancel,
-}: ConfirmDialogProps) {
+}: PublishConfirmDialogProps) {
   const titleId = useId();
   const descriptionId = useId();
-  const confirmRef = useRef<HTMLButtonElement | null>(null);
+  const publishRef = useRef<HTMLButtonElement | null>(null);
   const mounted = useSyncExternalStore(() => () => { }, () => true, () => false);
 
   useEffect(() => {
@@ -48,7 +40,7 @@ export default function ConfirmDialog({
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const focusTimer = window.setTimeout(() => confirmRef.current?.focus(), 0);
+    const focusTimer = window.setTimeout(() => publishRef.current?.focus(), 0);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
@@ -59,7 +51,7 @@ export default function ConfirmDialog({
 
   if (!mounted) return null;
 
-  const isDanger = tone === "danger";
+  const name = petName?.trim();
 
   return createPortal(
     <AnimatePresence>
@@ -85,7 +77,7 @@ export default function ConfirmDialog({
             role="alertdialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            aria-describedby={description ? descriptionId : undefined}
+            aria-describedby={descriptionId}
             className="relative w-full max-w-md overflow-hidden rounded-2xl bg-background shadow-(--shadow-card-elevated) ring-1 ring-black/5"
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -93,56 +85,42 @@ export default function ConfirmDialog({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex gap-4 p-6">
-              {isDanger ? (
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-                  <FiAlertTriangle className="h-5 w-5" aria-hidden />
-                </span>
-              ) : null}
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-(--accent-overlay-12) text-accent">
+                <FiArrowUpCircle className="h-5 w-5" aria-hidden />
+              </span>
 
               <div className="min-w-0 flex-1">
-                <h2
-                  id={titleId}
-                  className="text-base font-semibold text-(--foreground-inverse)"
-                >
-                  {title}
+                <h2 id={titleId} className="text-base font-semibold text-(--foreground-inverse)">
+                  {name ? `¿Publicar a ${name}?` : "¿Publicar esta mascota?"}
                 </h2>
-                {description ? (
-                  <p
-                    id={descriptionId}
-                    className="mt-1.5 text-sm leading-relaxed text-neutral-500"
-                  >
-                    {description}
-                  </p>
-                ) : null}
+                <p id={descriptionId} className="mt-1.5 text-sm leading-relaxed text-neutral-500">
+                  Va a aparecer en el listado público de adopción. Si todavía la estás
+                  preparando, guardala como borrador.
+                </p>
               </div>
             </div>
 
             <div className="flex flex-col-reverse gap-3 border-t border-(--border-hairline) bg-(--warm-sand)/40 px-6 py-4 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                onClick={onCancel}
+                onClick={onSaveDraft}
                 disabled={loading}
                 className="inline-flex items-center justify-center rounded-xl border border-(--border-input) bg-background px-4 py-2.5 text-sm font-semibold text-(--foreground-inverse) transition hover:bg-warm-sand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {cancelLabel}
+                Guardar borrador
               </button>
 
               <button
-                ref={confirmRef}
+                ref={publishRef}
                 type="button"
-                onClick={onConfirm}
+                onClick={onPublish}
                 disabled={loading}
-                className={[
-                  "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
-                  isDanger
-                    ? "bg-red-600 hover:bg-red-700 focus-visible:outline-red-600"
-                    : "bg-accent hover:bg-accent-hover focus-visible:outline-accent",
-                ].join(" ")}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {loading ? (
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                 ) : null}
-                {loading ? loadingLabel ?? confirmLabel : confirmLabel}
+                Publicar
               </button>
             </div>
           </motion.div>

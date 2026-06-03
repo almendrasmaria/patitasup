@@ -10,6 +10,7 @@ export const mockPets: Pet[] = [
     species: "cat",
     ageLabel: "60 días",
     locationLabel: "Villa Lugano",
+    characteristics: ["Sociable", "Juguetón", "Desparasitado/a"],
     description:
       "Curioso, juguetón y muy mimero. Le encanta dormir cerca de las personas y explorar cada rincón.",
     rescueInstagram: "@animalitos",
@@ -23,6 +24,7 @@ export const mockPets: Pet[] = [
     species: "dog",
     ageLabel: "1 año",
     locationLabel: "Flores",
+    characteristics: ["Sociable", "Energético/a", "Bueno/a con niños", "Vacunado/a"],
     description:
       "Súper sociable y lleno de energía. Ideal para familias que disfrutan de paseos y juegos al aire libre.",
     rescueInstagram: "@rescateanimal",
@@ -36,6 +38,7 @@ export const mockPets: Pet[] = [
     species: "cat",
     ageLabel: "2 años",
     locationLabel: "Palermo",
+    characteristics: ["Tranquilo/a", "Castrado/a", "Apto departamento"],
     description:
       "Tranquila y cariñosa. Ama las siestas al sol y recibir mimos después de comer.",
     rescueInstagram: "@huellitas",
@@ -49,6 +52,7 @@ export const mockPets: Pet[] = [
     species: "dog",
     ageLabel: "2 años",
     locationLabel: "San Telmo",
+    characteristics: ["Energético/a", "Bueno/a con perros", "Vacunado/a"],
     description:
       "Compañero y protector. Disfruta correr, jugar con pelotas y estar acompañado.",
     rescueInstagram: "@rescatadoscaba",
@@ -62,6 +66,7 @@ export const mockPets: Pet[] = [
     species: "cat",
     ageLabel: "3 meses",
     locationLabel: "Caballito",
+    characteristics: ["Juguetón", "Curiosa", "Desparasitado/a"],
     description:
       "Pequeña, dulce y muy curiosa. Siempre busca juguetes nuevos y rincones para esconderse.",
     rescueInstagram: "@gatitosfelices",
@@ -75,6 +80,7 @@ export const mockPets: Pet[] = [
     species: "dog",
     ageLabel: "8 meses",
     locationLabel: "Belgrano",
+    characteristics: ["Inteligente", "Energético/a", "Vacunado/a", "Microchip"],
     description:
       "Muy inteligente y activa. Aprende rápido y ama salir a pasear todos los días.",
     rescueInstagram: "@amigosperrunos",
@@ -88,6 +94,7 @@ export const mockPets: Pet[] = [
     species: "cat",
     ageLabel: "4 meses",
     locationLabel: "Villa Devoto",
+    characteristics: ["Activo", "Bueno/a con gatos", "Sociable"],
     description:
       "Activo y aventurero. Le encanta trepar muebles y jugar con otros animales.",
     rescueInstagram: "@patitas",
@@ -101,6 +108,7 @@ export const mockPets: Pet[] = [
     species: "dog",
     ageLabel: "3 años",
     locationLabel: "Boedo",
+    characteristics: ["Tranquilo/a", "Castrado/a", "Apto departamento"],
     description:
       "Leal y tranquilo. Perfecto para alguien que quiera un compañero fiel y relajado.",
     rescueInstagram: "@adoptame",
@@ -114,6 +122,7 @@ export const mockPets: Pet[] = [
     species: "cat",
     ageLabel: "5 años",
     locationLabel: "Almagro",
+    characteristics: ["Tranquilo/a", "Castrado/a", "Apto departamento", "Vacunado/a"],
     description:
       "Muy tierna y compañera. Le encanta dormir en mantas suaves y recibir caricias.",
     rescueInstagram: "@michisurbanos",

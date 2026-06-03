@@ -7,13 +7,14 @@ datasource db {
 }
 
 model Profile {
-  id             String   @id @default(cuid())
-  supabaseUserId String   @unique
-  email          String   @unique
-  displayName    String
-  publications   Publication[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               String            @id @default(cuid())
+  supabaseUserId   String            @unique
+  email            String            @unique
+  displayName      String
+  publications     Publication[]
+  adoptionRequests AdoptionRequest[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 }
 
 enum PublicationAgeUnit {
@@ -49,6 +50,7 @@ model Publication {
   sex             PublicationSex
   species         PublicationSpecies @default(CAT)
   location        String
+  characteristics String[]           @default([])
   description     String             @db.Text
   rescueInstagram String?
   imageUrl        String?
@@ -56,7 +58,49 @@ model Publication {
   publishedAt     DateTime?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
+  adoptionRequests AdoptionRequest[]
 
   @@index([authorProfileId, status, createdAt])
   @@index([status, createdAt])
+}
+
+enum AdoptionRequestStatus {
+  PENDING
+  SCHEDULED
+  APPROVED
+  REJECTED
+}
+
+model AdoptionRequest {
+  id             String      @id @default(cuid())
+  publicationId  String
+  publication    Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  ownerProfileId String
+  ownerProfile   Profile     @relation(fields: [ownerProfileId], references: [id], onDelete: Cascade)
+
+  // Paso 1 — datos del adoptante
+  firstName        String
+  lastName         String
+  email            String
+  phone            String
+  domicilio        String
+  barrio           String
+  preferredContact String
+
+  // Paso 2 — hogar
+  housingType String
+  protection  String
+  otherPets   String?
+
+  // Paso 3 — sobre la mascota
+  reason           String @db.Text
+  aloneHoursPerDay String
+
+  status            AdoptionRequestStatus @default(PENDING)
+  statusChangeCount Int                   @default(0)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@index([ownerProfileId, status, createdAt])
+  @@index([publicationId])
 }

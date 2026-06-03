@@ -56,7 +56,7 @@ export default function AdoptionSelectField({
           <Select.Content
             position="popper"
             sideOffset={6}
-            className="z-50 overflow-hidden rounded-lg border border-[var(--border-hairline-alt)] bg-white shadow-[var(--shadow-dropdown)]"
+            className="z-50 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-[var(--border-hairline-alt)] bg-white shadow-[var(--shadow-dropdown)]"
           >
             <Select.Viewport className="p-1.5">
               {options.map((option) => (

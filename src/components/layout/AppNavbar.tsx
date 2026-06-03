@@ -176,7 +176,7 @@ export default function AppNavbar({ navUser }: Props) {
                             <Link
                               href={DASHBOARD_PROFILE_HREF}
                               role="menuitem"
-                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--accent-overlay-8)]"
                               onClick={() => setDropdownOpen(false)}
                             >
                               <FiUser className="text-[var(--accent)]" aria-hidden />
@@ -187,7 +187,7 @@ export default function AppNavbar({ navUser }: Props) {
                             <Link
                               href={DASHBOARD_MY_LISTINGS_HREF}
                               role="menuitem"
-                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--accent-overlay-8)]"
                               onClick={() => setDropdownOpen(false)}
                             >
                               <FiFileText className="text-[var(--accent)]" aria-hidden />
@@ -198,7 +198,7 @@ export default function AppNavbar({ navUser }: Props) {
                             <Link
                               href="/"
                               role="menuitem"
-                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--surface-dashboard)]"
+                              className="flex w-full items-center gap-2 px-4 py-3 text-sm text-[var(--neutral-700)] transition hover:bg-[var(--accent-overlay-8)]"
                               onClick={() => setDropdownOpen(false)}
                             >
                               <FiHome className="text-[var(--accent)]" aria-hidden />

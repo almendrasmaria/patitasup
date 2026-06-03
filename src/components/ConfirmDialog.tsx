@@ -5,28 +5,44 @@ import { useEffect, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { FiAlertTriangle } from "react-icons/fi";
 
+type ConfirmTone = "default" | "danger";
+
 type ConfirmDialogProps = {
   open: boolean;
   title: string;
   description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
-  loadingLabel?: string;
+  tone?: ConfirmTone;
   loading?: boolean;
-  tone?: "danger" | "default";
   onConfirm: () => void;
   onCancel: () => void;
+};
+
+const toneStyles: Record<
+  ConfirmTone,
+  { iconWrap: string; confirm: string }
+> = {
+  default: {
+    iconWrap: "bg-(--accent-overlay-12) text-accent",
+    confirm:
+      "bg-accent text-white hover:bg-accent-hover focus-visible:outline-accent",
+  },
+  danger: {
+    iconWrap: "bg-rose-50 text-rose-600",
+    confirm:
+      "bg-rose-600 text-white hover:bg-rose-700 focus-visible:outline-rose-600",
+  },
 };
 
 export default function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = "Aceptar",
+  confirmLabel = "Confirmar",
   cancelLabel = "Cancelar",
-  loadingLabel,
+  tone = "default",
   loading = false,
-  tone = "danger",
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -59,7 +75,7 @@ export default function ConfirmDialog({
 
   if (!mounted) return null;
 
-  const isDanger = tone === "danger";
+  const styles = toneStyles[tone];
 
   return createPortal(
     <AnimatePresence>
@@ -93,24 +109,18 @@ export default function ConfirmDialog({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex gap-4 p-6">
-              {isDanger ? (
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-                  <FiAlertTriangle className="h-5 w-5" aria-hidden />
-                </span>
-              ) : null}
+              <span
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${styles.iconWrap}`}
+              >
+                <FiAlertTriangle className="h-5 w-5" aria-hidden />
+              </span>
 
               <div className="min-w-0 flex-1">
-                <h2
-                  id={titleId}
-                  className="text-base font-semibold text-(--foreground-inverse)"
-                >
+                <h2 id={titleId} className="text-base font-semibold text-(--foreground-inverse)">
                   {title}
                 </h2>
                 {description ? (
-                  <p
-                    id={descriptionId}
-                    className="mt-1.5 text-sm leading-relaxed text-neutral-500"
-                  >
+                  <p id={descriptionId} className="mt-1.5 text-sm leading-relaxed text-neutral-500">
                     {description}
                   </p>
                 ) : null}
@@ -132,17 +142,12 @@ export default function ConfirmDialog({
                 type="button"
                 onClick={onConfirm}
                 disabled={loading}
-                className={[
-                  "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-70",
-                  isDanger
-                    ? "bg-red-600 hover:bg-red-700 focus-visible:outline-red-600"
-                    : "bg-accent hover:bg-accent-hover focus-visible:outline-accent",
-                ].join(" ")}
+                className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-70 ${styles.confirm}`}
               >
                 {loading ? (
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
                 ) : null}
-                {loading ? loadingLabel ?? confirmLabel : confirmLabel}
+                {confirmLabel}
               </button>
             </div>
           </motion.div>

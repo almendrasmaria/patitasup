@@ -26,7 +26,17 @@ export const ADOPTION_FORM_FIELDS: AdoptionFieldConfig[] = [
 export const PREFERRED_CONTACT_OPTIONS = [
   { label: "WhatsApp", value: "whatsapp" },
   { label: "Correo electrónico", value: "email" },
-  { label: "Llamada telefónica", value: "telefono" },
+] as const;
+
+export const HOUSING_TYPE_OPTIONS = [
+  { label: "Departamento", value: "departamento" },
+  { label: "Casa", value: "casa" },
+  { label: "PH", value: "ph" },
+] as const;
+
+export const PROTECTION_OPTIONS = [
+  { label: "Sí, ya las tengo", value: "si" },
+  { label: "No, pero puedo colocarlas", value: "puedo" },
 ] as const;
 
 export const ALONE_HOURS_OPTIONS = [

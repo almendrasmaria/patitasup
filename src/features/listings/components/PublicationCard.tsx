@@ -25,15 +25,15 @@ export default function PublicationCard({
   const isRemoteImage = /^https?:\/\//.test(publication.imageUrl);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--warm-sand)]">
+    <article className="flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5">
+      <div className="group/image relative aspect-[4/3] w-full overflow-hidden bg-[var(--warm-sand)]">
         <Image
           src={publication.imageUrl}
           alt={publication.petName}
           fill
           unoptimized={isRemoteImage}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-700 group-hover/image:scale-105"
         />
 
         <div className="absolute top-3 left-3">
