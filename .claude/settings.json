@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(node check_enum.mjs 2>&1)"
-    ]
-  }
-}
