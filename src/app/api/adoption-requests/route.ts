@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { parseCreateAdoptionRequest } from "@/features/requests/lib/adoptionRequestValidation";
-import { createAdoptionRequest } from "@/features/requests/lib/requestsRepository";
+import {
+  DuplicateOpenRequestError,
+  createAdoptionRequest,
+} from "@/features/requests/lib/requestsRepository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,6 +42,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ adoptionRequest }, { status: 201 });
   } catch (error) {
+    if (error instanceof DuplicateOpenRequestError) {
+      return NextResponse.json(
+        {
+          message:
+            "Ya enviaste una solicitud para esta mascota y está en revisión. El refugio se va a contactar con vos.",
+        },
+        { status: 409 },
+      );
+    }
+
     console.error("Failed to create adoption request", error);
 
     return NextResponse.json(

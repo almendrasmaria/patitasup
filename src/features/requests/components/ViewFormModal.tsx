@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { FiCheck, FiCopy, FiMail, FiSend, FiX } from "react-icons/fi";
-import { FaPaw, FaRegCalendarCheck, FaStar } from "react-icons/fa";
+import { FaPaw, FaStar } from "react-icons/fa";
 import {
   HiOutlineChatAlt2,
   HiOutlineClock,
@@ -21,11 +21,7 @@ type ViewFormModalProps = {
   row: AdoptionRequestRow | null;
   shelterName?: string | null;
   onClose: () => void;
-  onStatusChange: (
-    row: AdoptionRequestRow,
-    status: AdoptionRequestStatus,
-    visitDate?: string | null,
-  ) => void;
+  onStatusChange: (row: AdoptionRequestRow, status: AdoptionRequestStatus) => void;
 };
 
 const FOCUSABLE_SELECTOR =
@@ -33,7 +29,8 @@ const FOCUSABLE_SELECTOR =
 
 const slideTransition = { duration: 0.42, ease: "easeInOut" } as const;
 
-const CALENDAR_LINK = "https://calendar.google.com/calendar/appointments";
+const AVAILABILITY_PLACEHOLDER =
+  "(escribí acá tu disponibilidad: días, horarios o un enlace para coordinar)";
 
 const COPIED_RESET_MS = 2000;
 
@@ -46,55 +43,15 @@ function firstNameOf(fullName: string) {
   return fullName.trim().split(/\s+/)[0] || fullName;
 }
 
-function formatDateInput(raw: string) {
-  const digits = raw.replace(/\D/g, "").slice(0, 8);
-  const parts: string[] = [];
-  if (digits.length > 0) parts.push(digits.slice(0, 2));
-  if (digits.length >= 3) parts.push(digits.slice(2, 4));
-  if (digits.length >= 5) parts.push(digits.slice(4, 8));
-  return parts.join("/");
-}
-
-function toIsoDate(value: string): string | null {
-  const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (!match) return null;
-  const [, dd, mm, yyyy] = match;
-  const day = Number(dd);
-  const month = Number(mm);
-  const year = Number(yyyy);
-  const date = new Date(year, month - 1, day);
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day
-  ) {
-    return null;
-  }
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-const visitDateFormatter = new Intl.DateTimeFormat("es-AR", {
-  weekday: "long",
-  day: "numeric",
-  month: "long",
-});
-
-function formatVisitDateLong(iso: string): string {
-  const [year, month, day] = iso.split("-").map(Number);
-  if (!year || !month || !day) return iso;
-  return visitDateFormatter.format(new Date(year, month - 1, day));
-}
-
 function buildSuggestedMessage(firstName: string, petName: string, shelterName: string) {
   return [
     `Hola ${firstName}! 👋`,
     "",
     `Te escribimos desde *${shelterName}* en relación a tu solicitud para adoptar a *${petName}*.`,
     "",
-    "Nos encantaría que se conozcan. ¿Podés elegir un horario en nuestro calendario?",
+    "Nos encantaría que se conozcan. Nuestra disponibilidad es la siguiente:",
     "",
-    "📅 Ver disponibilidad:",
-    CALENDAR_LINK,
+    AVAILABILITY_PLACEHOLDER,
     "",
     "¡Muchas gracias por querer darle un hogar! 🐾",
   ].join("\n");
@@ -111,8 +68,8 @@ export default function ViewFormModal({
 
   const onCloseRef = useRef(onClose);
 
-  const [visitDate, setVisitDate] = useState("");
   const [copied, setCopied] = useState(false);
+  const [message, setMessage] = useState("");
   const copyTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -121,11 +78,19 @@ export default function ViewFormModal({
 
   const rowId = row?.id;
 
+  const defaultMessage = row
+    ? buildSuggestedMessage(
+        firstNameOf(row.adoptanteName),
+        row.petName,
+        shelterName?.trim() || "PatitasUp",
+      )
+    : "";
+
   const [trackedRowId, setTrackedRowId] = useState(rowId);
   if (rowId !== trackedRowId) {
     setTrackedRowId(rowId);
-    setVisitDate("");
     setCopied(false);
+    setMessage(defaultMessage);
   }
 
   useEffect(
@@ -196,14 +161,8 @@ export default function ViewFormModal({
   const isScheduled = status === "agendada";
   const isResolved = status === "aprobada" || status === "rechazada";
 
-  const suggestedMessage = row
-    ? buildSuggestedMessage(
-        firstNameOf(row.adoptanteName),
-        row.petName,
-        shelterName?.trim() || "PatitasUp",
-      )
-    : "";
-  const encodedMessage = encodeURIComponent(suggestedMessage);
+  const encodedMessage = encodeURIComponent(message);
+  const messageEdited = message !== defaultMessage;
   const visitSubject = row
     ? encodeURIComponent(`Coordinemos la adopción de ${row.petName} 🐾`)
     : "";
@@ -212,9 +171,9 @@ export default function ViewFormModal({
     : "";
 
   const handleCopy = async () => {
-    if (!suggestedMessage) return;
+    if (!message) return;
     try {
-      await navigator.clipboard.writeText(suggestedMessage);
+      await navigator.clipboard.writeText(message);
       setCopied(true);
       if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
       copyTimerRef.current = window.setTimeout(() => setCopied(false), COPIED_RESET_MS);
@@ -222,10 +181,6 @@ export default function ViewFormModal({
       // noop
     }
   };
-
-  const visitIso = toIsoDate(visitDate);
-  const visitDateInvalid = visitDate.trim().length > 0 && !visitIso;
-  const showVisitDateError = visitDate.length === 10 && !visitIso;
 
   return createPortal(
     <AnimatePresence>
@@ -356,28 +311,43 @@ export default function ViewFormModal({
 
                   <div className="overflow-hidden rounded-2xl border border-(--border-hairline) bg-(--surface-card-elevated)">
                     <div className="flex items-center justify-between gap-2 border-b border-(--border-hairline) px-4 py-2">
-                      <span className="text-xs font-medium text-neutral-400">Mensaje sugerido</span>
-                      <button
-                        type="button"
-                        onClick={handleCopy}
-                        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-neutral-500 transition hover:bg-white hover:text-neutral-700"
-                      >
-                        {copied ? (
-                          <>
-                            <FiCheck className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
-                            Copiado
-                          </>
-                        ) : (
-                          <>
-                            <FiCopy className="h-3.5 w-3.5" aria-hidden />
-                            Copiar
-                          </>
-                        )}
-                      </button>
+                      <span className="text-xs font-medium text-neutral-400">Mensaje sugerido (editable)</span>
+                      <div className="flex items-center gap-1">
+                        {messageEdited ? (
+                          <button
+                            type="button"
+                            onClick={() => setMessage(defaultMessage)}
+                            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-neutral-500 transition hover:bg-white hover:text-neutral-700"
+                          >
+                            Restablecer
+                          </button>
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={handleCopy}
+                          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-neutral-500 transition hover:bg-white hover:text-neutral-700"
+                        >
+                          {copied ? (
+                            <>
+                              <FiCheck className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
+                              Copiado
+                            </>
+                          ) : (
+                            <>
+                              <FiCopy className="h-3.5 w-3.5" aria-hidden />
+                              Copiar
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
-                    <p className="whitespace-pre-line px-4 py-3 text-[13px] leading-relaxed text-neutral-700">
-                      {suggestedMessage}
-                    </p>
+                    <textarea
+                      value={message}
+                      onChange={(event) => setMessage(event.target.value)}
+                      rows={9}
+                      aria-label="Mensaje sugerido"
+                      className="block w-full resize-y bg-transparent px-4 py-3 text-[13px] leading-relaxed text-neutral-700 outline-none focus:bg-white"
+                    />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
@@ -464,52 +434,13 @@ export default function ViewFormModal({
                 </section>
               )}
 
-              {isScheduled && row.visitScheduledAt ? (
-                <div className="flex items-center gap-3 rounded-2xl bg-blue-50 px-4 py-3.5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500 text-white">
-                    <FaRegCalendarCheck className="h-5 w-5" aria-hidden />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-blue-600">Visita agendada para</p>
-                    <p className="text-base font-semibold text-(--foreground-inverse)">
-                      {formatVisitDateLong(row.visitScheduledAt)}
-                    </p>
-                  </div>
-                </div>
-              ) : null}
             </div>
 
             {isPending ? (
-              <footer className="space-y-3 border-t border-(--border-hairline) px-5 py-4">
-                <div>
-                  <label
-                    htmlFor="visit-date"
-                    className="mb-1.5 block text-[13px] font-medium text-neutral-500"
-                  >
-                    Fecha de visita (opcional)
-                  </label>
-                  <input
-                    id="visit-date"
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    placeholder="dd/mm/aaaa"
-                    value={visitDate}
-                    onChange={(event) => setVisitDate(formatDateInput(event.target.value))}
-                    aria-invalid={showVisitDateError}
-                    aria-describedby={showVisitDateError ? "visit-date-error" : undefined}
-                    className={`w-full rounded-xl border bg-white px-3 py-2.5 text-sm text-neutral-700 transition placeholder:text-neutral-400 focus:outline-none focus:ring-2 ${
-                      showVisitDateError
-                        ? "border-rose-300 focus:border-rose-300 focus:ring-rose-200"
-                        : "border-(--border-input) focus:border-(--accent-border-20) focus:ring-(--accent-ring-25)"
-                    }`}
-                  />
-                  {showVisitDateError ? (
-                    <p id="visit-date-error" className="mt-1.5 text-xs text-rose-600">
-                      Esa fecha no existe. Revisá el día y el mes.
-                    </p>
-                  ) : null}
-                </div>
+              <footer className="space-y-2.5 border-t border-(--border-hairline) px-5 py-4">
+                <p className="text-[13px] text-neutral-500">
+                  Coordiná la visita con el mensaje de arriba. Cuando esté coordinada, agendala.
+                </p>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -520,9 +451,8 @@ export default function ViewFormModal({
                   </button>
                   <button
                     type="button"
-                    disabled={visitDateInvalid}
-                    onClick={() => onStatusChange(row, "agendada", visitIso)}
-                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={() => onStatusChange(row, "agendada")}
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
                   >
                     Agendar visita
                   </button>
@@ -547,15 +477,54 @@ export default function ViewFormModal({
                     Adoptada
                   </button>
                 </div>
-              </footer>
-            ) : isResolved ? (
-              <footer className="border-t border-(--border-hairline) px-5 py-4">
                 <button
                   type="button"
-                  onClick={onClose}
-                  className="inline-flex w-full items-center justify-center rounded-xl border border-(--border-input) bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-(--surface-row)"
+                  onClick={() => onStatusChange(row, "pendiente")}
+                  className="w-full text-center text-xs font-medium text-neutral-400 underline underline-offset-2 transition hover:text-neutral-600"
                 >
-                  Cerrar
+                  Volver a pendiente
+                </button>
+              </footer>
+            ) : isResolved ? (
+              <footer className="space-y-3 border-t border-(--border-hairline) px-5 py-4">
+                {row.statusChangeCount > 0 ? (
+                  <p className="text-xs text-neutral-400">
+                    Esta decisión se cambió {row.statusChangeCount}{" "}
+                    {row.statusChangeCount === 1 ? "vez" : "veces"}.
+                  </p>
+                ) : null}
+                <div className="grid grid-cols-2 gap-3">
+                  {status === "aprobada" ? (
+                    <button
+                      type="button"
+                      onClick={() => onStatusChange(row, "rechazada")}
+                      className="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-4 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
+                    >
+                      Rechazar
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onStatusChange(row, "aprobada")}
+                      className="inline-flex items-center justify-center rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-600 transition hover:bg-emerald-50"
+                    >
+                      Adoptada
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="inline-flex items-center justify-center rounded-xl border border-(--border-input) bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 transition hover:bg-(--surface-row)"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onStatusChange(row, "pendiente")}
+                  className="w-full text-center text-xs font-medium text-neutral-400 underline underline-offset-2 transition hover:text-neutral-600"
+                >
+                  Reabrir solicitud
                 </button>
               </footer>
             ) : null}

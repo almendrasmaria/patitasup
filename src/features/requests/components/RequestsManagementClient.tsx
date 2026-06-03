@@ -4,10 +4,68 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { AdoptionRequestFilter, AdoptionRequestRow, AdoptionRequestStatus } from "../types";
 import { REQUEST_STATUS_ORDER } from "../lib/requestStatus";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import PaginationControls from "@/features/listings/components/PaginationControls";
 import RequestsList from "./RequestsList";
 import RequestStatusTabs from "./RequestStatusTabs";
 import ViewFormModal from "./ViewFormModal";
+
+const isResolvedStatus = (status: AdoptionRequestStatus) =>
+  status === "aprobada" || status === "rechazada";
+
+type ConfirmCopy = {
+  title: string;
+  description: string;
+  confirmLabel: string;
+  tone: "default" | "danger";
+};
+
+function buildConfirmCopy(
+  source: AdoptionRequestStatus,
+  target: AdoptionRequestStatus,
+  petName: string,
+): ConfirmCopy {
+  if (target === "rechazada") {
+    return {
+      title: "¿Rechazar esta solicitud?",
+      description:
+        source === "aprobada"
+          ? `Esta solicitud estaba aprobada. Si la rechazás, ${petName} vuelve a quedar disponible para adopción.`
+          : `Vas a rechazar la solicitud de adopción de ${petName}.`,
+      confirmLabel: "Sí, rechazar",
+      tone: "danger",
+    };
+  }
+
+  if (target === "agendada") {
+    return {
+      title: "¿Agendar la visita?",
+      description: `Confirmá que ya coordinaste la visita con el adoptante de ${petName}.`,
+      confirmLabel: "Sí, agendar visita",
+      tone: "default",
+    };
+  }
+
+  if (target === "aprobada") {
+    return {
+      title: "¿Marcar como adoptada?",
+      description: `Esta solicitud estaba rechazada. ${petName} pasará a estar adoptada.`,
+      confirmLabel: "Sí, marcar como adoptada",
+      tone: "default",
+    };
+  }
+
+  // target === "pendiente" (reopen) or other recovery
+  return {
+    title: "¿Reabrir esta solicitud?",
+    description:
+      source === "aprobada"
+        ? `Vuelve al estado pendiente y ${petName} queda disponible de nuevo.`
+        : "Vuelve al estado pendiente para coordinar otra vez.",
+    confirmLabel: "Sí, reabrir",
+    tone: "default",
+  };
+}
 
 const PAGE_SIZE = 10;
 const ERROR_DISMISS_MS = 5000;
@@ -31,10 +89,14 @@ export default function RequestsManagementClient({
   const [filter, setFilter] = useState<AdoptionRequestFilter>("todas");
   const [page, setPage] = useState(1);
   const [statusOverrides, setStatusOverrides] = useState<Partial<Record<string, AdoptionRequestStatus>>>({});
-  const [visitOverrides, setVisitOverrides] = useState<Record<string, string | null>>({});
+  const [countOverrides, setCountOverrides] = useState<Record<string, number>>({});
   const [pendingIds, setPendingIds] = useState<Set<string>>(() => new Set());
   const [detailId, setDetailId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [confirmRequest, setConfirmRequest] = useState<{
+    row: AdoptionRequestRow;
+    status: AdoptionRequestStatus;
+  } | null>(null);
 
   const inflightRef = useRef<Map<string, AbortController>>(new Map());
 
@@ -42,17 +104,15 @@ export default function RequestsManagementClient({
     () =>
       requests.map((r) => {
         const status = statusOverrides[r.id] ?? r.status;
-        const hasVisitOverride = Object.prototype.hasOwnProperty.call(visitOverrides, r.id);
-        if (status === r.status && !hasVisitOverride) return r;
+        const hasCountOverride = Object.prototype.hasOwnProperty.call(countOverrides, r.id);
+        if (status === r.status && !hasCountOverride) return r;
         return {
           ...r,
           status,
-          visitScheduledAt: hasVisitOverride
-            ? visitOverrides[r.id] ?? undefined
-            : r.visitScheduledAt,
+          statusChangeCount: hasCountOverride ? countOverrides[r.id] : r.statusChangeCount,
         };
       }),
-    [requests, statusOverrides, visitOverrides],
+    [requests, statusOverrides, countOverrides],
   );
 
   const counts = useMemo<Partial<Record<AdoptionRequestFilter, number>>>(() => {
@@ -82,9 +142,8 @@ export default function RequestsManagementClient({
   const handleStatusChange = async (
     row: AdoptionRequestRow,
     status: AdoptionRequestStatus,
-    visitDate?: string | null,
   ) => {
-    if (row.status === status && visitDate === undefined) return;
+    if (row.status === status) return;
 
     const prev = inflightRef.current.get(row.id);
     if (prev) prev.abort();
@@ -93,20 +152,11 @@ export default function RequestsManagementClient({
     inflightRef.current.set(row.id, controller);
 
     let rollbackStatus: AdoptionRequestStatus | undefined;
-    let hadVisitOverride = false;
-    let rollbackVisit: string | null | undefined;
 
     setStatusOverrides((cur) => {
       rollbackStatus = cur[row.id];
       return { ...cur, [row.id]: status };
     });
-    if (visitDate !== undefined) {
-      setVisitOverrides((cur) => {
-        hadVisitOverride = Object.prototype.hasOwnProperty.call(cur, row.id);
-        rollbackVisit = cur[row.id];
-        return { ...cur, [row.id]: visitDate };
-      });
-    }
     setPendingIds((cur) => {
       const next = new Set(cur);
       next.add(row.id);
@@ -117,9 +167,7 @@ export default function RequestsManagementClient({
       const response = await fetch(`/api/adoption-requests/${row.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          visitDate !== undefined ? { status, visitScheduledAt: visitDate } : { status },
-        ),
+        body: JSON.stringify({ status }),
         signal: controller.signal,
       });
 
@@ -132,6 +180,12 @@ export default function RequestsManagementClient({
           // noop
         }
         throw new StatusUpdateError(serverMessage);
+      }
+
+      const data = await response.json().catch(() => null);
+      const nextCount = data?.adoptionRequest?.statusChangeCount;
+      if (typeof nextCount === "number") {
+        setCountOverrides((cur) => ({ ...cur, [row.id]: nextCount }));
       }
 
       setPendingIds((cur) => {
@@ -152,17 +206,6 @@ export default function RequestsManagementClient({
         }
         return next;
       });
-      if (visitDate !== undefined) {
-        setVisitOverrides((cur) => {
-          const next = { ...cur };
-          if (hadVisitOverride) {
-            next[row.id] = rollbackVisit ?? null;
-          } else {
-            delete next[row.id];
-          }
-          return next;
-        });
-      }
       setPendingIds((cur) => {
         if (!cur.has(row.id)) return cur;
         const next = new Set(cur);
@@ -180,6 +223,28 @@ export default function RequestsManagementClient({
         inflightRef.current.delete(row.id);
       }
     }
+  };
+
+  // Public entry point used by the list and the modal. Two changes go through a
+  // confirmation first: rejecting (consequential and easy to click by accident),
+  // and any change away from an already-resolved decision. Everything else (first
+  // approval, scheduling, reopening from pending/agendada) applies directly.
+  const requestStatusChange = (row: AdoptionRequestRow, status: AdoptionRequestStatus) => {
+    if (row.status === status) return;
+    const needsConfirm =
+      status === "rechazada" || status === "agendada" || isResolvedStatus(row.status);
+    if (needsConfirm) {
+      setConfirmRequest({ row, status });
+      return;
+    }
+    void handleStatusChange(row, status);
+  };
+
+  const handleConfirm = () => {
+    if (!confirmRequest) return;
+    const { row, status } = confirmRequest;
+    setConfirmRequest(null);
+    void handleStatusChange(row, status);
   };
 
   const dismissError = useCallback(() => setErrorMessage(null), []);
@@ -206,6 +271,14 @@ export default function RequestsManagementClient({
     [detailId, hydrated],
   );
 
+  const confirmCopy = confirmRequest
+    ? buildConfirmCopy(
+        confirmRequest.row.status,
+        confirmRequest.status,
+        confirmRequest.row.petName,
+      )
+    : null;
+
   return (
     <div className="w-full">
       <div className="space-y-6">
@@ -224,7 +297,7 @@ export default function RequestsManagementClient({
           rows={pageRows}
           dirtyStatusIds={dirtyStatusIds}
           onViewDetail={(row) => setDetailId(row.id)}
-          onStatusChange={handleStatusChange}
+          onStatusChange={requestStatusChange}
         />
 
         {errorMessage ? (
@@ -261,7 +334,17 @@ export default function RequestsManagementClient({
         row={detailRow}
         shelterName={shelterName}
         onClose={() => setDetailId(null)}
-        onStatusChange={handleStatusChange}
+        onStatusChange={requestStatusChange}
+      />
+
+      <ConfirmDialog
+        open={Boolean(confirmRequest)}
+        tone={confirmCopy?.tone ?? "default"}
+        title={confirmCopy?.title ?? ""}
+        description={confirmCopy?.description}
+        confirmLabel={confirmCopy?.confirmLabel ?? "Confirmar"}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmRequest(null)}
       />
     </div>
   );

@@ -28,23 +28,22 @@ export class PublicationUnavailableError extends Error {
   }
 }
 
-export class InvalidStatusTransitionError extends Error {
+export class DuplicateOpenRequestError extends Error {
   constructor() {
-    super("No se puede aplicar ese cambio de estado.");
-    this.name = "InvalidStatusTransitionError";
+    super("Ya enviaste una solicitud para esta mascota.");
+    this.name = "DuplicateOpenRequestError";
   }
 }
 
-// Explicit state machine for adoption requests. Same-status updates are always
-// allowed (e.g. re-saving a visit date); any other transition must be listed.
-// Notably APPROVED can only move to REJECTED, so a stale/concurrent SCHEDULED
-// or PENDING PATCH can't silently undo a completed adoption.
-const ALLOWED_STATUS_TRANSITIONS: Record<PrismaStatus, PrismaStatus[]> = {
-  [PrismaStatus.PENDING]: [PrismaStatus.SCHEDULED, PrismaStatus.APPROVED, PrismaStatus.REJECTED],
-  [PrismaStatus.SCHEDULED]: [PrismaStatus.PENDING, PrismaStatus.APPROVED, PrismaStatus.REJECTED],
-  [PrismaStatus.APPROVED]: [PrismaStatus.REJECTED],
-  [PrismaStatus.REJECTED]: [PrismaStatus.PENDING, PrismaStatus.SCHEDULED, PrismaStatus.APPROVED],
-};
+// Any status can move to any other: the shelter coordinates with the adopter by
+// message and must always be able to correct a mistaken click. Consequential or
+// reversing changes are guarded with a confirmation in the UI, not blocked here,
+// so the flow never reaches a dead-end.
+const RESOLVED_STATUSES: PrismaStatus[] = [PrismaStatus.APPROVED, PrismaStatus.REJECTED];
+
+function isResolvedStatus(status: PrismaStatus) {
+  return RESOLVED_STATUSES.includes(status);
+}
 
 const statusByPrismaStatus: Record<PrismaStatus, AdoptionRequestStatus> = {
   [PrismaStatus.PENDING]: "pendiente",
@@ -102,9 +101,7 @@ function mapRequestRow(row: RequestWithPublication): AdoptionRequestRow {
     adoptantePhone: row.phone,
     status: statusByPrismaStatus[row.status],
     dateLabel: formatDashboardDate(row.createdAt),
-    visitScheduledAt: row.visitScheduledAt
-      ? row.visitScheduledAt.toISOString().slice(0, 10)
-      : undefined,
+    statusChangeCount: row.statusChangeCount,
     details: {
       preferredContact: row.preferredContact,
       housingType: housingTypeLabel(row.housingType),
@@ -156,6 +153,22 @@ export async function createAdoptionRequest(
         throw new PublicationUnavailableError();
       }
 
+      // One open request per adopter (email) per publication: block a new one if
+      // they already have a pending/scheduled request for this pet. A previously
+      // rejected request doesn't count, so they can try again.
+      const existingOpen = await tx.adoptionRequest.findFirst({
+        where: {
+          publicationId: publication.id,
+          email: { equals: input.email, mode: "insensitive" },
+          status: { in: [PrismaStatus.PENDING, PrismaStatus.SCHEDULED] },
+        },
+        select: { id: true },
+      });
+
+      if (existingOpen) {
+        throw new DuplicateOpenRequestError();
+      }
+
       const row = await tx.adoptionRequest.create({
         data: {
           publicationId: publication.id,
@@ -198,19 +211,8 @@ export async function updateAdoptionRequestStatusForProfile(
   profileId: string,
   requestId: string,
   status: AdoptionRequestStatus,
-  visitScheduledAt?: string | null,
 ): Promise<AdoptionRequestRow | null> {
   const nextStatus = prismaStatusByStatus[status];
-
-  const data: { status: PrismaStatus; visitScheduledAt?: Date | null } = {
-    status: nextStatus,
-  };
-
-  if (visitScheduledAt !== undefined) {
-    data.visitScheduledAt = visitScheduledAt
-      ? new Date(`${visitScheduledAt}T00:00:00.000Z`)
-      : null;
-  }
 
   return prisma.$transaction(async (tx) => {
     const existing = await tx.adoptionRequest.findFirst({
@@ -222,11 +224,21 @@ export async function updateAdoptionRequestStatusForProfile(
       return null;
     }
 
+    const data: {
+      status: PrismaStatus;
+      statusChangeCount?: { increment: number };
+    } = {
+      status: nextStatus,
+    };
+
+    // Count only changes of a decision already taken (APPROVED <-> REJECTED),
+    // not the first time a request reaches a resolved state.
     if (
       existing.status !== nextStatus &&
-      !ALLOWED_STATUS_TRANSITIONS[existing.status].includes(nextStatus)
+      isResolvedStatus(existing.status) &&
+      isResolvedStatus(nextStatus)
     ) {
-      throw new InvalidStatusTransitionError();
+      data.statusChangeCount = { increment: 1 };
     }
 
     await tx.adoptionRequest.update({ where: { id: existing.id }, data });

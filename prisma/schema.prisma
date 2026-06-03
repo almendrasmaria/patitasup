@@ -96,10 +96,10 @@ model AdoptionRequest {
   reason           String @db.Text
   aloneHoursPerDay String
 
-  status           AdoptionRequestStatus @default(PENDING)
-  visitScheduledAt DateTime?
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
+  status            AdoptionRequestStatus @default(PENDING)
+  statusChangeCount Int                   @default(0)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 
   @@index([ownerProfileId, status, createdAt])
   @@index([publicationId])

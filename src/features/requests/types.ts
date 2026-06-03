@@ -26,6 +26,6 @@ export type AdoptionRequestRow = {
   adoptantePhone?: string;
   status: AdoptionRequestStatus;
   dateLabel: string;
-  visitScheduledAt?: string;
+  statusChangeCount: number;
   details?: AdoptionRequestDetails;
 };

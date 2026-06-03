@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { getCurrentListingProfile } from "@/features/listings/lib/ensureListingProfile";
 import { updateAdoptionRequestStatusSchema } from "@/features/requests/lib/adoptionRequestValidation";
 import {
-  InvalidStatusTransitionError,
   PublicationUnavailableError,
   updateAdoptionRequestStatusForProfile,
 } from "@/features/requests/lib/requestsRepository";
@@ -50,7 +49,6 @@ export async function PATCH(request: Request, { params }: Context) {
       profile.id,
       id,
       parsed.data.status,
-      parsed.data.visitScheduledAt,
     );
 
     if (!adoptionRequest) {
@@ -62,13 +60,6 @@ export async function PATCH(request: Request, { params }: Context) {
     if (error instanceof PublicationUnavailableError) {
       return NextResponse.json(
         { message: "Esta mascota ya fue adoptada o no está disponible." },
-        { status: 409 },
-      );
-    }
-
-    if (error instanceof InvalidStatusTransitionError) {
-      return NextResponse.json(
-        { message: "El estado de la solicitud cambió. Actualizá la página." },
         { status: 409 },
       );
     }

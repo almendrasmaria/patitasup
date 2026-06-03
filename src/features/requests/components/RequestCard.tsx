@@ -22,8 +22,16 @@ export default function RequestCard({
   onStatusChange,
 }: RequestCardProps) {
   const petLine = [row.petSpecies, row.petAgeLabel].filter(Boolean).join(" · ");
+  const isPending = row.status === "pendiente";
   const isApproved = row.status === "aprobada";
   const isRejected = row.status === "rechazada";
+  // Approval only happens after a visit: from "pendiente" you must schedule first.
+  const approveDisabled = isApproved || isPending;
+  const approveLabel = isApproved
+    ? "Solicitud ya aprobada"
+    : isPending
+      ? "Agendá una visita antes de aprobar"
+      : `Aprobar solicitud de ${row.adoptanteName}`;
 
   return (
     <article className="group rounded-2xl border border-[var(--border-hairline)] bg-white p-4 shadow-sm transition duration-150 hover:border-[var(--accent-border-20)] hover:shadow-md sm:p-5">
@@ -68,9 +76,9 @@ export default function RequestCard({
 
         <div className="flex shrink-0 items-center gap-1.5">
           <ActionIconButton
-            label={isApproved ? "Solicitud ya aprobada" : `Aprobar solicitud de ${row.adoptanteName}`}
+            label={approveLabel}
             onClick={() => onStatusChange(row, "aprobada")}
-            disabled={isApproved}
+            disabled={approveDisabled}
             className="hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
           >
             <FiCheck className="h-4 w-4" aria-hidden />
