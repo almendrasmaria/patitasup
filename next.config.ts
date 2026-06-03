@@ -19,6 +19,7 @@ const supabaseHostname = getSupabaseHostname();
 const supabaseOrigins = supabaseHostname
   ? [`https://${supabaseHostname}`, `wss://${supabaseHostname}`]
   : [];
+const isDevelopment = process.env.NODE_ENV === "development";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -64,6 +65,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp"],
   async headers() {
+    if (isDevelopment) {
+      return [];
+    }
+
     return [
       {
         source: "/(.*)",
