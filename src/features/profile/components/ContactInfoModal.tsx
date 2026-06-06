@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FiMail, FiX } from "react-icons/fi";
+
+import { updateProfileInfo } from "@/features/profile/actions";
 
 type ContactInfoModalProps = {
   email?: string | null;
@@ -13,8 +16,10 @@ type ContactInfoModalProps = {
   facebook?: string | null;
 };
 
+type EditableKey = "phone" | "instagram" | "facebook";
+
 type Field = {
-  key: "email" | "phone" | "instagram" | "facebook";
+  key: EditableKey;
   label: string;
   placeholder: string;
   type: string;
@@ -22,7 +27,6 @@ type Field = {
 };
 
 const FIELDS: Field[] = [
-  { key: "email", label: "Email", placeholder: "refugio@correo.com", type: "email", Icon: FiMail },
   { key: "phone", label: "Teléfono / WhatsApp", placeholder: "+54 9 11 1234 5678", type: "tel", Icon: FaWhatsapp },
   { key: "instagram", label: "Instagram", placeholder: "@turefugio", type: "text", Icon: FaInstagram },
   { key: "facebook", label: "Facebook", placeholder: "facebook.com/turefugio", type: "text", Icon: FaFacebookF },
@@ -32,11 +36,13 @@ const transition = { duration: 0.18, ease: "easeOut" } as const;
 
 export default function ContactInfoModal({ email, phone, instagram, facebook }: ContactInfoModalProps) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const initial = {
-    email: email ?? "",
     phone: phone ?? "",
     instagram: instagram ?? "",
     facebook: facebook ?? "",
@@ -67,11 +73,21 @@ export default function ContactInfoModal({ email, phone, instagram, facebook }: 
 
   function handleOpen() {
     setValues(initial);
+    setError(null);
     setOpen(true);
   }
 
   function handleSave() {
-    setOpen(false);
+    setError(null);
+    startTransition(async () => {
+      const result = await updateProfileInfo(values);
+      if (result.ok) {
+        setOpen(false);
+        router.refresh();
+      } else {
+        setError(result.error);
+      }
+    });
   }
 
   return (
@@ -125,6 +141,21 @@ export default function ContactInfoModal({ email, phone, instagram, facebook }: 
                       </header>
 
                       <div className="space-y-4 px-6 py-5">
+                        <div>
+                          <span className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--neutral-500)]">
+                            <FiMail className="h-4 w-4 text-[var(--warm-orange)]" aria-hidden />
+                            Email
+                          </span>
+                          <input
+                            type="email"
+                            value={email ?? ""}
+                            readOnly
+                            disabled
+                            className="w-full cursor-not-allowed rounded-lg border border-[var(--border-input)] bg-[var(--surface-profile-tint)] px-3.5 py-2.5 text-sm text-[var(--neutral-500)] outline-none"
+                          />
+                          <p className="mt-1 text-[12px] text-[var(--neutral-500)]">Es el correo de tu cuenta.</p>
+                        </div>
+
                         {FIELDS.map(({ key, label, placeholder, type, Icon }) => (
                           <label key={key} className="block">
                             <span className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--neutral-500)]">
@@ -142,6 +173,8 @@ export default function ContactInfoModal({ email, phone, instagram, facebook }: 
                             />
                           </label>
                         ))}
+
+                        {error ? <p className="text-[13px] text-[var(--destructive)]">{error}</p> : null}
                       </div>
 
                       <footer className="flex items-center justify-end gap-3 border-t border-[var(--border-hairline)] px-6 py-4">
@@ -155,9 +188,10 @@ export default function ContactInfoModal({ email, phone, instagram, facebook }: 
                         <button
                           type="button"
                           onClick={handleSave}
-                          className="rounded-lg bg-[var(--warm-orange)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
+                          disabled={isPending}
+                          className="rounded-lg bg-[var(--warm-orange)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          Guardar
+                          {isPending ? "Guardando..." : "Guardar"}
                         </button>
                       </footer>
                     </motion.div>

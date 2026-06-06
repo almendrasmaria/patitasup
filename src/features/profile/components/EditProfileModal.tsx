@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { FiEdit2, FiX } from "react-icons/fi";
+
+import { updateProfileInfo } from "@/features/profile/actions";
 
 type EditProfileModalProps = {
   location?: string | null;
@@ -14,6 +17,9 @@ const transition = { duration: 0.18, ease: "easeOut" } as const;
 
 export default function EditProfileModal({ location, description }: EditProfileModalProps) {
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -47,11 +53,21 @@ export default function EditProfileModal({ location, description }: EditProfileM
 
   function handleOpen() {
     setValues(initial);
+    setError(null);
     setOpen(true);
   }
 
   function handleSave() {
-    setOpen(false);
+    setError(null);
+    startTransition(async () => {
+      const result = await updateProfileInfo(values);
+      if (result.ok) {
+        setOpen(false);
+        router.refresh();
+      } else {
+        setError(result.error);
+      }
+    });
   }
 
   return (
@@ -135,6 +151,8 @@ export default function EditProfileModal({ location, description }: EditProfileM
                             className="w-full resize-y rounded-lg border border-[var(--border-input)] bg-white px-3.5 py-2.5 text-sm leading-relaxed text-[var(--foreground-table)] outline-none transition focus:border-[var(--warm-orange)] focus:ring-2 focus:ring-[var(--accent-overlay-20)]"
                           />
                         </label>
+
+                        {error ? <p className="text-[13px] text-[var(--destructive)]">{error}</p> : null}
                       </div>
 
                       <footer className="flex items-center justify-end gap-3 border-t border-[var(--border-hairline)] px-6 py-4">
@@ -148,9 +166,10 @@ export default function EditProfileModal({ location, description }: EditProfileM
                         <button
                           type="button"
                           onClick={handleSave}
-                          className="rounded-lg bg-[var(--warm-orange)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
+                          disabled={isPending}
+                          className="rounded-lg bg-[var(--warm-orange)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          Guardar
+                          {isPending ? "Guardando..." : "Guardar"}
                         </button>
                       </footer>
                     </motion.div>

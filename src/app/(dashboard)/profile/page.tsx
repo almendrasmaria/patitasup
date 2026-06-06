@@ -29,8 +29,11 @@ export default async function Page() {
 
   const contactEmail = profile?.email ?? user.email ?? null;
 
-  const location: string | null = null;
-  const description: string | null = null;
+  const location = profile?.location ?? null;
+  const description = profile?.description ?? null;
+  const phone = profile?.phone ?? null;
+  const instagram = profile?.instagram ?? null;
+  const facebook = profile?.facebook ?? null;
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
@@ -38,9 +41,6 @@ export default async function Page() {
         <article className="rounded-xl bg-white shadow-sm ring-1 ring-black/5">
           <div className="relative h-36 rounded-t-xl bg-gradient-to-r from-[var(--warm-orange)] via-[#ff9d73] to-[var(--brand-teal)] sm:h-44">
             <div className="absolute right-5 top-4 text-right text-white drop-shadow-sm">
-              {location ? (
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/85">{location}</p>
-              ) : null}
               <p className="text-sm font-semibold">{profileName}</p>
             </div>
           </div>
@@ -59,7 +59,12 @@ export default async function Page() {
               <FiMapPin className="h-4 w-4 shrink-0" aria-hidden />
               <span>{location ?? "Completá tu ubicación"}</span>
               <span aria-hidden>·</span>
-              <ContactInfoModal email={contactEmail} />
+              <ContactInfoModal
+                email={contactEmail}
+                phone={phone}
+                instagram={instagram}
+                facebook={facebook}
+              />
             </p>
 
             <div className="mt-5 border-t border-[var(--border-hairline)] pt-5">

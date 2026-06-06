@@ -1,6 +1,21 @@
+import type { Profile } from "@prisma/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LISTING_IMAGE_UPLOAD_MAX_REQUEST_BYTES } from "@/features/listings/lib/listingImageConstants";
+
+const profileStub: Profile = {
+  id: "profile-1",
+  supabaseUserId: "user-1",
+  email: "rescate@correo.com",
+  displayName: "Refugio",
+  location: null,
+  description: null,
+  phone: null,
+  instagram: null,
+  facebook: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
 vi.mock("@/features/listings/lib/ensureListingProfile", () => ({
   getCurrentListingProfile: vi.fn(),
@@ -29,7 +44,7 @@ describe("listing image upload route", () => {
   });
 
   it("rejects oversized requests before parsing multipart data", async () => {
-    getProfileMock.mockResolvedValue({ id: "profile-1", supabaseUserId: "user-1" });
+    getProfileMock.mockResolvedValue(profileStub);
 
     const response = await POST(
       new Request("http://localhost/api/listings/image", {
@@ -44,7 +59,7 @@ describe("listing image upload route", () => {
   });
 
   it("rejects unsupported upload content types", async () => {
-    getProfileMock.mockResolvedValue({ id: "profile-1", supabaseUserId: "user-1" });
+    getProfileMock.mockResolvedValue(profileStub);
     const formData = new FormData();
     formData.append("file", new File(["not-an-image"], "note.txt", { type: "text/plain" }));
 
