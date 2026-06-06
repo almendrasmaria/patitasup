@@ -17,11 +17,12 @@ import type { Pet } from "@/features/pets/types";
 type PetDetailModalProps = {
   pet: Pet | null;
   onClose: () => void;
+  buildShareUrl?: (pet: Pet) => string;
 };
 
 const COPIED_RESET_MS = 2000;
 
-export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
+export default function PetDetailModal({ pet, onClose, buildShareUrl }: PetDetailModalProps) {
   const mounted = useSyncExternalStore(() => () => { }, () => true, () => false);
   const [copied, setCopied] = useState(false);
   const copyTimerRef = useRef<number | null>(null);
@@ -66,7 +67,7 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
   const handleShare = async () => {
     if (!pet) return;
     try {
-      const url = `${window.location.origin}/pets?pet=${pet.slug}`;
+      const url = buildShareUrl ? buildShareUrl(pet) : `${window.location.origin}/pets?pet=${pet.slug}`;
       await navigator.clipboard.writeText(url);
       setCopied(true);
       if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
@@ -177,7 +178,7 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
 
                 {pet?.authorProfileSlug ? (
                   <Link
-                    href={`/refugios/${pet.authorProfileSlug}`}
+                    href={`/shelters/${pet.authorProfileSlug}`}
                     className="flex items-center justify-between gap-3 rounded-2xl border border-(--border-hairline) bg-(--surface-card-elevated) px-4 py-3 transition hover:border-(--accent-border-20) hover:bg-(--accent-overlay-8)"
                   >
                     <div className="flex items-center gap-3">
