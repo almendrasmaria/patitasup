@@ -11,6 +11,7 @@ model Profile {
   supabaseUserId   String            @unique
   email            String            @unique
   displayName      String
+  slug             String?           @unique
   location         String?
   description      String?           @db.Text
   phone            String?

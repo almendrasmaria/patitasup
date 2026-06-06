@@ -175,8 +175,26 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
                   </section>
                 ) : null}
 
-                <div className="flex items-center justify-between gap-3 rounded-2xl border border-(--border-hairline) bg-(--surface-card-elevated) px-4 py-3">
-                  <div className="flex items-center gap-3">
+                {pet?.authorProfileSlug ? (
+                  <Link
+                    href={`/refugios/${pet.authorProfileSlug}`}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-(--border-hairline) bg-(--surface-card-elevated) px-4 py-3 transition hover:border-(--accent-border-20) hover:bg-(--accent-overlay-8)"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-(--accent-bg-chip) text-accent">
+                        <FiHeart className="h-5 w-5" aria-hidden />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                          Publicado por
+                        </p>
+                        <p className="truncate text-sm font-semibold text-neutral-700">{rescueName}</p>
+                      </div>
+                    </div>
+                    <FiExternalLink className="h-4 w-4 shrink-0 text-neutral-400" aria-hidden />
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-3 rounded-2xl border border-(--border-hairline) bg-(--surface-card-elevated) px-4 py-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-(--accent-bg-chip) text-accent">
                       <FiHeart className="h-5 w-5" aria-hidden />
                     </span>
@@ -187,8 +205,7 @@ export default function PetDetailModal({ pet, onClose }: PetDetailModalProps) {
                       <p className="truncate text-sm font-semibold text-neutral-700">{rescueName}</p>
                     </div>
                   </div>
-                  <FiExternalLink className="h-4 w-4 shrink-0 text-neutral-400" aria-hidden />
-                </div>
+                )}
               </div>
 
               <div className="border-t border-(--border-hairline) px-6 py-4">

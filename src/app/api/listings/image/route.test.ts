@@ -8,6 +8,7 @@ const profileStub: Profile = {
   supabaseUserId: "user-1",
   email: "rescate@correo.com",
   displayName: "Refugio",
+  slug: "refugio",
   location: null,
   description: null,
   phone: null,

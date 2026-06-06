@@ -12,4 +12,5 @@ export type Pet = {
   characteristics: string[];
   description: string;
   rescueInstagram: string;
+  authorProfileSlug?: string | null;
 };
