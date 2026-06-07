@@ -9,14 +9,13 @@ import PetsGrid from "./PetsGrid";
 
 type Props = {
   pets: Pet[];
+  initialPetSlug?: string;
 };
 
-export default function PetsGridWithModal({ pets }: Props) {
-  const [selectedPet, setSelectedPet] = useState<Pet | null>(() => {
-    if (typeof window === "undefined") return null;
-    const slug = new URLSearchParams(window.location.search).get("pet");
-    return slug ? pets.find((pet) => pet.slug === slug) ?? null : null;
-  });
+export default function PetsGridWithModal({ pets, initialPetSlug }: Props) {
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(
+    () => (initialPetSlug ? pets.find((pet) => pet.slug === initialPetSlug) ?? null : null),
+  );
 
   const syncPetParam = (slug: string | null) => {
     const url = new URL(window.location.href);

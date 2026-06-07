@@ -9,10 +9,13 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ pet?: string | string[] }>;
 };
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { pet } = await searchParams;
+  const initialPetSlug = typeof pet === "string" ? pet : undefined;
 
   const profile = await prisma.profile.findUnique({ where: { slug } });
 
@@ -28,6 +31,7 @@ export default async function Page({ params }: Props) {
       location={profile.location}
       description={profile.description}
       pets={pets}
+      initialPetSlug={initialPetSlug}
       contact={
         <PublicContactInfo
           email={profile.email}

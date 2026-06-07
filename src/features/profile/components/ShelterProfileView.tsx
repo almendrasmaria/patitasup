@@ -22,6 +22,7 @@ type ShelterProfileViewProps = {
   description: string | null;
   contact: ReactNode;
   pets?: Pet[];
+  initialPetSlug?: string;
   showPublications?: boolean;
   headerAction?: ReactNode;
   locationPlaceholder?: string;
@@ -35,6 +36,7 @@ export default function ShelterProfileView({
   description,
   contact,
   pets = [],
+  initialPetSlug,
   showPublications = true,
   headerAction,
   locationPlaceholder,
@@ -104,7 +106,7 @@ export default function ShelterProfileView({
             </h2>
             {pets.length > 0 ? (
               <div className="mt-5">
-                <PetsGridWithModal pets={pets} />
+                <PetsGridWithModal pets={pets} initialPetSlug={initialPetSlug} />
               </div>
             ) : (
               <p className="mt-3 text-[15px] leading-7 text-[var(--neutral-500)]">{emptyPublicationsText}</p>
