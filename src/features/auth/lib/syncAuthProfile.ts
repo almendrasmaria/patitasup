@@ -1,5 +1,6 @@
 import "server-only";
 
+import { generateUniqueProfileSlug } from "@/features/profile/lib/profileSlug";
 import { prisma } from "@/lib/prisma";
 
 type SyncAuthProfileInput = {
@@ -27,6 +28,7 @@ export async function syncAuthProfile({ userId, email, displayName }: SyncAuthPr
           supabaseUserId: userId,
           email: normalizedEmail,
           displayName,
+          slug: await generateUniqueProfileSlug(tx.profile, displayName),
         },
       });
     }
@@ -59,6 +61,10 @@ export async function syncAuthProfile({ userId, email, displayName }: SyncAuthPr
       });
     }
 
+    const slug =
+      canonicalProfile.slug ??
+      (await generateUniqueProfileSlug(tx.profile, displayName, canonicalProfile.id));
+
     return tx.profile.update({
       where: {
         id: canonicalProfile.id,
@@ -67,6 +73,7 @@ export async function syncAuthProfile({ userId, email, displayName }: SyncAuthPr
         supabaseUserId: userId,
         email: normalizedEmail,
         displayName,
+        slug,
       },
     });
   });

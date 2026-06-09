@@ -153,7 +153,7 @@ function getFallbackImage(rowId: string, species: PrismaSpecies) {
 }
 
 type ListingWithAuthor = PrismaPublication & {
-  authorProfile: Pick<Profile, "displayName">;
+  authorProfile: Pick<Profile, "displayName" | "slug">;
 };
 
 export function mapListingRow(row: PrismaPublication): Publication {
@@ -199,6 +199,7 @@ export function mapListingRowToPet(row: ListingWithAuthor): Pet {
     characteristics: row.characteristics,
     description: row.description,
     rescueInstagram: row.rescueInstagram ?? row.authorProfile.displayName,
+    authorProfileSlug: row.authorProfile.slug,
   };
 }
 
@@ -222,6 +223,27 @@ export async function listPublishedListingPets() {
       authorProfile: {
         select: {
           displayName: true,
+          slug: true,
+        },
+      },
+    },
+    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+  });
+
+  return rows.map(mapListingRowToPet);
+}
+
+export async function listPublishedListingPetsForProfile(profileId: string) {
+  const rows = await prisma.publication.findMany({
+    where: {
+      authorProfileId: profileId,
+      status: PrismaStatus.ACTIVE,
+    },
+    include: {
+      authorProfile: {
+        select: {
+          displayName: true,
+          slug: true,
         },
       },
     },
@@ -241,6 +263,7 @@ export async function findPublishedListingPetBySlug(slug: string) {
       authorProfile: {
         select: {
           displayName: true,
+          slug: true,
         },
       },
     },

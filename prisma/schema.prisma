@@ -11,6 +11,12 @@ model Profile {
   supabaseUserId   String            @unique
   email            String            @unique
   displayName      String
+  slug             String?           @unique
+  location         String?
+  description      String?           @db.Text
+  phone            String?
+  instagram        String?
+  facebook         String?
   publications     Publication[]
   adoptionRequests AdoptionRequest[]
   createdAt        DateTime          @default(now())
