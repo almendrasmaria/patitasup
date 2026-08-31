@@ -30,7 +30,7 @@ const Hero = ({
       className={
         isHome
           ? "relative mx-auto flex w-full max-w-5xl flex-col items-center px-4 pt-14 pb-20 text-center sm:px-6 sm:pt-16 sm:pb-24 lg:px-8 lg:pt-20 lg:pb-28"
-          : "relative mx-auto flex w-full max-w-5xl flex-col items-center px-4 pt-10 pb-12 text-center sm:px-6 sm:pt-12 sm:pb-14 lg:px-8"
+          : "relative mx-auto flex w-full max-w-5xl flex-col items-center px-4 pt-4 pb-6 text-center sm:px-6 sm:pt-6 sm:pb-8 lg:px-8"
       }
     >
       {isHome && (
@@ -48,7 +48,7 @@ const Hero = ({
           className={
             isHome
               ? "mt-6 text-balance text-[40px] font-extrabold leading-[1.05] tracking-tight sm:text-[48px] lg:text-[64px]"
-              : "text-balance text-[36px] font-semibold leading-[1.05] sm:text-[40px] lg:text-[44px]"
+              : "text-balance text-[30px] font-bold leading-[1.1] tracking-tight sm:text-[34px] lg:text-[40px]"
           }
         >
           {title}
@@ -58,7 +58,7 @@ const Hero = ({
           className={
             isHome
               ? "mt-5 max-w-2xl text-pretty text-[15px] leading-7 text-white/85 sm:text-[16px] lg:text-[18px]"
-              : "mt-4 max-w-3xl text-pretty text-[15px] leading-relaxed text-white/90 sm:text-[16px] lg:text-base"
+              : "mt-4 max-w-2xl text-pretty text-[14px] leading-relaxed text-white/90 sm:text-[15px] lg:text-[16px]"
           }
         >
           {subtitle}

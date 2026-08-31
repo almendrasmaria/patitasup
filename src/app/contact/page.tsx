@@ -7,19 +7,29 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-[var(--surface-shell)] flex flex-col">
       <div className="flex-1 flex flex-col">
-        <PawsSection className="py-12 md:py-20 lg:py-28">
-          <div className="mx-auto flex h-full max-w-6xl items-center justify-center px-4 lg:px-8">
-            <Hero
-              badgeText="Contacto"
-              variant="page"
-              title="Contáctanos"
-              subtitle="Estamos aquí para ayudarte a conectar con tu futuro mejor amigo y responder cualquier duda que tengas sobre el proceso."
-            />
-          </div>
-        </PawsSection>
+        <div className="relative overflow-hidden bg-gradient-to-b from-[#FF7B4D] via-[#FF8A5C] to-[#FFA178]">
+          <div
+            className="pointer-events-none absolute -right-24 -top-28 h-[320px] w-[320px] rounded-full bg-white/10 blur-3xl sm:h-[380px] sm:w-[380px]"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -bottom-40 -left-20 h-[300px] w-[300px] rounded-full bg-[#FFD4B8]/25 blur-3xl sm:h-[360px] sm:w-[360px]"
+            aria-hidden
+          />
 
-        <section className="relative z-10 mx-auto w-full max-w-6xl -mt-10 md:-mt-14 lg:-mt-20 pb-12 md:pb-20 lg:pb-28 px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <PawsSection bgColor="transparent" className="py-16 md:py-24 lg:py-32">
+            <div className="mx-auto flex h-full max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8">
+              <Hero
+                variant="page"
+                title="Contáctanos"
+                subtitle="Estamos aquí para ayudarte a conectar con tu futuro mejor amigo y resolver cualquier duda sobre el proceso de adopción."
+              />
+            </div>
+          </PawsSection>
+        </div>
+
+        <section className="relative z-10 mx-auto w-full max-w-7xl -mt-12 md:-mt-16 lg:-mt-24 pb-16 md:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
             <ContactFormCard />
             <ContactInfoCard />
           </div>
